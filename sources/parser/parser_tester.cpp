@@ -4,14 +4,15 @@
 #include <istream>
 
 int main() {
-	std::string line = "/aDmin tata";
+	std::string line = "/admin tata";
 	irc::parser parser(line);
 
 	irc::command *cmd;
-	cmd = parser.get_command();
+	std::string arg = parser.get_first_arg();
+	cmd = parser.get_command(arg);
 	if (cmd)
 		std::cout << "My cmd is : " << cmd->get_name() << std::endl;
 	else
-		std::cout << "Error(" + std::string(ERR_UNKNOWNCOMMAND) + "): " + "cmd" + " Unknown command" << std::endl;
+		std::cout << "Error(" + std::string(ERR_UNKNOWNCOMMAND) + "): " + arg + " Unknown command" << std::endl;
 	return 0;
 }

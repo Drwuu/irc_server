@@ -56,7 +56,7 @@ namespace irc {
 	};
 
 /* Functions */
-	command *parser::get_command() {
+	string	parser::get_first_arg() {
 		string mstr;
 		if (_line.empty())
 			return NULL;
@@ -64,11 +64,13 @@ namespace irc {
 		if (_line[0] == '/') i++;
 		while (_line[i] && _line[i] != ' ')
 			mstr.push_back(_line[i++]);
-
+		return mstr;
+	}
+	command	*parser::get_command(string const &first_arg) {
 		string insensitive_cmd;
 		std::locale loc;
-		for (size_t i = 0; i < mstr.size(); i++)
-			insensitive_cmd.push_back(std::toupper(mstr[i], loc));
+		for (size_t i = 0; i < first_arg.size(); i++)
+			insensitive_cmd.push_back(std::toupper(first_arg[i], loc));
 		citerator it = _map.find(insensitive_cmd);
 		if (it == _map.end())
 			return NULL;

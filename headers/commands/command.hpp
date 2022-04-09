@@ -31,5 +31,6 @@ namespace irc {
 		private:
 		protected:
 			string send_instructions(command const &cmd);
+		public:
 	};
 }
