@@ -2,34 +2,30 @@
 #include "../irc.hpp"
 
 namespace irc {
-	class parser {
+	class command {
 	/* Typedefs */
 		private:
 		public:
 	/* Variables */
 		private:
-			string	_line;
-			map		_map;
 		public:
-
 	/* Constructors & Destructors */
 		private:
-			parser();
 		public:
-			virtual ~parser();
-			parser(string const &line);
-			parser(parser const &src);
+			virtual ~command();
+			command();
+			command(command const &src);
 	/* Operators */
 		private:
+			command& operator=(command const &src);
 		public:
-			parser		&operator=(parser const &src);
+			string operator()(command const &cmd) const;
 	/* Getters & Setters */
 		private:
 		public:
-			map const	&get_map();
 	/* Functions */
 		private:
-		public:
-			string		get_command();
+		protected:
+			string send_instructions(command const &cmd);
 	};
 }

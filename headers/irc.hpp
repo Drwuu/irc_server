@@ -1,9 +1,15 @@
 #pragma once
+#include <iostream>
 #include <string>
+#include <map>
 
 namespace irc {
 /* Typedefs */
+	class command;
 	typedef std::string string;
+	typedef std::map<string, command *> map;
+	typedef std::map<string, command *>::iterator iterator;
+	typedef std::map<string, command *>::const_iterator citerator;
 
 /* Basics */
 	#define RPL_WELCOME "1"

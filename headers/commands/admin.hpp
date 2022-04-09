@@ -1,8 +1,8 @@
 #pragma once
-#include "Icommand.hpp"
+#include "command.hpp"
 
 namespace irc {
-	class Admin: public Icommand {
+	class admin: public command {
 	/* Typedefs */
 		private:
 		public:
@@ -12,13 +12,15 @@ namespace irc {
 	/* Constructors & Destructors */
 		private:
 		public:
-			virtual ~Admin() {};
+			admin();
+			admin(admin const &src);
+			virtual ~admin();
 	/* Operators */
 		private:
 		public:
+			admin &operator=(admin const &src);
 	/* Functions */
 		private:
 		public:
-			string send_message() const;
 	};
 }
