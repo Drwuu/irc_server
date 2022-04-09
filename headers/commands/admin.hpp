@@ -11,8 +11,9 @@ namespace irc {
 		public:
 	/* Constructors & Destructors */
 		private:
-		public:
 			admin();
+		public:
+			admin(string const &name);
 			admin(admin const &src);
 			virtual ~admin();
 	/* Operators */

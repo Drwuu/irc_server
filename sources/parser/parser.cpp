@@ -8,7 +8,7 @@ namespace irc {
 	};
 	parser::parser(): _line(NULL), _map() {};
 	parser::parser(string const &line): _line(line){
-		_map.insert(std::make_pair("ADMIN", new admin()));
+		_map.insert(std::make_pair("ADMIN", new admin("ADMIN")));
 		// _map.insert(std::make_pair("AWAY", admin()));
 		// _map.insert(std::make_pair("HELP", admin()));
 		// _map.insert(std::make_pair("INFO", admin()));
@@ -56,10 +56,10 @@ namespace irc {
 	};
 
 /* Functions */
-	string parser::get_command() {
+	command *parser::get_command() {
 		string mstr;
 		if (_line.empty())
-			return string("Error(" ERR_UNKNOWNCOMMAND "): " "NULL" " Unknown command" );
+			return NULL;
 		size_t i = 0;
 		if (_line[0] == '/') i++;
 		while (_line[i] && _line[i] != ' ')
@@ -71,8 +71,8 @@ namespace irc {
 			insensitive_cmd.push_back(std::toupper(mstr[i], loc));
 		citerator it = _map.find(insensitive_cmd);
 		if (it == _map.end())
-			return string("Error(" ERR_UNKNOWNCOMMAND "): " + mstr + " Unknown command" );
+			return NULL;
 		else
-			return mstr;
+			return it->second;
 	};
 }

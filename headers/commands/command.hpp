@@ -8,12 +8,15 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
+		protected:
+			string	_name;
 		public:
 	/* Constructors & Destructors */
 		private:
 		public:
 			virtual ~command();
 			command();
+			command(string const &name);
 			command(command const &src);
 	/* Operators */
 		private:
@@ -23,6 +26,7 @@ namespace irc {
 	/* Getters & Setters */
 		private:
 		public:
+			string const	&get_name() const;
 	/* Functions */
 		private:
 		protected:

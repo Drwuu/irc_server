@@ -1,4 +1,5 @@
 #include "../../headers/parser/parser.hpp"
+#include "../../headers/commands/command.hpp"
 #include <iostream>
 #include <istream>
 
@@ -6,8 +7,11 @@ int main() {
 	std::string line = "/aDmin tata";
 	irc::parser parser(line);
 
-	std::string cmd;
+	irc::command *cmd;
 	cmd = parser.get_command();
-	std::cout << "My cmd is : " << cmd << std::endl;
+	if (cmd)
+		std::cout << "My cmd is : " << cmd->get_name() << std::endl;
+	else
+		std::cout << "Error(" + std::string(ERR_UNKNOWNCOMMAND) + "): " + "cmd" + " Unknown command" << std::endl;
 	return 0;
 }

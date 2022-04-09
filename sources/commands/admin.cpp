@@ -4,6 +4,9 @@ namespace irc {
 /* Constructors & Destructors */
 	admin::~admin() {};
 	admin::admin() {};
+	admin::admin(string const &name) {
+		_name = name;
+	};
 	admin::admin(admin const &src) {
 		*this = src;
 	};

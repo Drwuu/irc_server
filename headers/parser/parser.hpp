@@ -30,6 +30,6 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			string		get_command();
+			command		*get_command();
 	};
 }
