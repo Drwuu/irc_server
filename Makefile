@@ -1,43 +1,43 @@
-NAME			=  irc_parser
+NAME			=  irc_42
 
-FLAGS			= -Wall -Wextra -Werror -g3 -fsanitize=address
+FLAGS			= -Wall -Wextra -Werror -std=c++98
+FLAGS			+= -g3 -fsanitize=address
 
 OBJS_DIR		= objects
 INCLUDES		= headers
 
 SRCS			= \
-parser_tester.cpp \
-parser.cpp \
-
+$(addprefix parser/, parser_tester.cpp parser.cpp) \
+$(addprefix commands/, command.cpp admin.cpp) \
 
 HEADERS			= \
-parser.hpp \
-error_defines.hpp \
+$(addprefix commands/, command.hpp admin.hpp) \
+$(addprefix errors/, error_defines.hpp) \
+$(addprefix parser/, parser.hpp) \
 
-FILES			= sources
-FOLDERS			= objects
+SOURCES			= sources
+FOLDERS			= commands parser
 OBJS			= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 all:				$(NAME)
 
 $(NAME):			$(OBJS)
-						@clang++ $(FLAGS) $^ -o $@
-						@printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(GREEN)Compiled [√]$(RESET)$(NO_COLOR)\n"
+						clang++ $(FLAGS) $^ -o $@
+						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(GREEN)Compiled [√]$(RESET)$(NO_COLOR)\n"
 						./$(NAME)
 
-$(OBJS_DIR)/%.o:	$(FILES)/%.cpp $(addprefix $(INCLUDES)/, $(HEADERS))
-						@mkdir -p $(OBJS_DIR)
-# @mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
-						@clang++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
-						@printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(PURPLE)$<$(RESET)$(NO_COLOR)"
+$(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(addprefix $(INCLUDES)/, $(HEADERS))
+						mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
+						clang++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
+						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(PURPLE)$<$(RESET)$(NO_COLOR)"
 
 clean:
-						@rm -f $(OBJS)
-						@rm -rf $(OBJS_DIR)
-# @rm -rf $(addprefix ./, $(FOLDERS))
+						rm -rf $(OBJS)
+						rm -rf $(addprefix $(OBJS_DIR)/, $(FOLDERS))
+						rm -rf $(OBJS_DIR)
 
 fclean:				clean
-						@rm -f $(NAME)
+						rm -f $(NAME)
 
 re:					fclean all
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "error_defines.hpp"
+#include "../errors/error_defines.hpp"
 
 namespace irc {
 	class parser {
