@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 19:12:55 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/05 20:05:20 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/09 13:34:38 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int main(int ac, char **av) {
     if (sockfd < 0)  {
 		std::cerr << " Error socket creation" << std::endl;
 	}
-    server = gethostbyname(av[1]);
+    server = gethostbyname(av[2]);
     if (server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
         exit(0);
@@ -51,9 +51,11 @@ int main(int ac, char **av) {
     serv_addr.sin_port = htons(port_nb);
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		std::cerr << " Errr connect() " << std::endl;
+		std::cerr << " ERRNO : " << std::strerror(errno) << std::endl;
+		return 1;
 	}
-    printf("Please enter the message: ");
     bzero(buffer,256);
+    printf("Please enter the message: ");
     fgets(buffer,255,stdin);
     n = write(sockfd,buffer,strlen(buffer));
     if (n < 0) {
