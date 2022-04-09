@@ -8,10 +8,10 @@ INCLUDES		= headers
 
 SRCS			= \
 $(addprefix parser/, parser_tester.cpp parser.cpp) \
-$(addprefix commands/, command.cpp admin.cpp) \
+$(addprefix commands/, admin.cpp) \
 
 HEADERS			= \
-$(addprefix commands/, command.hpp admin.hpp) \
+$(addprefix commands/, Icommand.hpp admin.hpp) \
 $(addprefix errors/, error_defines.hpp) \
 $(addprefix parser/, parser.hpp) \
 
