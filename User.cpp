@@ -1,5 +1,5 @@
 #include "User.hpp"
-
+#include <iostream>
 User::User(){}
 User::~User(){}
 
@@ -21,6 +21,15 @@ std::vector<std::string> User::get_past_username(){
 	return (this->_past_username);}
 std::vector<ChanStatus> User::get_chan_list(){
 	return (this->_chan_list);}
+ChanStatus User::get_chanstatus_from_list(Channel * channel){
+	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end();++it)
+	{
+		if ((*(it)).channel->get_name() == channel->get_name())
+			return (*it);
+	}
+	std::cout << "Channel not found\n";
+	return NULL;
+}
 
 void User::set_password(std::string password){
 	this->_password = password;}
@@ -41,29 +50,177 @@ void User::set_nickname(std::string nickname){
 void User::join_channel(Server & server,std::string channel){
 	for(std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
 		if ((*it).channel->get_name() == channel){
-			return ;
+			if ((*it).is_banned == true)
+			{
+				return ; // User banned from channel
+			}
+			return ; // Channel already joined
 		}
 	}
 	for (std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
 		if ((*it)->get_name() == channel){
 			ChanStatus chan(*it,false,false);
+			if ((*it)->get_mode().c_str() == "v") // WIP Mode not implemented
+				chan.is_mute = true;
 			get_chan_list().push_back(chan);
-			return ;
+			return ; // Channel found
 		}
 	}
+	// Channel not found in channel list : create it
 	Channel *new_chan = new Channel(channel);
 	server.add_channel(*new_chan);
 	ChanStatus chan_status(new_chan,true,true);
+	chan_status.is_mute = false;
 	get_chan_list().push_back(chan_status);
 	new_chan->add_user(this);
 }
 
-void User::leave_channel(const Server & server, std::string channel){
+void User::leave_channel(std::string channel){
 	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
 		if ((*it).channel->get_name() == channel){
 			(*it).channel->del_user(this);
 			get_chan_list().erase(it);
 			break;
 		}
+	}
+}
+
+void User::send_message(Server & server, Channel & channel, std::string msg){
+	for(std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
+		if ((*it)->get_name() == channel.get_name()){
+			if (channel.get_mode().c_str() == "m" && get_chanstatus_from_list(&channel).is_mute == true) // si le channel est restreint et que l'utilisateur est mute
+				return; // if the server is muted, the user can't send message
+			for(std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+				(*it)->receive_message(server,channel,msg); // send message to all users in the channel
+			}
+		}
+	}
+	// Channel not found in channel list : send error
+}
+
+void User::send_message(Server & server,User & user, std::string msg){
+	if (this->get_registered_status() == false)
+		return; // if the user is not registered, he can't send message : return error
+	for (std::vector<User *>::const_iterator it = server.get_user_list().begin(); it != server.get_user_list().end(); ++it){
+		if ((*it)->get_username() == user.get_username()){
+			(*it)->receive_message(server,*this,msg);
+			return; // user found in server list : send message
+		}
+	}
+	// user not found in server list : send error
+}
+
+void User::kick_user(User & user, Channel & channel,std::string msg){
+	if (this->get_chanstatus_from_list(&channel).is_operator == true)
+	{
+		for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			if ((*it)->get_username() == user.get_username()){
+				user.leave_channel(channel.get_name());
+				std::cout << msg << std::endl;
+				return; // user found in channel list : kick user
+			}
+			else if (it == channel.get_user_list().end() - 1)
+				return; // user not found in channel list : send error
+		}
+	}
+	else
+	{
+		// User not operator: send error
+	}
+}
+
+void User::ban_user(User & user, Channel & channel){
+	if (this->get_chanstatus_from_list(&channel).is_operator == true)
+	{
+		for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			if ((*it)->get_username() == user.get_username()){
+				if (user.get_chanstatus_from_list(&channel).is_banned == true)
+					return; // user already banned from the channel
+				else
+					user.get_chanstatus_from_list(&channel).is_banned = true;
+				return; // user found in channel list : ban user but do not kick him
+			}
+			else if (it == channel.get_user_list().end() - 1)
+				return; // user not found in channel list : send error
+		}
+	}
+	else
+	{
+		// User not operator: send error
+	}
+}
+
+void User::unban_user(User & user,Channel & channel)
+{
+	if (this->get_chanstatus_from_list(&channel).is_operator == true)
+	{
+		for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			if ((*it)->get_username() == user.get_username()){
+				if (user.get_chanstatus_from_list(&channel).is_banned == false)
+					return; // user not banned from the channel
+				else
+					user.get_chanstatus_from_list(&channel).is_banned = false;
+				return; // user found in channel list : ban user but do not kick him
+			}
+			else if (it == channel.get_user_list().end() - 1)
+				return; // user not found in channel list : send error
+		}
+	}
+	else
+	{
+		// User not operator: send error
+	}
+}
+
+void User::op_user(User & user, Channel & channel){
+	if (this->get_chanstatus_from_list(&channel).is_operator == true)
+	{
+		for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			if ((*it)->get_username() == user.get_username()){
+				if (user.get_chanstatus_from_list(&channel).is_operator == true)
+					return; // user already operator in the channel
+				else
+					user.get_chanstatus_from_list(&channel).is_operator = false;
+				return; // user found in channel list : op user
+			}
+			else if (it == channel.get_user_list().end() - 1)
+				return; // user not found in channel list : send error
+		}
+	}
+	else
+	{
+		// User not operator: send error
+	}
+}
+
+void User::change_topic(Channel & channel,std::string topic){
+	if (this->get_chanstatus_from_list(&channel).is_operator == true){
+		channel.set_topic(topic);
+	}
+	else{
+		// User not operator: send error
+	}
+}
+
+void User::unmute_user(User & user, Channel & channel){
+	if (this->get_chanstatus_from_list(&channel).is_operator == true)
+	{
+		for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			if ((*it)->get_username() == user.get_username()){
+				if (user.get_chanstatus_from_list(&channel).is_mute == true){
+					user.get_chanstatus_from_list(&channel).is_mute = false;
+					return; // user was mute
+				}
+				else
+					user.get_chanstatus_from_list(&channel).is_mute = false;
+				return; // user was unmute
+			}
+			else if (it == channel.get_user_list().end() - 1)
+				return; // user not found in channel list : send error
+		}
+	}
+	else
+	{
+		// User not operator: send error
 	}
 }

@@ -16,8 +16,8 @@ class Channel{
 		int			_lifetime;
 		int			_opdelay;
 		int			_userlimit;
-		std::vector<User *>	_users_list;
-		std::vector<std::string> _banlist; // Needed for ISBANNED function
+		std::vector<User *>	_user_list;
+		std::vector<User *> _ban_list; // Needed for ISBANNED function
 		Channel & operator=(Channel const & op);
 		Channel(Channel const & copy);
 	protected:
@@ -35,8 +35,8 @@ class Channel{
 		const int&					get_lifetime() const;
 		const int&					get_opdelay() const;
 		const int&					get_userlimit() const;
-		const std::vector<User *>&	get_users_list() const;
-		const std::vector<User *>&	get_banned_users() const; // Needed for ISBANNED function
+		const std::vector<User *>	get_user_list() const;
+		const std::vector<User *>	get_banned_user() const; // Needed for ISBANNED function
 
 		void						set_name(const std::string& name);
 		void						set_prefix(const std::string& prefix);

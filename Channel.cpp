@@ -23,8 +23,11 @@ const int & Channel::get_opdelay() const{
 const int & Channel::get_userlimit() const{
 	return (this->_userlimit);}
 
-const std::vector<User *> & Channel::get_users_list() const{
-	return (this->_users_list);}
+const std::vector<User *> Channel::get_user_list() const{
+	return (this->_user_list);}
+
+const std::vector<User *> Channel::get_banned_user() const{
+	return (this->_ban_list);}
 
 void Channel::set_name(const std::string & name){
 	this->_name = name;}

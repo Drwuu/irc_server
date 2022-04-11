@@ -6,10 +6,12 @@
 
 struct ChanStatus
 {
+	ChanStatus(Channel * channel);
 	ChanStatus(Channel *channel, bool is_admin,bool is_operator);
 	bool is_admin;
 	bool is_operator;
 	bool is_banned;
+	bool is_mute;
 	Channel *channel;
 };
 
