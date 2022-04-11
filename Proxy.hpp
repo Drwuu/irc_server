@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/11 22:54:49 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/11 23:35:16 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 
 # include <poll.h>
 # include <list>
+# include <map>
 
 // struct sockaddr_in6 {
 // 		__uint8_t       sin6_len;       [> length of this struct(sa_family_t) <]
@@ -42,27 +43,44 @@
 //     short  revents;  /* events returned */
 // };
 
-// FIXME : add filter for Signal Handling ?
-
+// FIXME : manage Signal Handling ?
 
 
 class	Proxy {
 
 	// Typedef
 	public:
-		typedef		Socket						socket_type;
-		typedef		Socket_event				event_type;
-		typedef		std::list<event_type>		api_type;
+		typedef		Socket								socket_type;
+		typedef		socket_type::port_type				port_type;
+		typedef		socket_type::fd_type				fd_type;
+
+		typedef		std::map<fd_type, socket_type>		client_socket;
+		typedef		Socket_event						event_type;
+		typedef		std::list<event_type>				api_type;
 
 	private:
-		api_type	send_packet;
-		api_type	receive_packet;
+		socket_type		server;
+		socket_type		*client;
+		api_type		send_packet;
+		api_type		receive_packet;
+	
+	private:
+		Proxy();
+		void		create_socket();
+		void		generate_address();
+		void		bind_socket();
+		void		listen();
 	
 	public:
-		Proxy();
+		Proxy(const port_type &port);
 		~Proxy();
 
-		int			launch_queue();
+		void		switch_on();
+		void		switch_off();
+
+		// main loop
+		int			queuing();
+
 		api_type	send_data();
 		void		receive_data(const api_type &data);
 };
