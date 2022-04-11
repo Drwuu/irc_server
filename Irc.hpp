@@ -4,11 +4,13 @@
 #include <string>
 #include <vector>
 
-typedef struct s_chanstatus
+struct ChanStatus
 {
+	ChanStatus(Channel *channel, bool is_admin,bool is_operator);
 	bool is_admin;
 	bool is_operator;
-	Channel *channel;}				t_chanstatus;
+	Channel *channel;
+};
 
 
 #endif

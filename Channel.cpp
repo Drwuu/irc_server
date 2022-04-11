@@ -23,6 +23,9 @@ const int & Channel::get_opdelay() const{
 const int & Channel::get_userlimit() const{
 	return (this->_userlimit);}
 
+const std::vector<User *> & Channel::get_users_list() const{
+	return (this->_users_list);}
+
 void Channel::set_name(const std::string & name){
 	this->_name = name;}
 
@@ -48,6 +51,8 @@ void Channel::set_userlimit(const int & userlimit){
 	this->_userlimit = userlimit;}
 
 Channel::Channel(){}
+
+Channel::Channel(std::string name): _name(name){}
 
 Channel::Channel(Channel const & copy){*this = copy;}
 

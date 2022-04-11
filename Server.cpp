@@ -4,7 +4,7 @@ Server::Server(std::string password,std::string port):_password(password),_port(
 
 Server::~Server(){}
 
-std::vector<Channel *> Server::get_channel_list(){
+const std::vector<Channel *> Server::get_channel_list() const{
 	return (this->_channel_list);}
 
 std::vector<User *> Server::get_user_list(){

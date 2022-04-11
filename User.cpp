@@ -19,7 +19,7 @@ const std::string User::get_mode() const{
 	return (this->_mode);}
 std::vector<std::string> User::get_past_username(){
 	return (this->_past_username);}
-std::vector<t_chanstatus> User::get_chan_list(){
+std::vector<ChanStatus> User::get_chan_list(){
 	return (this->_chan_list);}
 
 void User::set_password(std::string password){
@@ -37,3 +37,33 @@ void User::set_username(std::string username){
 	this->_username = username;}
 void User::set_nickname(std::string nickname){
 	this->_nickname = nickname;}
+
+void User::join_channel(Server & server,std::string channel){
+	for(std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
+		if ((*it).channel->get_name() == channel){
+			return ;
+		}
+	}
+	for (std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
+		if ((*it)->get_name() == channel){
+			ChanStatus chan(*it,false,false);
+			get_chan_list().push_back(chan);
+			return ;
+		}
+	}
+	Channel *new_chan = new Channel(channel);
+	server.add_channel(*new_chan);
+	ChanStatus chan_status(new_chan,true,true);
+	get_chan_list().push_back(chan_status);
+	new_chan->add_user(this);
+}
+
+void User::leave_channel(const Server & server, std::string channel){
+	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
+		if ((*it).channel->get_name() == channel){
+			(*it).channel->del_user(this);
+			get_chan_list().erase(it);
+			break;
+		}
+	}
+}
