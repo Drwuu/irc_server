@@ -9,6 +9,7 @@ struct ChanStatus
 	ChanStatus(Channel *channel, bool is_admin,bool is_operator);
 	bool is_admin;
 	bool is_operator;
+	bool is_banned;
 	Channel *channel;
 };
 
