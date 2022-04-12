@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/11 22:49:37 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/12 23:12:50 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 class	Socket_event {
 	public:
-		typedef		Socket					socket_type;
+		typedef		Socket<Address_ipv6>	socket_type;
 		typedef		socket_type::fd_type	fd_type;
 		typedef		socket_type::data_type	data_type;
 
@@ -102,7 +102,8 @@ struct Proxy_queue {
 // Server class, used in the Server class.
 // This is a unified API form thanks to polymorphisme
 // All the server has to do, is receive data and run handle() on a for loop.
-//
+
+
 struct Server_queue {
 
 	class	Message : public Socket_event {
@@ -110,6 +111,7 @@ struct Server_queue {
 			// Content of the message from the Client
 			data_type		data;
 		public:
+			Message(data_type data);
 			void			handle();
 	};
 

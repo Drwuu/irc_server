@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/11 23:35:16 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/12 23:11:39 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Socket.hpp"
 # include "Event.hpp"
+# include "Address.hpp"
 
 # include <sys/types.h>
 # include <sys/time.h>
@@ -45,35 +46,46 @@
 
 // FIXME : manage Signal Handling ?
 
+class	Poll_handling {
+};
 
 class	Proxy {
 
 	// Typedef
 	public:
-		typedef		Socket								socket_type;
+		typedef		Socket<Address_ipv6>				socket_type;
 		typedef		socket_type::port_type				port_type;
 		typedef		socket_type::fd_type				fd_type;
+		typedef		short int							flag_type;
 
-		typedef		std::map<fd_type, socket_type>		client_socket;
+		typedef		std::map<fd_type, socket_type>		client_tree_type;
+		typedef		std::map<flag_type, Poll_handling>	flag_tree_type;
 		typedef		Socket_event						event_type;
 		typedef		std::list<event_type>				api_type;
 
 	private:
-		socket_type		server;
-		socket_type		*client;
-		api_type		send_packet;
-		api_type		receive_packet;
+		socket_type				_server;
+		client_tree_type		_clients;
+		flag_tree_type			_flags;
+		api_type				_to_server;
+		api_type				_to_client;
 	
 	private:
+		// Should stay unaccessible
 		Proxy();
-		void		create_socket();
+		void		create_socket(socket_type &source);
 		void		generate_address();
 		void		bind_socket();
 		void		listen();
+
+		void		manage_new_connexion(socket_type &new_client);
 	
 	public:
 		Proxy(const port_type &port);
+		Proxy(const Proxy &source);
 		~Proxy();
+
+		Proxy	&operator=(const Proxy &source);
 
 		void		switch_on();
 		void		switch_off();
