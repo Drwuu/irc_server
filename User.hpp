@@ -41,6 +41,7 @@ class User
 		const bool					get_away_status() const;
 		std::vector<std::string>	get_past_username();
 		std::vector<ChanStatus>		get_chan_list();
+		ChanStatus					get_chanstatus_from_list(Channel * channel);
 
 		void						set_password(std::string password);
 		void						set_ip(std::string ip);
@@ -51,17 +52,19 @@ class User
 
 		void						join_channel(Server & server, std::string channel); // Command JOIN
 		void						join_channel(Server & server, std::string channel, std::string key); // Command JOIN with Key mode
-		void						leave_channel(const Server & server, std::string channel);
+		void						leave_channel(std::string channel);
 		void						leave_channel(const Server & server, Channel *channel);// Command PART
 
-		void						send_message(Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
-		void						receive_message(Channel& channel,std::string msg);
+		void						send_message(Server & server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
+		void						send_message(Server & Server, User & User, std::string msg); // Command MSG et/ou PRIVMSG
+		void						receive_message(Server & server,	Channel& channel,std::string msg);
+		void						receive_message(Server & Server,User& user, std::string msg);
 
-		void						kick_user(User & user, Channel & channel); // Command Kick Need to test is this is op
+		void						kick_user(User & user, Channel & channel,std::string msg); // Command Kick Need to test is this is op
 		void						ban_user(User & user, Channel & channel); // Use /mode #channel + b pseudo
 		void						unban_user(User & user, Channel & channel); // Use Command UNBAN
 		void						op_user(User & user, Channel & channel); // Use /mode #channel -o pseudo
 		void						unmute_user(User & user, Channel & Channel); // Use /mode username -v Authorize talking in moderated channel (mode m)
-
+		void						change_topic(Channel & channel,std::string msg); // Used for TOPIC function
 };
 #endif
