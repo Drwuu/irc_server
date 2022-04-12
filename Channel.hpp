@@ -9,10 +9,6 @@ class Channel{
 		std::string	_name;
 		std::string	_topic;
 		std::string	_prefix;
-		std::string	_mask;
-		std::string	_mode;
-		std::string	_mask;
-		std::string	_flag;
 		std::string	_key;
 		int			_lifetime;
 		int			_opdelay;
@@ -36,12 +32,7 @@ class Channel{
 		~Channel();
 		const std::string&			get_name() const;
 		const std::string&			get_prefix() const;
-		const std::string&			get_mask() const;
-		const std::string&			get_mode() const;
-		const std::string&			get_flag() const;
 		const std::string&			get_topic() const;
-		const int&					get_lifetime() const;
-		const int&					get_opdelay() const;
 		const int&					get_userlimit() const;
 		const std::vector<User *>	get_user_list() const;
 		const std::vector<User *>	get_banned_user() const; // Needed for ISBANNED function
