@@ -7,7 +7,7 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-			map	_map;
+			map_cmd	_map;
 		public:
 
 	/* Constructors & Destructors */
@@ -23,7 +23,7 @@ namespace irc {
 	/* Getters & Setters */
 		private:
 		public:
-			map const	*get_map();
+			map_cmd const	*get_map();
 	/* Functions */
 		private:
 		public:

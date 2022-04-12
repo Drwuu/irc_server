@@ -9,8 +9,8 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-			string		_line;
-			map const	*_commands;
+			string			_line;
+			map_cmd const	*_commands;
 		public:
 
 	/* Constructors & Destructors */
@@ -19,7 +19,7 @@ namespace irc {
 			parser(parser const &src);
 		public:
 			virtual ~parser();
-			parser(string const &line, map const *commands);
+			parser(string const &line, map_cmd const *commands);
 	/* Operators */
 		private:
 			parser		&operator=(parser const &src);
@@ -29,8 +29,9 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			string		_get_cmd_name() const;
+			string		_get_arg(string::const_iterator &it) const;
+			bool		_is_valid_cmd(map_citerator_cmd const &cmd, vector_args const &args) const;
 		public:
-			command		*get_command() const;
+			vector_args	get_command_infos() const;
 	};
 }

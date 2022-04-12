@@ -7,12 +7,13 @@
 
 int main() {
 	irc::server server;
-	irc::parser parser("/toto tata", server.get_map());
-
-	irc::command *cmd;
+	irc::parser parser("/invite tata", server.get_map());
+	irc::vector_args cmd;
 	try {
-		cmd = parser.get_command();
-		std::cout << "CMD is: " << cmd->get_name() << std::endl;
+		cmd = parser.get_command_infos();
+		std::cout << "CMD is: " << *cmd.begin() << std::endl;
+		std::cout << "ARG1 is: " << *(cmd.begin()+1) << std::endl;
+		// std::cout << "ARG2 is: " << *(cmd.begin()+2) << std::endl;
 	}
 	catch (irc::error &e) {
 		std::cout << e.what() << std::endl;

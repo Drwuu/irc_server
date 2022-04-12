@@ -5,30 +5,52 @@ namespace irc {
 /* Constructors & Destructors */
 	parser::~parser() {};
 	parser::parser(): _line(nullptr) {};
-	parser::parser(string const &line, map const *commands): _line(line), _commands(commands) {};
+	parser::parser(string const &line, map_cmd const *commands): _line(line), _commands(commands) {};
 /* Operators */
 /* Getters & Setters */
 /* Functions */
-	string	parser::_get_cmd_name() const {
+	string	parser::_get_arg(string::const_iterator &it) const {
 		string mstr;
-		if (_line.empty())
-			return NULL;
-		size_t i = 0;
-		if (_line[0] == '/') i++;
-		while (_line[i] && _line[i] != ' ')
-			mstr.push_back(_line[i++]);
+		string insensitive_line;
+		std::locale loc;
+		for (; it != _line.end(); it++) {
+			if (*it == ' ') {
+				it++; // move forward next space
+				break;
+			}
+			insensitive_line.push_back(std::toupper(*it, loc));
+		}
+		if (insensitive_line.empty())
+			return "";
+		for (string::iterator it2 = insensitive_line.begin(); it2 != insensitive_line.end(); it2++)
+			mstr.push_back(*it2);
 		return mstr;
 	}
-	command	*parser::get_command() const {
-		string cmd_name = _get_cmd_name();
-		string insensitive_cmd;
-		std::locale loc;
-		for (size_t i = 0; i < cmd_name.size(); i++)
-			insensitive_cmd.push_back(std::toupper(cmd_name[i], loc));
-		citerator it = _commands->find(insensitive_cmd);
-		if (it == _commands->end())
+	bool parser::_is_valid_cmd(map_citerator_cmd const &cmd, vector_args const &args) const {
+		(void)cmd; (void)args;
+		return false;
+	};
+
+	vector_args	parser::get_command_infos() const {
+		vector_args args;
+		string::const_iterator it = _line.begin();
+		if (*it == '/')
+			it++;
+		string cmd_name = _get_arg(it);
+		if (cmd_name.empty())
+			throw error("EMPTY COMMAND", ERR_UNKNOWNCOMMAND);
+		map_citerator_cmd cmd_it = _commands->find(cmd_name);
+		if (cmd_it == _commands->end())
 			throw error(cmd_name, ERR_UNKNOWNCOMMAND);
-		else
-			return it->second;
+		else {
+			args.push_back(cmd_name);
+			for (; it != _line.end(); it++) {
+				string mstr = _get_arg(it);
+				args.push_back(mstr);
+				if (it == _line.end())
+					break;
+			}
+		}
+		return args;
 	};
 }

@@ -3,8 +3,8 @@
 namespace irc {
 /* Constructors & Destructors */
 	kick::~kick() {};
-	kick::kick(string const &name) {
-		_name = name;
+	kick::kick(vector_args const &args) {
+		_args = args;
 	};
 /* Operators */
 /* Functions */

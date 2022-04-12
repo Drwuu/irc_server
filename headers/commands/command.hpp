@@ -9,15 +9,15 @@ namespace irc {
 	/* Variables */
 		private:
 		protected:
-			string	_name;
+			vector_args	_args;
 		public:
 	/* Constructors & Destructors */
 		private:
-		public:
-			virtual ~command();
-			command();
-			command(string const &name);
 			command(command const &src);
+		public:
+			command();
+			command(vector_args const &args);
+			virtual ~command();
 	/* Operators */
 		private:
 			command& operator=(command const &src);
@@ -26,7 +26,7 @@ namespace irc {
 	/* Getters & Setters */
 		private:
 		public:
-			string const	&get_name() const;
+			vector_args const	&get_args() const;
 	/* Functions */
 		private:
 		protected:

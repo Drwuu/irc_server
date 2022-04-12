@@ -3,8 +3,8 @@
 namespace irc {
 /* Constructors & Destructors */
 	mode::~mode() {};
-	mode::mode(string const &name) {
-		_name = name;
+	mode::mode(vector_args const &args) {
+		_args = args;
 	};
 /* Operators */
 /* Functions */

@@ -2,14 +2,20 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 
 namespace irc {
 /* Typedefs */
-	class command;
 	typedef std::string string;
-	typedef std::map<string, command *> map;
-	typedef std::map<string, command *>::iterator iterator;
-	typedef std::map<string, command *>::const_iterator citerator;
+
+	class command;
+	typedef std::map<string, command *>	map_cmd;
+	typedef map_cmd::iterator			map_iterator_cmd;
+	typedef map_cmd::const_iterator		map_citerator_cmd;
+
+	typedef std::vector<string>			vector_args;
+	typedef vector_args::iterator 		vector_iterator_args;
+	typedef vector_args::const_iterator	vector_citerator_args;
 
 	enum error_type {
 

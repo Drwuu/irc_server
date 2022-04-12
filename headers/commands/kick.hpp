@@ -14,7 +14,7 @@ namespace irc {
 			kick();
 			kick(kick const &src);
 		public:
-			kick(string const &name);
+			kick(vector_args const &args);
 			virtual ~kick();
 	/* Operators */
 		private:

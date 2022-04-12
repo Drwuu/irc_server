@@ -3,23 +3,16 @@
 namespace irc {
 /* Constructors & Destructors */
 	command::~command() {};
-	command::command(): _name() {};
-	command::command(string const &name): _name(name) {};
-	command::command(command const &src) {
-		*this = src;
-	};
+	command::command(): _args() {};
+	command::command(vector_args const &args): _args(args) {};
 /* Operators */
-	command& command::operator=(command const &src) {
-		_name = src._name;
-		return *this;
-	};
 	// string command::operator()(command const &cmd) const {
 
 	// };
 /* Getters & Setters */
-	string const	&command::get_name() const {
-		return _name;
-	};
+	vector_args const	&command::get_args() const {
+		return _args;
+	}
 
 /* Functions */
 	// string command::send_instructions(command const &cmd) {

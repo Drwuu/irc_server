@@ -3,8 +3,8 @@
 namespace irc {
 /* Constructors & Destructors */
 	invite::~invite() {};
-	invite::invite(string const &name) {
-		_name = name;
+	invite::invite(vector_args const &args) {
+		_args = args;
 	};
 /* Operators */
 /* Functions */

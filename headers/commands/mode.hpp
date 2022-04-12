@@ -14,7 +14,7 @@ namespace irc {
 			mode();
 			mode(mode const &src);
 		public:
-			mode(string const &name);
+			mode(vector_args const &args);
 			virtual ~mode();
 	/* Operators */
 		private:
