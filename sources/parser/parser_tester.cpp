@@ -1,18 +1,22 @@
+#include "../../headers/server.hpp"
 #include "../../headers/parser/parser.hpp"
 #include "../../headers/commands/command.hpp"
+#include "../../headers/error/error.hpp"
 #include <iostream>
 #include <istream>
 
 int main() {
-	std::string line = "/admin tata";
-	irc::parser parser(line);
+	irc::server server;
+	irc::parser parser("/toto tata", server.get_map());
 
 	irc::command *cmd;
-	std::string arg = parser.get_first_arg();
-	cmd = parser.get_command(arg);
-	if (cmd)
-		std::cout << "My cmd is : " << cmd->get_name() << std::endl;
-	else
-		std::cout << "Error(" + std::string(ERR_UNKNOWNCOMMAND) + "): " + arg + " Unknown command" << std::endl;
+	try {
+		cmd = parser.get_command();
+		std::cout << "CMD is: " << cmd->get_name() << std::endl;
+	}
+	catch (irc::error &e) {
+		std::cout << e.what() << std::endl;
+		return 0;
+	}
 	return 0;
 }

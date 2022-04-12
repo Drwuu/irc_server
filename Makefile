@@ -7,16 +7,20 @@ OBJS_DIR		= objects
 INCLUDES		= headers
 
 SRCS			= \
+$(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
+$(addprefix error/, error.cpp) \
 $(addprefix parser/, parser_tester.cpp parser.cpp) \
-$(addprefix commands/, command.cpp admin.cpp) \
+server.cpp
 
 HEADERS			= \
-$(addprefix commands/, command.hpp admin.hpp) \
+$(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
+$(addprefix error/, error.hpp) \
 $(addprefix parser/, parser.hpp) \
 irc.hpp \
+server.hpp
 
 SOURCES			= sources
-FOLDERS			= commands parser
+FOLDERS			= commands error parser
 OBJS			= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 all:				$(NAME)

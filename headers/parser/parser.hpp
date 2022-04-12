@@ -1,5 +1,6 @@
 #pragma once
 #include "../irc.hpp"
+#include "../server.hpp"
 
 namespace irc {
 	class parser {
@@ -8,29 +9,28 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-			string	_line;
-			map		_map;
+			string		_line;
+			map const	*_commands;
 		public:
 
 	/* Constructors & Destructors */
 		private:
 			parser();
+			parser(parser const &src);
 		public:
 			virtual ~parser();
-			parser(string const &line);
-			parser(parser const &src);
+			parser(string const &line, map const *commands);
 	/* Operators */
 		private:
-		public:
 			parser		&operator=(parser const &src);
+		public:
 	/* Getters & Setters */
 		private:
 		public:
-			map const	&get_map();
 	/* Functions */
 		private:
+			string		_get_cmd_name() const;
 		public:
-			string		get_first_arg();
-			command		*get_command(string const &first_arg);
+			command		*get_command() const;
 	};
 }

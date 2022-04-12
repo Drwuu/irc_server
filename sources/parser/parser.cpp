@@ -1,62 +1,15 @@
 #include "../../headers/parser/parser.hpp"
-#include "../../headers/commands/admin.hpp"
+#include "../../headers/error/error.hpp"
 
 namespace irc {
 /* Constructors & Destructors */
-	parser::~parser() {
-		_map.clear();
-	};
-	parser::parser(): _line(NULL), _map() {};
-	parser::parser(string const &line): _line(line){
-		_map.insert(std::make_pair("ADMIN", new admin("ADMIN")));
-		// _map.insert(std::make_pair("AWAY", admin()));
-		// _map.insert(std::make_pair("HELP", admin()));
-		// _map.insert(std::make_pair("INFO", admin()));
-		// _map.insert(std::make_pair("INVITE", admin()));
-		// _map.insert(std::make_pair("ISON", admin()));
-		// _map.insert(std::make_pair("JOIN", admin()));
-		// _map.insert(std::make_pair("KICK", admin()));
-		// _map.insert(std::make_pair("LINKS", admin()));
-		// _map.insert(std::make_pair("LIST", admin()));
-		// _map.insert(std::make_pair("LUSERS", admin()));
-		// _map.insert(std::make_pair("ME", admin()));
-		// _map.insert(std::make_pair("MODE", admin()));
-		// _map.insert(std::make_pair("MOTD", admin()));
-		// _map.insert(std::make_pair("NAMES", admin()));
-		// _map.insert(std::make_pair("NICK", admin()));
-		// _map.insert(std::make_pair("NOTICE", admin()));
-		// _map.insert(std::make_pair("OPER", admin()));
-		// _map.insert(std::make_pair("PART", admin()));
-		// _map.insert(std::make_pair("PRIVMSG", admin()));
-		// _map.insert(std::make_pair("QUERY", admin()));
-		// _map.insert(std::make_pair("QUIT", admin()));
-		// _map.insert(std::make_pair("STATS", admin()));
-		// _map.insert(std::make_pair("SUMMON", admin()));
-		// _map.insert(std::make_pair("TIME", admin()));
-		// _map.insert(std::make_pair("TOPIC", admin()));
-		// _map.insert(std::make_pair("USERHOST", admin()));
-		// _map.insert(std::make_pair("USERS", admin()));
-		// _map.insert(std::make_pair("VERSION", admin()));
-		// _map.insert(std::make_pair("WHO", admin()));
-		// _map.insert(std::make_pair("WHOIS", admin()));
-		// _map.insert(std::make_pair("WHOWAS", admin()));
-	};
-	parser::parser(parser const &src): _line(NULL) {
-		*this = src;
-	};
-
+	parser::~parser() {};
+	parser::parser(): _line(nullptr) {};
+	parser::parser(string const &line, map const *commands): _line(line), _commands(commands) {};
 /* Operators */
-	parser &parser::operator=(parser const &src) {
-		_line = src._line;
-		return *this;
-	};
 /* Getters & Setters */
-	map const &parser::get_map() {
-		return _map;
-	};
-
 /* Functions */
-	string	parser::get_first_arg() {
+	string	parser::_get_cmd_name() const {
 		string mstr;
 		if (_line.empty())
 			return NULL;
@@ -66,14 +19,15 @@ namespace irc {
 			mstr.push_back(_line[i++]);
 		return mstr;
 	}
-	command	*parser::get_command(string const &first_arg) {
+	command	*parser::get_command() const {
+		string cmd_name = _get_cmd_name();
 		string insensitive_cmd;
 		std::locale loc;
-		for (size_t i = 0; i < first_arg.size(); i++)
-			insensitive_cmd.push_back(std::toupper(first_arg[i], loc));
-		citerator it = _map.find(insensitive_cmd);
-		if (it == _map.end())
-			return NULL;
+		for (size_t i = 0; i < cmd_name.size(); i++)
+			insensitive_cmd.push_back(std::toupper(cmd_name[i], loc));
+		citerator it = _commands->find(insensitive_cmd);
+		if (it == _commands->end())
+			throw error(cmd_name, ERR_UNKNOWNCOMMAND);
 		else
 			return it->second;
 	};
