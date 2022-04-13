@@ -64,6 +64,7 @@ void User::join_channel(Server & server,std::string channel){
 			ChanStatus chan(*it,false,false);
 			if ((*it)->is_moderated() == true)
 				chan.is_mute = true;
+			chan.channel->add_user(this);
 			get_chan_list().push_back(chan);
 			return ; // Channel found
 		}
@@ -91,7 +92,7 @@ void User::leave_channel(std::string channel){
 void User::send_message(Server & server, Channel & channel, std::string msg){
 	for(std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
 		if ((*it)->get_name() == channel.get_name()){
-			if (channel.get_mode().c_str() == "m" && get_chanstatus_from_list(&channel).is_mute == true) // si le channel est restreint et que l'utilisateur est mute
+			if (channel.is_moderated() == true && get_chanstatus_from_list(&channel).is_mute == true) // si le channel est restreint et que l'utilisateur est mute
 				return; // if the server is muted, the user can't send message
 			for(std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
 				(*it)->receive_message(server,channel,msg); // send message to all users in the channel
@@ -141,6 +142,7 @@ void User::ban_user(User & user, Channel & channel){
 	{
 		for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
 			if ((*it)->get_username() == user.get_username()){
+
 				if (user.get_chanstatus_from_list(&channel).is_banned == true)
 					return; // user already banned from the channel
 				else

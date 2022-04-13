@@ -17,6 +17,7 @@ class User
 		std::string _mode;
 		std::vector<std::string> _past_username;
 		std::vector<ChanStatus> _chan_list;
+		// *CMD
 		bool _is_away;
 		bool _is_registered;
 		bool _is_irc_operator;
@@ -59,6 +60,8 @@ class User
 		void						send_message(Server & Server, User & User, std::string msg); // Command MSG et/ou PRIVMSG
 		void						receive_message(Server & server,	Channel& channel,std::string msg);
 		void						receive_message(Server & Server,User& user, std::string msg);
+		void						send_invite(User & user, Channel & channel);
+		void						receive_invite(User & user, Channel & channel);
 
 		void						kick_user(User & user, Channel & channel,std::string msg); // Command Kick Need to test is this is op
 		void						ban_user(User & user, Channel & channel); // Use /mode #channel + b pseudo

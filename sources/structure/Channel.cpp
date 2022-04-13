@@ -44,6 +44,22 @@ void Channel::set_opdelay(const int & opdelay){
 void Channel::set_userlimit(const int & userlimit){
 	this->_userlimit = userlimit;}
 
+void Channel::add_user(User * user){
+	for (std::vector<User *>::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
+	if (user->get_username() == (*it)->get_username())
+		return; // User already banned from this channel
+	this->_user_list.push_back(user);
+}
+
+void Channel::del_user(User * user)
+{
+	for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
+	{
+		if ((*it)->get_username() == user->get_username())
+			this->_user_list.erase(it);
+	}
+}
+
 Channel::Channel(){}
 
 Channel::Channel(std::string name): _name(name){}
