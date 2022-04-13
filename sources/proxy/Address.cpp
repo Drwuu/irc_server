@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Address.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:58:42 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/13 15:22:08 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/13 19:59:42 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Address.hpp"
+#include "../../headers/proxy/Address.hpp"
 
 // Unaccessible
 Address_ipv6::Address_ipv6() { }
@@ -44,10 +44,10 @@ void							Address_ipv6::set_family(const family_type &family) { _family = famil
 
 Address_ipv6::port_type			Address_ipv6::get_port() const { return _port; }
 Address_ipv6::address_type		Address_ipv6::get_address() const { return _address.sin6_addr; }
-std::string						Address_ipv6::get_readable_address() const { 
+std::string						Address_ipv6::get_readable_address() const {
 	int		address_length = INET6_ADDRSTRLEN;
 	char	tmp[address_length];
-	bzero(tmp, address_length); 
+	bzero(tmp, address_length);
 	inet_ntop(_family, &_address.sin6_addr, tmp, (socklen_t)address_length);
 	return std::string(tmp, address_length);
 }

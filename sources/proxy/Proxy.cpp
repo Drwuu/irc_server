@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Proxy.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/13 18:42:31 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/13 20:04:28 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Proxy.hpp"
+#include "../../headers/proxy/Proxy.hpp"
 
 // Should stay unaccessible
 Proxy::Proxy()
@@ -67,7 +67,7 @@ void			Proxy::queuing() {
 
 Proxy::api_type	Proxy::send_data() { return _to_server; }
 
-void			Proxy::receive_data(const api_type &data) { }
+void			Proxy::receive_data(const api_type &data) {(void)data;}
 
 //////////////////////////////////////////////////////////////////////////
 // Private methodes
@@ -80,6 +80,7 @@ void		Proxy::end_connexion() {
 
 void	Proxy::init_flags() {
 	fd_type		serv_sock = _server.get_fd();
+	(void)serv_sock;
 	_flags.insert(std::make_pair(POLLIN, new Poll_in()));
 	_flags.insert(std::make_pair(POLLPRI, new Poll_priority_in()));
 	_flags.insert(std::make_pair(POLLNVAL, new Poll_invalid()));
