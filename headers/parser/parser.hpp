@@ -1,6 +1,6 @@
 #pragma once
 #include "../irc.hpp"
-#include "../server.hpp"
+#include "../../headers/structure/Server.hpp"
 #include "../error/error.hpp"
 #include "../commands/command.hpp"
 

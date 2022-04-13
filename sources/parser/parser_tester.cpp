@@ -1,4 +1,4 @@
-#include "../../headers/server.hpp"
+#include "../../headers/structure/Server.hpp"
 #include "../../headers/parser/parser.hpp"
 #include "../../headers/commands/command.hpp"
 #include "../../headers/error/error.hpp"
@@ -6,7 +6,7 @@
 #include <istream>
 
 int main() {
-	irc::server server;
+	Server server;
 	irc::parser parser("/invite tata", server.get_map());
 	try {
 		parser.fill_command();

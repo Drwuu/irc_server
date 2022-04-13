@@ -1,9 +1,21 @@
 #ifndef USER_HPP
 #define USER_HPP
 
-#include "Irc.hpp"
+#include "../irc.hpp"
 #include "Channel.hpp"
-#include "Server.hpp"
+
+class Server;
+
+struct ChanStatus
+{
+	ChanStatus(Channel * channel);
+	ChanStatus(Channel *channel, bool is_admin,bool is_operator);
+	bool is_admin;
+	bool is_operator;
+	bool is_banned;
+	bool is_mute;
+	Channel *channel;
+};
 
 class User
 {
@@ -22,7 +34,6 @@ class User
 		bool _is_registered;
 		bool _is_irc_operator;
 		User(User const & copy);
-		User & operator=(User const & op);
 
 	protected:
 		/*Arg*/
@@ -37,9 +48,9 @@ class User
 		const std::string			get_port() const;
 		const std::string			get_ip() const;
 		const std::string			get_mode() const;
-		const bool					get_operator_status() const;
-		const bool					get_registered_status()const ;
-		const bool					get_away_status() const;
+		bool					get_operator_status() const;
+		bool					get_registered_status()const ;
+		bool					get_away_status() const;
 		std::vector<std::string>	get_past_username();
 		std::vector<ChanStatus>		get_chan_list();
 		ChanStatus					get_chanstatus_from_list(Channel * channel);

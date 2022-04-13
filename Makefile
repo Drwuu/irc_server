@@ -10,17 +10,18 @@ SRCS			= \
 $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
 $(addprefix error/, error.cpp) \
 $(addprefix parser/, parser_tester.cpp parser.cpp) \
-server.cpp \
+$(addprefix structure/, Server.cpp) \
+# server.cpp
 
 HEADERS			= \
 irc.hpp \
-server.hpp \
+$(addprefix structure/, Server.hpp) \
 $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
 $(addprefix error/, error.hpp) \
 $(addprefix parser/, parser.hpp) \
 
 SOURCES			= sources
-FOLDERS			= commands error parser
+FOLDERS			= commands error parser structure
 OBJS			= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 all:				$(NAME)

@@ -1,8 +1,8 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
-#include "Irc.hpp"
-#include "User.hpp"
+#include "../irc.hpp"
+class User;
 
 class Channel{
 	private:
@@ -22,7 +22,6 @@ class Channel{
 		bool		_is_limited;
 		std::vector<User *>	_user_list;
 		std::vector<User *> _ban_list; // Needed for ISBANNED function
-		Channel & operator=(Channel const & op);
 		Channel(Channel const & copy);
 	protected:
 		/*Arg*/
@@ -36,13 +35,13 @@ class Channel{
 		const int&					get_userlimit() const;
 		const std::vector<User *>	get_user_list() const;
 		const std::vector<User *>	get_banned_user() const; // Needed for ISBANNED function
-		const bool					is_private() const;
-		const bool					is_secret() const;
-		const bool					is_invite() const;
-		const bool					is_topic() const;
-		const bool					is_no_external_msg() const;
-		const bool					is_moderated() const;
-		const bool					is_limited() const;
+		bool					is_private() const;
+		bool					is_secret() const;
+		bool					is_invite() const;
+		bool					is_topic() const;
+		bool					is_no_external_msg() const;
+		bool					is_moderated() const;
+		bool					is_limited() const;
 
 		void						set_name(const std::string& name);
 		void						set_prefix(const std::string& prefix);

@@ -1,4 +1,5 @@
-#include "Channel.hpp"
+#include "../../headers/structure/Channel.hpp"
+#include "../../headers/structure/User.hpp"
 
 const std::string& Channel::get_name() const{
 	return (this->_name);}
@@ -14,20 +15,20 @@ const std::vector<User *> Channel::get_user_list() const{
 const std::vector<User *> Channel::get_banned_user() const{
 	return (this->_ban_list);}
 
-const bool Channel::is_private() const{
-	return (this->_is_private);}
-const bool Channel::is_secret() const{
-	return (this->_is_secret);}
-const bool Channel::is_invite() const{
-	return (this->_is_invite);}
-const bool Channel::is_topic() const{
-	return (this->_is_topic);}
-const bool Channel::is_no_external_msg() const{
-	return (this->_is_no_external_msg);}
-const bool Channel::is_moderated() const{
-	return (this->_is_moderated);}
-const bool Channel::is_limited() const{
-	return (this->_is_limited);}
+// const bool Channel::is_private() const{
+// 	return (this->_is_private);}
+// const bool Channel::is_secret() const{
+// 	return (this->_is_secret);}
+// const bool Channel::is_invite() const{
+// 	return (this->_is_invite);}
+// const bool Channel::is_topic() const{
+// 	return (this->_is_topic);}
+// const bool Channel::is_no_external_msg() const{
+// 	return (this->_is_no_external_msg);}
+// const bool Channel::is_moderated() const{
+// 	return (this->_is_moderated);}
+// const bool Channel::is_limited() const{
+// 	return (this->_is_limited);}
 
 void Channel::set_name(const std::string & name){
 	this->_name = name;}
@@ -46,8 +47,10 @@ void Channel::set_userlimit(const int & userlimit){
 
 void Channel::add_user(User * user){
 	for (std::vector<User *>::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
-	if (user->get_username() == (*it)->get_username())
-		return; // User already banned from this channel
+	{
+		if (user->get_username() == (*it)->get_username())
+			return; // User already banned from this channel
+	}
 	this->_user_list.push_back(user);
 }
 
@@ -65,7 +68,5 @@ Channel::Channel(){}
 Channel::Channel(std::string name): _name(name){}
 
 Channel::Channel(Channel const & copy){*this = copy;}
-
-Channel & Channel::operator=(Channel const & op){}
 
 Channel::~Channel(){}

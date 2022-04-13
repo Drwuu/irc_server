@@ -1,8 +1,26 @@
-#include "Server.hpp"
+#include "../../headers/structure/Server.hpp"
+	Server::~Server() {
+		for (irc::map_iterator_cmd it = _map.begin(); it != _map.end(); it++)
+			if (it->second)
+				delete it->second;
+		_map.clear();
+	};
+	Server::Server(): _map() {
+		_map.insert(std::make_pair("INVITE", new irc::invite(irc::vector_args(1, "INVITE"))));
+		_map.insert(std::make_pair("KICK", new irc::kick(irc::vector_args(1, "KICK"))));
+		_map.insert(std::make_pair("MODE", new irc::mode(irc::vector_args(1, "MODE"))));
+	};
+	Server::Server(Server const &src) {
+		*this = src;
+	};
+/* Getters & Setters */
+	irc::map_cmd &Server::get_map() {
+		return _map;
+	};
 
 Server::Server(std::string password,std::string port):_password(password),_port(port){}
 
-Server::~Server(){}
+// Server::~Server(){}
 
 const std::vector<Channel *> Server::get_channel_list() const{
 	return (this->_channel_list);}
@@ -37,13 +55,13 @@ void					Server::set_port(std::string port){
 void					Server::set_ip(std::string ip){
 	this->_ip = ip;}
 
-void Server::add_user(User & const user){
+void Server::add_user(User & user){
 	this->_user_list.push_back(&user);}
 
-void Server::add_channel(Channel & const channel){
+void Server::add_channel(Channel & channel){
 	this->_channel_list.push_back(&channel);}
 
-void Server::del_channel(Channel & const channel){
+void Server::del_channel(Channel & channel){
 	for (std::vector<Channel *>::iterator it = this->_channel_list.begin(); it != this->_channel_list.end(); ++it){
 		if (*it == &channel){
 			this->_channel_list.erase(it);
@@ -51,7 +69,7 @@ void Server::del_channel(Channel & const channel){
 		}
 	}}
 
-void Server::del_user(User & const user){
+void Server::del_user(User & user){
 	for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end(); ++it){
 		if (*it == &user){
 			this->_user_list.erase(it);

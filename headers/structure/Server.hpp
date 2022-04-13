@@ -2,9 +2,12 @@
 #define SERVER_HPP
 
 
-#include "Irc.hpp"
-#include "User.hpp"
+#include "../commands/invite.hpp"
+#include "../commands/kick.hpp"
+#include "../commands/mode.hpp"
+#include "../irc.hpp"
 #include "Channel.hpp"
+
 class Server
 {
 	private:
@@ -23,8 +26,8 @@ class Server
 		std::vector<User *>		_user_list;
 		std::vector<Channel *>	_channel_list;
 		std::vector<std::string>_ban_list;
+		irc::map_cmd					_map;
 		Server(Server const & copy);
-		Server & operator=(Server const & op);
 	protected:
 		/*Arg*/
 	public:
@@ -41,7 +44,7 @@ class Server
 		const std::string		get_motd() const;
 		std::vector<User *>		get_user_list();
 		const std::vector<Channel *>	get_channel_list() const;
-
+		irc::map_cmd	&						get_map();
 		void					set_name(std::string name);
 		void					set_label(std::string label);
 		void					set_hostname(std::string hostname);
@@ -51,11 +54,11 @@ class Server
 		void  					set_motd(std::string motd); // Use For IMPORTMOTD
 
 
-		void					add_user(User & const user);
-		void					add_channel(Channel & const channel);
+		void					add_user(User & user);
+		void					add_channel(Channel & channel);
 
 		void					del_user(User & user);
-		void					del_channel(Channel & const channel);
+		void					del_channel(Channel & channel);
 
 		void					ban_user(std::string nick);//Use For UNKLINE unban USer from server
 		void					unban_user(std::string nick);
