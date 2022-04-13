@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:40:21 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/12 22:54:22 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/13 15:21:34 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,11 +62,11 @@ class	Address_ipv6 {
 		void			set_port(const port_type &port);
 		void			set_family(const family_type &family);
 
-		port_type		get_port();
-		address_type	get_address();
-		std::string		get_readable_address();
-		len_type		get_len();
-		len_type		get_family();
+		port_type		get_port() const;
+		address_type	get_address() const;
+		std::string		get_readable_address() const;
+		len_type		get_len() const;
+		len_type		get_family() const;
 
 		void			renew(const port_type &port);
 };

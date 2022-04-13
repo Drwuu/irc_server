@@ -6,13 +6,13 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/12 23:03:24 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/13 15:23:02 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#ifndef ASOCKET_HPP
-# define ASOCKET_HPP
+#ifndef SOCKET_HPP
+# define SOCKET_HPP
 
 # include "unistd.h"
 # include <sys/socket.h>
@@ -30,10 +30,11 @@ class Socket {
 		typedef		int											socket_sort;
 		typedef		const int									const_fd_type;
 		typedef		char	*									data_type;
+		typedef		unsigned int								len_type;
 
 		typedef		AddSock										address_type;
 		typedef		typename address_type::address_type			ipv6_type;
-		typedef		typename address_type::len_type				len_type;
+		typedef		typename address_type::len_type				addrlen_type;
 		typedef		typename address_type::port_type			port_type;
 
 
@@ -55,7 +56,9 @@ class Socket {
 
 		virtual ~Socket() { }
 
-		Socket(const Socket &source) { *this = source; }
+		Socket(const Socket &source)
+			: _sockfd(source._sockfd), _type(source._type),
+			_protocol(source._protocol), _address(source._address) { }
 		Socket	&operator=(const Socket &source) {
 			_sockfd = source._sockfd;
 			_type = source._type;
@@ -63,19 +66,29 @@ class Socket {
 			_address = source._address;
 		}
 
-		fd_type			get_fd() { return _sockfd; }
-		len_type		get_len() { return _address.get_len(); }
-		port_type		get_port() { return _address.get_port(); }
-		std::string		get_address_readable() { return _address.get_readable_address(); }
-		socket_sort		get_socket_sort() { return _type; };
+		fd_type			get_fd() const { return _sockfd; }
+		addrlen_type	get_addrlen() const { return _address.get_len(); }
+		port_type		get_port() const { return _address.get_port(); }
+		std::string		get_address_readable() const { return _address.get_readable_address(); }
+		socket_sort		get_socket_sort() const { return _type; };
 
 		void			create_endpoint() {
-			std::clog << "Create endpoint on port " << this->get_port() << " ... " <<  std::endl;
+			std::clog << " -- Create endpoint on port " << this->get_port() << " ... " <<  std::endl;
 			_sockfd = socket(_address.get_family(), _type, _protocol);
 			if (_sockfd == -1) {
-				std::cerr << " error : socket function failed." << std::endl;
+				std::cerr << " [ERROR] : socket function failed." << std::endl;
 				return ;
 			}
+			bool	opt_val = true;
+			if (setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(bool)) == -1) {
+				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR]" << std::endl;
+				return ;
+			}
+			if (setsockopt(_sockfd, SOL_SOCKET, SO_NOTIFYCONFLICT, &opt_val, sizeof(bool)) == -1) {
+				std::cerr << " [ERROR] : adding socket option failed -- [SO_NOTIFYCONFLICT]" << std::endl;
+				return ;
+			}
+			std::clog << " -- Endpoint created on the address " << "" << std::endl;
 		}
 		void			end_connexion() {
 			if (_sockfd != 0)
@@ -86,40 +99,52 @@ class Socket {
 		}
 
 		void			renew(const port_type &port, const socket_sort &type, const protocol_type &protocol = 0) {
-			end_connexion();
+			this->end_connexion();
 			*this = Socket(port, type, protocol);
 		}
 
 		void			bind_socket() {
-			std::clog << "Binding socket on port " << this->get_port() << " ... " <<  std::endl;
-			if (bind(_sockfd, (sockaddr *)*_address, _address.get_len()) == -1) {
+			std::clog << " -- Binding socket on port " << this->get_port() << " ... " <<  std::endl;
+			if (bind(_sockfd, (sockaddr *)&(*_address), _address.get_len()) == -1) {
 				std::cerr << " [ERROR] bind_socket failed " << std::endl;
+				return ;
 			}
-			std::clog << "Binding done." <<  std::endl;
+			std::clog << " -- Binding done." <<  std::endl;
 		}
 
 		// max_queue defines the maximum length for the queue of pending connections. (man length)
-		void			listen_for_connexion(int max_queue) {
-			std::clog << "Make socket listen on port " << this->get_port() << " ... " <<  std::endl;
-			if (listen(_sockfd, 5) == -1) {
+		void			listen_for_connexion(int max_queue = 5) {
+			std::clog << " -- Make socket listen on port " << this->get_port() << " ... " <<  std::endl;
+			if (listen(_sockfd, max_queue) == -1) {
 				std::cerr << "[ERROR] listen failed " << std::endl;
+				return ;
 			}
+			std::clog << " -- The socket is listening on port " << this->get_port() << "." <<  std::endl;
 		}
 
 		Socket			accept_connexion() {
-			std::clog << "Accepting connexion on fd " << this->_sockfd
-				<< " bind to port " << this->get_port() << " ..." << std::endl;
+			std::clog << " -> Accepting connexion on Server [" << this->get_address_readable() << "], identified by the fd [" << this->_sockfd
+				<< "], bind to port [" << this->get_port() << "] ..." << std::endl;
 			Socket			new_client;
 			len_type		new_len;
-			new_client._sockfd = accept(_sockfd, (sockaddr *)*new_client._address, &new_len);
+			new_client._sockfd = accept(_sockfd, (sockaddr *)&(*new_client._address), &new_len);
 			new_client._address.set_len(new_len);
 			new_client._address.set_port(this->get_port());
 			new_client._address.set_family(this->_address.get_family());
 			new_client._type = this->_type;
 			new_client._protocol = this->_protocol;
+
+			// bool	opt_val = true;
+			// if (setsockopt(new_client._sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(bool)) == -1) {
+				// std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR]" << std::endl;
+				// return new_client;
+			// }
+
 			if (new_client.get_fd() == -1) {
 				std::cerr << " [ERROR] accept failed " << std::endl;
 			}
+			std::clog << " -> Connexion succed with Client [" << new_client.get_address_readable()
+				<< "] - identified by the fd [" << new_client.get_fd() << "] " << std::endl;
 			return new_client;
 		}
 

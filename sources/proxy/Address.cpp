@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:58:42 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/12 22:54:17 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/13 15:22:08 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ void							Address_ipv6::set_len(const len_type &len) { _len = len; }
 void							Address_ipv6::set_port(const port_type &port) { _port = port; }
 void							Address_ipv6::set_family(const family_type &family) { _family = family; }
 
-Address_ipv6::port_type			Address_ipv6::get_port() { return _port; }
-Address_ipv6::address_type		Address_ipv6::get_address() { return _address.sin6_addr; }
-std::string						Address_ipv6::get_readable_address() { 
+Address_ipv6::port_type			Address_ipv6::get_port() const { return _port; }
+Address_ipv6::address_type		Address_ipv6::get_address() const { return _address.sin6_addr; }
+std::string						Address_ipv6::get_readable_address() const { 
 	int		address_length = INET6_ADDRSTRLEN;
 	char	tmp[address_length];
 	bzero(tmp, address_length); 
@@ -52,8 +52,8 @@ std::string						Address_ipv6::get_readable_address() {
 	return std::string(tmp, address_length);
 }
 
-Address_ipv6::len_type			Address_ipv6::get_len() { return _len; }
-Address_ipv6::family_type		Address_ipv6::get_family() { return _family; }
+Address_ipv6::len_type			Address_ipv6::get_len() const { return _len; }
+Address_ipv6::family_type		Address_ipv6::get_family() const { return _family; }
 
 
 void			Address_ipv6::renew(const port_type &port) {
