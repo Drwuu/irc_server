@@ -1,6 +1,9 @@
 #pragma once
 #include "../irc.hpp"
 #include "../server.hpp"
+#include "../error/error.hpp"
+#include "../commands/command.hpp"
+
 
 namespace irc {
 	class parser {
@@ -9,8 +12,8 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-			string			_line;
-			map_cmd const	*_commands;
+			string	_line;
+			map_cmd	&_commands;
 		public:
 
 	/* Constructors & Destructors */
@@ -19,7 +22,7 @@ namespace irc {
 			parser(parser const &src);
 		public:
 			virtual ~parser();
-			parser(string const &line, map_cmd const *commands);
+			parser(string const &line, map_cmd &commands);
 	/* Operators */
 		private:
 			parser		&operator=(parser const &src);
@@ -29,9 +32,9 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			string		_get_arg(string::const_iterator &it) const;
-			bool		_is_valid_cmd(map_citerator_cmd const &cmd, vector_args const &args) const;
+			string					_get_arg(string::const_iterator &it) const;
+			map_citerator_cmd const	_get_command() const;
 		public:
-			vector_args	get_command_infos() const;
+			void					fill_command() const;
 	};
 }

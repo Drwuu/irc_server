@@ -1,11 +1,10 @@
 #include "../../headers/parser/parser.hpp"
-#include "../../headers/error/error.hpp"
+#include <cstdio>
 
 namespace irc {
 /* Constructors & Destructors */
 	parser::~parser() {};
-	parser::parser(): _line(nullptr) {};
-	parser::parser(string const &line, map_cmd const *commands): _line(line), _commands(commands) {};
+	parser::parser(string const &line, map_cmd &commands): _line(line), _commands(commands) {};
 /* Operators */
 /* Getters & Setters */
 /* Functions */
@@ -14,10 +13,8 @@ namespace irc {
 		string insensitive_line;
 		std::locale loc;
 		for (; it != _line.end(); it++) {
-			if (*it == ' ') {
-				it++; // move forward next space
+			if (*it == ' ')
 				break;
-			}
 			insensitive_line.push_back(std::toupper(*it, loc));
 		}
 		if (insensitive_line.empty())
@@ -26,31 +23,30 @@ namespace irc {
 			mstr.push_back(*it2);
 		return mstr;
 	}
-	bool parser::_is_valid_cmd(map_citerator_cmd const &cmd, vector_args const &args) const {
-		(void)cmd; (void)args;
-		return false;
-	};
-
-	vector_args	parser::get_command_infos() const {
-		vector_args args;
+	map_citerator_cmd const parser::_get_command() const {
 		string::const_iterator it = _line.begin();
 		if (*it == '/')
 			it++;
 		string cmd_name = _get_arg(it);
 		if (cmd_name.empty())
 			throw error("EMPTY COMMAND", ERR_UNKNOWNCOMMAND);
-		map_citerator_cmd cmd_it = _commands->find(cmd_name);
-		if (cmd_it == _commands->end())
+		map_citerator_cmd cmd_it = _commands.find(cmd_name);
+		if (cmd_it == _commands.end())
 			throw error(cmd_name, ERR_UNKNOWNCOMMAND);
-		else {
-			args.push_back(cmd_name);
-			for (; it != _line.end(); it++) {
-				string mstr = _get_arg(it);
-				args.push_back(mstr);
-				if (it == _line.end())
-					break;
-			}
+		return cmd_it;
+	}
+	void	parser::fill_command() const {
+		vector_args args;
+		command &cmd = *_get_command()->second;
+		string::const_iterator it = _line.begin();
+		if (*it == '/')
+			it++;
+		for (; it != _line.end(); it++) {
+			string mstr = _get_arg(it);
+			args.push_back(mstr);
+			if (it == _line.end())
+				break;
 		}
-		return args;
+		cmd.set_args(args);
 	};
 }

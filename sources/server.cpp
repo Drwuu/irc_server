@@ -26,8 +26,8 @@ namespace irc {
 		return *this;
 	};
 /* Getters & Setters */
-	map_cmd const *server::get_map() {
-		return &_map;
+	map_cmd &server::get_map() {
+		return _map;
 	};
 
 /* Functions */

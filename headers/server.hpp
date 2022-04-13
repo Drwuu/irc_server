@@ -19,11 +19,11 @@ namespace irc {
 	/* Operators */
 		private:
 		public:
-			server		&operator=(server const &src);
+			server	&operator=(server const &src);
 	/* Getters & Setters */
 		private:
 		public:
-			map_cmd const	*get_map();
+			map_cmd	&get_map();
 	/* Functions */
 		private:
 		public:

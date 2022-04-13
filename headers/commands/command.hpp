@@ -27,6 +27,7 @@ namespace irc {
 		private:
 		public:
 			vector_args const	&get_args() const;
+			void				set_args(vector_args const &args);
 	/* Functions */
 		private:
 		protected:

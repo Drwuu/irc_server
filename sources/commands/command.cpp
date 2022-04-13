@@ -10,9 +10,12 @@ namespace irc {
 
 	// };
 /* Getters & Setters */
-	vector_args const	&command::get_args() const {
+	vector_args const &command::get_args() const {
 		return _args;
 	}
+	void command::set_args(vector_args const &args) {
+		_args = args;
+	};
 
 /* Functions */
 	// string command::send_instructions(command const &cmd) {

@@ -10,14 +10,14 @@ SRCS			= \
 $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
 $(addprefix error/, error.cpp) \
 $(addprefix parser/, parser_tester.cpp parser.cpp) \
-server.cpp
+server.cpp \
 
 HEADERS			= \
+irc.hpp \
+server.hpp \
 $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
 $(addprefix error/, error.hpp) \
 $(addprefix parser/, parser.hpp) \
-irc.hpp \
-server.hpp
 
 SOURCES			= sources
 FOLDERS			= commands error parser
