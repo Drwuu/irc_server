@@ -3,6 +3,8 @@
 
 #include "../irc.hpp"
 #include "Channel.hpp"
+#include "../proxy/Socket.hpp"
+#include "../proxy/Address.hpp"
 
 class Server;
 
@@ -28,16 +30,16 @@ class User
 		std::string _mode;
 		std::vector<std::string> _past_username;
 		std::vector<ChanStatus> _chan_list;
-		irc::map_cmd * _cmd_list;
 		bool _is_away;
-		bool _is_registered;
 		bool _is_irc_operator;
+		Socket<Address_ipv6>	 * _socket;
 		User(User const & copy);
 
 	protected:
 		/*Arg*/
 	public:
 		User();
+		User(Socket<Address_ipv6> * socket);
 		~User();
 
 		const std::string			get_username() const;

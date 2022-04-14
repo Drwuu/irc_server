@@ -20,7 +20,9 @@ const std::string User::get_ip() const{
 const std::string User::get_mode() const{
 	return (this->_mode);}
 bool User::get_registered_status() const{
-	return _is_registered;}
+	if (this->get_username() == "" || this->get_nickname() == "")
+		return false;}
+	return true;
 std::vector<std::string> User::get_past_username(){
 	return (this->_past_username);}
 std::vector<ChanStatus> User::get_chan_list(){

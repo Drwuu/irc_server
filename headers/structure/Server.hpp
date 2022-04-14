@@ -5,7 +5,9 @@
 #include "../commands/invite.hpp"
 #include "../commands/kick.hpp"
 #include "../commands/mode.hpp"
+#include "../proxy/Event.hpp"
 #include "../irc.hpp"
+#include <list>
 #include "Channel.hpp"
 
 class Server
@@ -26,7 +28,7 @@ class Server
 		std::vector<User *>		_user_list;
 		std::vector<Channel *>	_channel_list;
 		std::vector<std::string>_ban_list;
-		//std::list<Obj *> 		_obj_list;
+		std::list<Socket_event *> 		_event_list;
 		irc::map_cmd					_map;
 		Server(Server const & copy);
 	protected:
