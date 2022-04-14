@@ -8,7 +8,7 @@ namespace irc {
 	};
 /* Operators */
 /* Functions */
-	void invite::_exec_cmd(command const &cmd) const {
+	void invite::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
 	void invite::_is_valid_args(vector_args const &args) throw() {

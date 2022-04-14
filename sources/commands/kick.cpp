@@ -8,7 +8,7 @@ namespace irc {
 	};
 /* Operators */
 /* Functions */
-	void kick::_exec_cmd(command const &cmd) const {
+	void kick::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
 	void kick::_is_valid_args(vector_args const &args) throw() {

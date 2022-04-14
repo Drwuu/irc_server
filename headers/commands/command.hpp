@@ -30,8 +30,8 @@ namespace irc {
 	/* Functions */
 		private:
 		protected:
-			virtual void		_exec_cmd(command const &cmd) const = 0;
 			virtual void		_is_valid_args(vector_args const &args) throw() = 0;
 		public:
+			virtual void		exec_cmd(command const &cmd) const = 0;
 	};
 }

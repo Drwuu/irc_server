@@ -8,7 +8,7 @@ namespace irc {
 	};
 /* Operators */
 /* Functions */
-	void mode::_exec_cmd(command const &cmd) const {
+	void mode::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
 	void mode::_is_valid_args(vector_args const &args) throw() {
