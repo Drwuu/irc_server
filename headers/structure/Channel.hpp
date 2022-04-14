@@ -35,13 +35,13 @@ class Channel{
 		const int&					get_userlimit() const;
 		const std::vector<User *>	get_user_list() const;
 		const std::vector<User *>	get_banned_user() const; // Needed for ISBANNED function
-		bool					is_private() const;
-		bool					is_secret() const;
-		bool					is_invite() const;
-		bool					is_topic() const;
-		bool					is_no_external_msg() const;
-		bool					is_moderated() const;
-		bool					is_limited() const;
+		bool						is_private() const;
+		bool						is_secret() const;
+		bool						is_invite() const;
+		bool						is_topic() const;
+		bool						is_no_external_msg() const;
+		bool						is_moderated() const;
+		bool						is_limited() const;
 
 		void						set_name(const std::string& name);
 		void						set_prefix(const std::string& prefix);

@@ -1,5 +1,6 @@
 #include "../../headers/structure/User.hpp"
 #include "../../headers/structure/Server.hpp"
+#include <_ctype.h>
 User::User(){}
 User::~User(){}
 ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
@@ -19,9 +20,7 @@ const std::string User::get_ip() const{
 const std::string User::get_mode() const{
 	return (this->_mode);}
 bool User::get_registered_status() const{
-	if (_is_registered == true)
-		return true;
-	return false;}
+	return _is_registered;}
 std::vector<std::string> User::get_past_username(){
 	return (this->_past_username);}
 std::vector<ChanStatus> User::get_chan_list(){
@@ -49,7 +48,20 @@ void User::set_username(std::string username){
 		this->_past_username.push_back(this->_username);
 	}
 	this->_username = username;}
-void User::set_nickname(std::string nickname){
+void User::set_nickname(std::string nickname){ //nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
+	if (nickname.size() > 9 || (!isalpha(nickname.at(0)) && !isspecial(nickname.at(0))))
+	{
+		std::cout << irc::ERR_ERRONEUSNICKNAME <<"\n"<< nickname << " :Erroneous nickname" << std::endl;
+		return;
+	}
+	for (std::string::iterator it = ++nickname.begin(); it != nickname.end(); ++it)
+	{
+		if (!isalpha(*it) && !isdigit(*it) && !isspecial(*it) && *it != '-')
+		{
+			std::cout << irc::ERR_ERRONEUSNICKNAME <<"\n"<< nickname << " :Erroneous nickname" << std::endl;
+			return;
+		}
+	}
 	this->_nickname = nickname;}
 
 void User::join_channel(Server & server,std::string channel){

@@ -26,6 +26,7 @@ class Server
 		std::vector<User *>		_user_list;
 		std::vector<Channel *>	_channel_list;
 		std::vector<std::string>_ban_list;
+		//std::list<Obj *> 		_obj_list;
 		irc::map_cmd					_map;
 		Server(Server const & copy);
 	protected:
@@ -56,7 +57,6 @@ class Server
 
 		void					add_user(User & user);
 		void					add_channel(Channel & channel);
-
 		void					del_user(User & user);
 		void					del_channel(Channel & channel);
 
@@ -68,6 +68,8 @@ class Server
 		void					print_registered_user(std::string servername); // Use FOR LIST Command | Syntaxe : /lusers [nomserveur]
 		void					print_channel_user(std::string channel); // Use FOR NAMES Command | Syntaxe : /lusers [nomserveur]
 		void					print_motd(); // Use For MOTD Command
+
+		void					exec_cmd(User & user, irc::command *command);
 };
 
 

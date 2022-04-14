@@ -74,3 +74,8 @@ void Server::del_user(User & user){
 			break;
 		}
 	}}
+
+void Server::exec_cmd(User & user, irc::command *command){
+//command.parse(user, this);
+//command.execute(user, this);
+}
