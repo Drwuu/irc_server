@@ -22,7 +22,6 @@ namespace irc {
 		private:
 			command& operator=(command const &src);
 		public:
-			string operator()(command const &cmd) const;
 	/* Getters & Setters */
 		private:
 		public:
@@ -31,7 +30,8 @@ namespace irc {
 	/* Functions */
 		private:
 		protected:
-			string send_instructions(command const &cmd);
+			virtual void		_exec_cmd(command const &cmd) const = 0;
+			virtual void		_is_valid_args(vector_args const &args) throw() = 0;
 		public:
 	};
 }
