@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/13 15:23:02 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/14 19:27:20 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Socket {
 		typedef		unsigned int								len_type;
 
 		typedef		AddSock										address_type;
+		typedef		typename address_type::value_type			address_value_type;
 		typedef		typename address_type::address_type			ipv6_type;
 		typedef		typename address_type::len_type				addrlen_type;
 		typedef		typename address_type::port_type			port_type;
@@ -66,11 +67,13 @@ class Socket {
 			_address = source._address;
 		}
 
-		fd_type			get_fd() const { return _sockfd; }
-		addrlen_type	get_addrlen() const { return _address.get_len(); }
-		port_type		get_port() const { return _address.get_port(); }
-		std::string		get_address_readable() const { return _address.get_readable_address(); }
-		socket_sort		get_socket_sort() const { return _type; };
+		fd_type				get_fd() const { return _sockfd; }
+		addrlen_type		get_addrlen() const { return _address.get_len(); }
+		port_type			get_port() const { return _address.get_port(); }
+		std::string			get_address_readable() const { return _address.get_readable_address(); }
+		socket_sort			get_socket_sort() const { return _type; };
+		address_value_type	get_address_data() const { return _address.data(); };
+
 
 		void			create_endpoint() {
 			std::clog << " -- Create endpoint on port " << this->get_port() << " ... " <<  std::endl;

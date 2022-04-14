@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/12 23:12:50 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/15 00:17:59 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ class	Socket_event {
 		fd_type			sockfd;
 
 	public:
+		Socket_event();
+		virtual ~Socket_event();
 		virtual void	handle() = 0;
 };
 
@@ -111,6 +113,7 @@ struct Server_queue {
 			// Content of the message from the Client
 			data_type		data;
 		public:
+			~Message();
 			Message(data_type data);
 			void			handle();
 	};
@@ -128,10 +131,12 @@ struct Server_queue {
 			// Request details from the Client
 			data_type		data;
 		public:
+			Request_connexion();
+			~Request_connexion();
 			void			handle();
 	};
 
-	class	Disconnect : public Socket_event {
+	class	Client_disconnected : public Socket_event {
 		// Inform the server of a disconnection
 		public:
 			void			handle();
