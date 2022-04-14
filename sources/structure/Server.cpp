@@ -1,26 +1,24 @@
 #include "../../headers/structure/Server.hpp"
-	Server::~Server() {
-		for (irc::map_iterator_cmd it = _map.begin(); it != _map.end(); it++)
-			if (it->second)
-				delete it->second;
-		_map.clear();
-	};
-	Server::Server(): _map() {
-		_map.insert(std::make_pair("INVITE", new irc::invite(irc::vector_args(1, "INVITE"))));
-		_map.insert(std::make_pair("KICK", new irc::kick(irc::vector_args(1, "KICK"))));
-		_map.insert(std::make_pair("MODE", new irc::mode(irc::vector_args(1, "MODE"))));
-	};
-	Server::Server(Server const &src) {
-		*this = src;
-	};
+Server::~Server() {
+	for (irc::map_iterator_cmd it = _map.begin(); it != _map.end(); it++)
+		if (it->second)
+			delete it->second;
+	_map.clear();
+};
+Server::Server(): _map() {
+	_map.insert(std::make_pair("INVITE", new irc::invite(irc::vector_args(1, "INVITE"))));
+	_map.insert(std::make_pair("KICK", new irc::kick(irc::vector_args(1, "KICK"))));
+	_map.insert(std::make_pair("MODE", new irc::mode(irc::vector_args(1, "MODE"))));
+};
+Server::Server(Server const &src) {
+	*this = src;
+};
 /* Getters & Setters */
-	irc::map_cmd &Server::get_map() {
-		return _map;
-	};
+irc::map_cmd &Server::get_map() {
+	return _map;
+};
 
 Server::Server(std::string password,std::string port):_password(password),_port(port){}
-
-// Server::~Server(){}
 
 const std::vector<Channel *> Server::get_channel_list() const{
 	return (this->_channel_list);}
@@ -76,3 +74,8 @@ void Server::del_user(User & user){
 			break;
 		}
 	}}
+
+void Server::exec_cmd(User & user, irc::command *command){
+//command.parse(user, this);
+//command.execute(user, this);
+}

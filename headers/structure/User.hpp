@@ -9,12 +9,11 @@ class Server;
 struct ChanStatus
 {
 	ChanStatus(Channel * channel);
-	ChanStatus(Channel *channel, bool is_admin,bool is_operator);
+	Channel *channel;
 	bool is_admin;
-	bool is_operator;
 	bool is_banned;
 	bool is_mute;
-	Channel *channel;
+	bool is_operator;
 };
 
 class User
@@ -29,7 +28,7 @@ class User
 		std::string _mode;
 		std::vector<std::string> _past_username;
 		std::vector<ChanStatus> _chan_list;
-		// *CMD
+		irc::map_cmd * _cmd_list;
 		bool _is_away;
 		bool _is_registered;
 		bool _is_irc_operator;
@@ -53,7 +52,7 @@ class User
 		bool					get_away_status() const;
 		std::vector<std::string>	get_past_username();
 		std::vector<ChanStatus>		get_chan_list();
-		ChanStatus					get_chanstatus_from_list(Channel * channel);
+		ChanStatus	*				get_chanstatus_from_list(Channel * channel);
 
 		void						set_password(std::string password);
 		void						set_ip(std::string ip);
@@ -69,8 +68,8 @@ class User
 
 		void						send_message(Server & server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
 		void						send_message(Server & Server, User & User, std::string msg); // Command MSG et/ou PRIVMSG
-		void						receive_message(Server & server,	Channel& channel,std::string msg);
-		void						receive_message(Server & Server,User& user, std::string msg);
+		void						receive_message(Server & server,	Channel& channel,std::string msg){(void)server;(void)channel;(void)msg;};
+		void						receive_message(Server & Server,User& user, std::string msg){(void)Server;(void)user;(void)msg;};
 		void						send_invite(User & user, Channel & channel);
 		void						receive_invite(User & user, Channel & channel);
 

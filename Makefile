@@ -10,12 +10,12 @@ SRCS			= \
 $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
 $(addprefix error/, error.cpp) \
 $(addprefix parser/, parser_tester.cpp parser.cpp) \
-$(addprefix structure/, Server.cpp) \
-# server.cpp
+$(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
+#server.cpp
 
 HEADERS			= \
 irc.hpp \
-$(addprefix structure/, Server.hpp) \
+$(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
 $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
 $(addprefix error/, error.hpp) \
 $(addprefix parser/, parser.hpp) \
