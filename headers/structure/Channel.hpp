@@ -8,10 +8,9 @@ class Channel{
 	private:
 		std::string	_name;
 		std::string	_topic;
-		std::string	_prefix;
+		std::string _channel_identifier; // Pour les canaux sures
+		char		_prefix;
 		std::string	_key;
-		int			_lifetime;
-		int			_opdelay;
 		int			_userlimit;
 		bool		_is_private;
 		bool		_is_secret;
@@ -28,9 +27,10 @@ class Channel{
 	public:
 		Channel();
 		Channel(std::string name);
+		Channel(std::string name,char prefix);
 		~Channel();
 		const std::string&			get_name() const;
-		const std::string&			get_prefix() const;
+		const char&					get_prefix() const;
 		const std::string&			get_topic() const;
 		const int&					get_userlimit() const;
 		const std::vector<User *>	get_user_list() const;
@@ -52,6 +52,7 @@ class Channel{
 		void						set_lifetime(const int& lifetime);
 		void						set_opdelay(const int& opdelay);
 		void						set_userlimit(const int& userlimit);
+		void						set_channel_identifier(const std::string& channel_identifier);
 
 		void						add_user(User * user);
 		void						del_user(User * user);
@@ -59,5 +60,7 @@ class Channel{
 		void						unban_user(std::string nick);
 };
 
+
+//commande MODE limiter a trois argument par commande
 
 #endif

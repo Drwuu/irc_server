@@ -48,6 +48,23 @@ void Channel::set_opdelay(const int & opdelay){
 void Channel::set_userlimit(const int & userlimit){
 	this->_userlimit = userlimit;}
 
+void					Channel::set_channel_identifier(){
+	if (this->_channel_identifier.size() != 0)
+		return; // Channel Identifier Already Set
+	std::string base("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
+	size_t t = time(NULL);
+	std::string _channel_identifier;
+	int lbase = base.length();
+	while(1)
+	{
+		this->_channel_identifier.insert(0,1, base[t % lbase]);
+		t /= lbase;
+		if (t == 0)
+			break;
+	} // WAI WAI ITOA
+	_channel_identifier.erase(0,1);
+}
+
 void Channel::add_user(User * user){
 	for (std::vector<User *>::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
 	{

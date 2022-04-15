@@ -55,7 +55,6 @@ void					Server::set_ip(std::string ip){
 void Server::add_user(Socket<Address_ipv6> * socket) {
 	User *user = new User(socket);
 	this->_user_list.push_back(user);
-
 }
 
 void Server::add_channel(Channel & channel){

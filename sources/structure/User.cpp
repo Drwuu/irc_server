@@ -107,7 +107,7 @@ void User::join_channel(Server & server,std::string channel){
 }
 
 void User::leave_channel(std::string channel){
-
+	srand(time(NULL));
 	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
 		if ((*it).channel->get_name() == channel){
 			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
@@ -117,13 +117,21 @@ void User::leave_channel(std::string channel){
 					return ; // Channel found
 				}
 			}
-			}
+			// No operator left on the channel
 			(*it).channel->del_user(this);
 			get_chan_list().erase(it);
+			if ((*it).channel->get_user_list().size > 5){
+				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size()).get_chanstatus_from_list((*it).channel)->is_operator = true;
+			}
+			else{
+				for (std::vector<User *>::iterator it2 = (*it).channel->get_user_list.begin(); it2 != (*it).channel->get_user_list.end(); ++it2){
+					(*it2)->get_chanstatus_from_list((*it).channel)->is_operator = true;
+				} // If there is less than 6 user in the channel make them all op
+			}
+			}
 			break;
 		}
 	}
-}
 
 void User::send_message(Server & server, Channel & channel, std::string msg){
 	for(std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
