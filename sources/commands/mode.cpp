@@ -3,15 +3,14 @@
 namespace irc {
 /* Constructors & Destructors */
 	mode::~mode() {};
-	mode::mode(vector_args const &args) {
-		_args = args;
+	mode::mode() {
+		_args.push_back("MODE");
 	};
 /* Operators */
 /* Functions */
 	void mode::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
-	void mode::_is_valid_args(vector_args const &args) throw() {
-		(void)args;
+	void mode::is_valid_args(void) const {
 	};
 }

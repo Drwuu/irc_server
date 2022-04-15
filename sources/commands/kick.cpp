@@ -3,15 +3,14 @@
 namespace irc {
 /* Constructors & Destructors */
 	kick::~kick() {};
-	kick::kick(vector_args const &args) {
-		_args = args;
+	kick::kick() {
+		_args.push_back("KICK");
 	};
 /* Operators */
 /* Functions */
 	void kick::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
-	void kick::_is_valid_args(vector_args const &args) throw() {
-		(void)args;
+	void kick::is_valid_args(void) const {
 	};
 }

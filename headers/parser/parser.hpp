@@ -1,6 +1,5 @@
 #pragma once
 #include "../irc.hpp"
-#include "../../headers/structure/Server.hpp"
 #include "../error/error.hpp"
 #include "../commands/command.hpp"
 
@@ -22,20 +21,20 @@ namespace irc {
 			parser();
 			parser(parser const &src);
 		public:
-			virtual ~parser();
 			parser(string const &line, map_cmd &commands);
+			virtual ~parser();
 	/* Operators */
 		private:
-			parser		&operator=(parser const &src);
 		public:
+			parser		&operator=(parser const &src);
 	/* Getters & Setters */
 		private:
 		public:
-			command const		*get_command() const;
+			command				&get_command() const;
 	/* Functions */
 		private:
 			void				_fill_command();
-			map_citerator_cmd	_get_command() const;
+			map_citerator_cmd	_find_command() const;
 			string				_get_arg(string::const_iterator &it) const;
 		public:
 	};

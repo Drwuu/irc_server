@@ -29,9 +29,8 @@ namespace irc {
 			void				set_args(vector_args const &args);
 	/* Functions */
 		private:
-		protected:
-			virtual void		_is_valid_args(vector_args const &args) throw() = 0;
 		public:
+			virtual void		is_valid_args() const = 0;
 			virtual void		exec_cmd(command const &cmd) const = 0;
 	};
 }

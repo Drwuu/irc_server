@@ -8,34 +8,33 @@ namespace irc {
 	};
 /* Operators */
 /* Getters & Setters */
-	command const	*parser::get_command() const {
-		return _command;
+	command &parser::get_command() const {
+		return *_command;
 	};
 /* Functions */
 	void	parser::_fill_command() {
 		vector_args args;
-		_command = _get_command()->second;
+		_command = _find_command()->second;
 		string::const_iterator it = _line.begin();
 		if (*it == '/')
 			it++;
 		for (; it != _line.end(); it++) {
-			string mstr = _get_arg(it);
-			args.push_back(mstr);
+			args.push_back(_get_arg(it));
 			if (it == _line.end())
 				break;
 		}
 		_command->set_args(args);
 	};
-	map_citerator_cmd parser::_get_command() const {
+	map_citerator_cmd parser::_find_command() const {
 		string::const_iterator it = _line.begin();
 		if (*it == '/')
 			it++;
 		string cmd_name = _get_arg(it);
 		if (cmd_name.empty())
-			throw error("EMPTY COMMAND", ERR_UNKNOWNCOMMAND);
+			throw error("Empty command", ERR_UNKNOWNCOMMAND);
 		map_citerator_cmd cmd_it = _commands.find(cmd_name);
 		if (_commands.find(cmd_name) == _commands.end())
-			throw error(cmd_name, ERR_UNKNOWNCOMMAND);
+			throw error(cmd_name + ": Unknown command", ERR_UNKNOWNCOMMAND);
 		return cmd_it;
 	}
 	string	parser::_get_arg(string::const_iterator &it) const {

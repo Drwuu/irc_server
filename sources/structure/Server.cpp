@@ -5,10 +5,11 @@ Server::~Server() {
 			delete it->second;
 	_map.clear();
 };
-Server::Server(): _map() {
-	_map.insert(std::make_pair("INVITE", new irc::invite(irc::vector_args(1, "INVITE"))));
-	_map.insert(std::make_pair("KICK", new irc::kick(irc::vector_args(1, "KICK"))));
-	_map.insert(std::make_pair("MODE", new irc::mode(irc::vector_args(1, "MODE"))));
+Server::Server(): _line("/invite prout toto"), _map(), _cmd(nullptr) {
+	_map.insert(std::make_pair("INVITE", new irc::invite()));
+	_map.insert(std::make_pair("KICK", new irc::kick()));
+	_map.insert(std::make_pair("MODE", new irc::mode()));
+	parse_line();
 };
 Server::Server(Server const &src) {
 	*this = src;
@@ -17,8 +18,18 @@ Server::Server(Server const &src) {
 irc::map_cmd &Server::get_map() {
 	return _map;
 };
+void Server::parse_line(void) {
+	irc::parser parser(_line, _map);
+	_cmd = &parser.get_command();
+	try {
+		_cmd->is_valid_args();
+	}
+	catch (irc::error &e) {
+		std::cout << e.what() << std::endl;
+	}
+};
 
-Server::Server(std::string password,std::string port):_password(password),_port(port){}
+Server::Server(std::string password,std::string port): _password(password), _port(port) {}
 
 const std::vector<Channel *> Server::get_channel_list() const{
 	return (this->_channel_list);}
