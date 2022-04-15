@@ -9,6 +9,7 @@
 #include "../irc.hpp"
 #include <list>
 #include "Channel.hpp"
+#include "User.hpp"
 
 class Server
 {
@@ -57,7 +58,7 @@ class Server
 		void  					set_motd(std::string motd); // Use For IMPORTMOTD
 
 
-		void					add_user(User & user);
+		void					add_user(Socket<Address_ipv6> * socket);
 		void					add_channel(Channel & channel);
 		void					del_user(User & user);
 		void					del_channel(Channel & channel);

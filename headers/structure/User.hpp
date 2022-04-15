@@ -33,11 +33,11 @@ class User
 		bool _is_away;
 		bool _is_irc_operator;
 		Socket<Address_ipv6>	 * _socket;
-		User(User const & copy);
 
 	protected:
 		/*Arg*/
 	public:
+		User(User const & copy);
 		User();
 		User(Socket<Address_ipv6> * socket);
 		~User();
@@ -49,6 +49,7 @@ class User
 		const std::string			get_port() const;
 		const std::string			get_ip() const;
 		const std::string			get_mode() const;
+		const Socket<Address_ipv6>		& get_socket() const;
 		bool					get_operator_status() const;
 		bool					get_registered_status()const ;
 		bool					get_away_status() const;

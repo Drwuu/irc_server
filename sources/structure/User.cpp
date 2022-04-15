@@ -2,6 +2,10 @@
 #include "../../headers/structure/Server.hpp"
 #include <_ctype.h>
 User::User(){}
+User::User(User const & copy) {
+	*this = copy;
+}
+User::User(Socket<Address_ipv6> * socket):_socket(socket){}
 User::~User(){}
 ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
 
@@ -21,8 +25,8 @@ const std::string User::get_mode() const{
 	return (this->_mode);}
 bool User::get_registered_status() const{
 	if (this->get_username() == "" || this->get_nickname() == "")
-		return false;}
-	return true;
+		return false;
+	return true;}
 std::vector<std::string> User::get_past_username(){
 	return (this->_past_username);}
 std::vector<ChanStatus> User::get_chan_list(){
@@ -36,6 +40,9 @@ ChanStatus * User::get_chanstatus_from_list(Channel * channel){
 	std::cout << "Channel not found\n";
 	return nullptr;
 }
+
+const Socket<Address_ipv6> & User::get_socket() const{
+	return (*(this->_socket));}
 
 void User::set_password(std::string password){
 	this->_password = password;}
@@ -100,8 +107,17 @@ void User::join_channel(Server & server,std::string channel){
 }
 
 void User::leave_channel(std::string channel){
+
 	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
 		if ((*it).channel->get_name() == channel){
+			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
+				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){
+					(*it).channel->remove_user(this);
+					get_chan_list().erase(it);
+					return ; // Channel found
+				}
+			}
+			}
 			(*it).channel->del_user(this);
 			get_chan_list().erase(it);
 			break;

@@ -13,11 +13,10 @@ Server::Server(): _map() {
 Server::Server(Server const &src) {
 	*this = src;
 };
-/* Getters & Setters */
+
 irc::map_cmd &Server::get_map() {
 	return _map;
 };
-
 Server::Server(std::string password,std::string port):_password(password),_port(port){}
 
 const std::vector<Channel *> Server::get_channel_list() const{
@@ -53,8 +52,11 @@ void					Server::set_port(std::string port){
 void					Server::set_ip(std::string ip){
 	this->_ip = ip;}
 
-void Server::add_user(User & user){
-	this->_user_list.push_back(&user);}
+void Server::add_user(Socket<Address_ipv6> * socket) {
+	User *user = new User(socket);
+	this->_user_list.push_back(user);
+
+}
 
 void Server::add_channel(Channel & channel){
 	this->_channel_list.push_back(&channel);}
