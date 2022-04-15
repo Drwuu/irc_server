@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/15 00:17:59 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/15 14:39:39 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,11 @@ struct Server_queue {
 	class	Message : public Socket_event {
 		private:
 			// Content of the message from the Client
-			data_type		data;
+			data_type			data;
+			const socket_type *	socket;
 		public:
 			~Message();
-			Message(data_type data);
+			Message(data_type data, const socket_type *socket);
 			void			handle();
 	};
 
