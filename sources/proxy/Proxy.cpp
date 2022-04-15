@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/15 14:53:42 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/15 17:46:48 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,19 +242,21 @@ int			Proxy::receive(const socket_type *client) {
 		rtn = recv(client->get_fd(), &buffer, buffer_len - 1, MSG_DONTWAIT);
 		if (rtn < 0) {
 			if (errno != EAGAIN) {
-				std::clog << "[ERROR] recv() failed on client [" << client->get_fd()
-					<< "] with the address [" << client->get_address_readable() << "]" << std::endl;
+				std::clog << "[ERROR] recv() failed. [" << client->get_fd()
+					<< "] [" << client->get_address_readable() << "]" << std::endl;
 				return EXIT_FAILURE;
 			}
 			return EXIT_SUCCESS;
 		}
 		else if (rtn == 0) {
 			std::clog << " --> Connexion closed. [" << client->get_fd() << "]"
-				<< "[" << client->get_address_readable() << "]" << std::endl;
+				<< " [" << client->get_address_readable() << "]" << std::endl;
 			// Connexion closed : launch POLLHUP after
 			return -1;
 		}
 		_to_server.push_back(new Server_queue::Message(buffer, client));
+		std::clog << " --> New message. [" << client->get_fd() << "]"
+				<< " [" << client->get_address_readable() << "]" << std::endl;
 		bzero(&buffer, buffer_len);
 		rtn = 0;
 	}
@@ -322,7 +324,6 @@ Proxy::IPoll_handling::~IPoll_handling() {
 void	Proxy::IPoll_handling::handle(socket_type *socket) {
 }
 void	Proxy::IPoll_handling::handle_server(socket_type *server_socket) {
-
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -334,13 +335,21 @@ Proxy::Poll_in::Poll_in(Proxy &proxy) : IPoll_handling(proxy) { }
 
 Proxy::Poll_in::~Poll_in() { }
 
-void	Proxy::Poll_in::handle(socket_type *socket, const char *data) {
+void	Proxy::Poll_in::handle(socket_type *socket) {
+	int		rtn = 0;
+	rtn = _proxy->receive(socket);
+	// FIXME : Error on recv()
+	// if (rtn == EXIT_FAILURE)
+		// return ;
 
+	// If client disconnects
+	if (rtn == -1)
+		_proxy->_flags[POLLHUP]->handle(socket);
 }
 
 void	Proxy::Poll_in::handle_server(socket_type *server_socket) {
 	_proxy->add_client(server_socket->accept_connexion());
-	_proxy->_to_server.push_back(new Server_queue::Request_connexion());
+	_proxy->_to_server.push_back(new Server_queue::Request_connexion(server_socket));
 }
 
 
@@ -393,8 +402,12 @@ Proxy::Poll_hang_up::Poll_hang_up(Proxy &proxy) : IPoll_handling(proxy)
 { }
 
 void	Proxy::Poll_hang_up::handle(socket_type *socket) {
+	socket->end_connexion();
+	_proxy->_to_server.push_back(new Server_queue::Client_disconnected(socket));
 }
+
 void	Proxy::Poll_hang_up::handle_server(socket_type *socket) {
+	// FIXME : error to handle
 }
 
 //////////////////////////////////////////////////////////////////////////
