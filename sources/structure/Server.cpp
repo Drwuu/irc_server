@@ -1,4 +1,4 @@
-#include "../../headers/structure/server.hpp"
+#include "../../headers/structure/Server.hpp"
 
 namespace irc {
 /* Constructors & Destructors */
@@ -9,7 +9,7 @@ namespace irc {
 		User admin;
 		admin.set_nickname("COCO");
 		User user;
-		user.set_nickname("TOTO");
+		user.set_nickname("PUTE");
 		add_user(user);
 		Channel chan("PROUT");
 		add_channel(chan);
