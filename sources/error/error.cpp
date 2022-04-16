@@ -6,10 +6,7 @@ namespace irc {
 	error::error(): _msg(nullptr) {};
 	error::error(string const &arg, error_type const &type) {
 		std::stringstream s;
-		s << "Error(" << type << "): " << arg;
-		if (type == ERR_UNKNOWNCOMMAND)
-			s << " Unknown command";
-		// else if (...)
+		s << "Error " << type << " | " << arg;
 		_msg = s.str();
 	};
 /* Operators */

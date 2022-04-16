@@ -2,6 +2,7 @@
 #include "command.hpp"
 
 namespace irc {
+	class server;
 	class invite: public command {
 	/* Typedefs */
 		private:
@@ -11,10 +12,9 @@ namespace irc {
 		public:
 	/* Constructors & Destructors */
 		private:
-			invite();
 			invite(invite const &src);
 		public:
-			invite(vector_args const &args);
+			invite();
 			virtual ~invite();
 	/* Operators */
 		private:
@@ -22,8 +22,8 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			void	_is_valid_args(vector_args const &args) throw();
 		public:
 			void	exec_cmd(command const &cmd) const;
+			void	is_valid_args(server const *server) const;
 	};
 }

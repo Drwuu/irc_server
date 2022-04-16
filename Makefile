@@ -12,21 +12,20 @@ INCLUDES		= headers
 
 				  
 SRCS			= \
-				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
-				  $(addprefix error/, error.cpp) \
-				  $(addprefix parser/, parser.cpp) \
-				  $(addprefix structure/, Server.cpp) \
-				  $(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
-				  # parser_tester.cpp
-				  # server.cpp
+$(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
+$(addprefix error/, error.cpp) \
+$(addprefix parser/, parser.cpp) \
+$(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
+$(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
+irc.cpp \
 
 HEADERS			= \
-				  irc.hpp \
-				  $(addprefix structure/, Server.hpp) \
-				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
-				  $(addprefix error/, error.hpp) \
-				  $(addprefix parser/, parser.hpp) \
-				  $(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp)
+irc.hpp \
+$(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
+$(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
+$(addprefix error/, error.hpp) \
+$(addprefix parser/, parser.hpp) \
+$(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp)
 
 PATH_HEADERS	= $(addprefix $(INCLUDES)/, $(HEADERS))
 
@@ -39,7 +38,6 @@ all:				$(NAME)
 server_test:		./server_test/server_test.cpp
 						clang++ $< -o $@_
 						./$@_
-
 clean_server_test:
 					rm -f server_test_
 					rm -f ./server_test/*.o

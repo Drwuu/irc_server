@@ -11,10 +11,9 @@ namespace irc {
 		public:
 	/* Constructors & Destructors */
 		private:
-			mode();
 			mode(mode const &src);
 		public:
-			mode(vector_args const &args);
+			mode();
 			virtual ~mode();
 	/* Operators */
 		private:
@@ -22,8 +21,8 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			void	_is_valid_args(vector_args const &args) throw();
 		public:
 			void	exec_cmd(command const &cmd) const;
+			void	is_valid_args(server const *server) const;
 	};
 }
