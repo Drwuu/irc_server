@@ -1,9 +1,9 @@
 #pragma once
-#include "../irc.hpp"
-#include "Channel.hpp"
+#include "server.hpp"
 
 namespace irc {
 	class server;
+	class Channel;
 	struct ChanStatus
 	{
 		ChanStatus(Channel * channel);
@@ -49,7 +49,7 @@ namespace irc {
 			bool						get_away_status() const;
 			std::vector<std::string>	get_past_username();
 			std::vector<ChanStatus>		get_chan_list();
-			ChanStatus	*				get_chanstatus_from_list(Channel * channel);
+			ChanStatus					*get_chanstatus_from_list(Channel * channel);
 
 			void						set_password(std::string password);
 			void						set_ip(std::string ip);

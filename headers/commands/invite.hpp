@@ -2,6 +2,7 @@
 #include "command.hpp"
 
 namespace irc {
+	class server;
 	class invite: public command {
 	/* Typedefs */
 		private:

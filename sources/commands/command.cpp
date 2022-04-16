@@ -4,16 +4,16 @@ namespace irc {
 /* Constructors & Destructors */
 	command::~command() {};
 	command::command(): _args() {};
-	command::command(vector_args const &args): _args(args) {};
+	command::command(vector_string const &args): _args(args) {};
 /* Operators */
 	// string command::operator()(command const &cmd) const {
 
 	// };
 /* Getters & Setters */
-	vector_args const &command::get_args() const {
+	vector_string const &command::get_args() const {
 		return _args;
 	}
-	void command::set_args(vector_args const &args) {
+	void command::set_args(vector_string const &args) {
 		_args = args;
 	};
 

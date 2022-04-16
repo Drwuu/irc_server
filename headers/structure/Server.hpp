@@ -1,8 +1,9 @@
 #pragma once
-
-
-#include "../irc.hpp"
+#include "../error/error.hpp"
+#include "../commands/command.hpp"
+#include "../parser/parser.hpp"
 #include "Channel.hpp"
+#include "User.hpp"
 
 namespace irc {
 	class server {
@@ -30,12 +31,12 @@ namespace irc {
 			//std::list<Obj *> 			_obj_list;
 
 			std::string					_line;
-			map_cmd				_map;
-			command				*_cmd;
+			map_cmd						_map;
+			command						*_cmd;
 		public:
 	/* Constructors & Destructors */
 		private:
-			server(server const & copy);
+			server(server const &copy);
 		public:
 			server();
 			server(std::string password, std::string port);
@@ -43,6 +44,7 @@ namespace irc {
 	/* Operators */
 		private:
 		public:
+			server& operator=(server const &src);
 	/* Getters */
 		private:
 		public:
@@ -53,7 +55,7 @@ namespace irc {
 			std::string const				get_port() const;
 			std::string const				get_ip() const;
 			std::string const				get_motd() const;
-			std::vector<User *> const		get_user_list() const;
+			std::vector<User *>				get_user_list() const;
 			std::vector<Channel *> const	get_channel_list() const;
 			map_cmd const					get_map() const;
 	/* Setters */
@@ -70,9 +72,10 @@ namespace irc {
 
 	/* Functions */
 		private:
-			void							_init_server(void);
 		public:
-			void							parse_line(void);
+			vec_cit_user const				find_nickname(string const &nick, vec_user const &user) const;
+			vec_cit_chan const				find_chan_name(string const &chan, vec_chan const &channel) const;
+			void							parse_line();
 			void							exec_cmd(User & user, command *command);
 
 			void							add_user(User & user);

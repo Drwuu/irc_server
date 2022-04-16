@@ -9,13 +9,23 @@ namespace irc {
 	typedef std::string string;
 
 	class command;
-	typedef std::map<string, command *>	map_cmd;
-	typedef map_cmd::iterator			map_iterator_cmd;
-	typedef map_cmd::const_iterator		map_citerator_cmd;
+	class User;
+	class Channel;
+	typedef std::map<string, command *>		map_cmd;
+	typedef map_cmd::iterator				map_iterator_cmd;
+	typedef map_cmd::const_iterator			map_citerator_cmd;
 
-	typedef std::vector<string>			vector_args;
-	typedef vector_args::iterator 		vector_iterator_args;
-	typedef vector_args::const_iterator	vector_citerator_args;
+	typedef std::vector<string>				vector_string;
+	typedef vector_string::iterator 		vec_it_string;
+	typedef vector_string::const_iterator	vec_cit_string;
+
+	typedef std::vector<User *>				vec_user;
+	typedef vec_user::iterator 				vec_it_user;
+	typedef vec_user::const_iterator 		vec_cit_user;
+
+	typedef std::vector<Channel *>			vec_chan;
+	typedef vec_chan::iterator 				vec_it_chan;
+	typedef vec_chan::const_iterator		vec_cit_chan;
 
 	enum error_type {
 

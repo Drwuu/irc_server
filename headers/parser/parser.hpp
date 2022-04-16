@@ -1,10 +1,8 @@
 #pragma once
-#include "../irc.hpp"
 #include "../error/error.hpp"
-#include "../commands/command.hpp"
-
 
 namespace irc {
+	class command;
 	class parser {
 	/* Typedefs */
 		private:
@@ -38,3 +36,4 @@ namespace irc {
 		public:
 	};
 }
+#include "../commands/command.hpp"

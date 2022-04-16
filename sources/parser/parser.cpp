@@ -13,7 +13,7 @@ namespace irc {
 	};
 /* Functions */
 	void	parser::_fill_command() {
-		vector_args args;
+		vector_string args;
 		_command = _find_command()->second;
 		string::const_iterator it = _line.begin();
 		if (*it == '/')

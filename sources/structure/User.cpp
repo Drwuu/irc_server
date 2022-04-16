@@ -1,6 +1,4 @@
 #include "../../headers/structure/User.hpp"
-#include "../../headers/structure/server.hpp"
-#include <_ctype.h>
 
 namespace irc {
 	User::User(){}
@@ -9,7 +7,7 @@ namespace irc {
 
 	const std::string User::get_username() const{
 		return (this->_username);}
-	const std::string User::get_nickname() const{
+	std::string const User::get_nickname() const{
 		return (this->_nickname);}
 	const std::string User::get_password() const{
 		return (this->_password);}

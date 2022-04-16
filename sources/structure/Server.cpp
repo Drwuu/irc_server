@@ -1,13 +1,19 @@
 #include "../../headers/structure/server.hpp"
-#include "../../headers/parser/parser.hpp"
-#include "../../headers/commands/invite.hpp"
 
 namespace irc {
 /* Constructors & Destructors */
-	server::server(): _line("/invite prout toto"), _map(), _cmd(nullptr) {
-		_map.insert(std::make_pair("INVITE", new irc::invite()));
+	server::server(): _line("/invite toto prout"), _map(), _cmd(nullptr) {
+		_map.insert(std::make_pair("INVITE", new invite()));
 		// _map.insert(std::make_pair("KICK", new irc::kick()));
 		// _map.insert(std::make_pair("MODE", new irc::mode()));
+		User admin;
+		admin.set_nickname("COCO");
+		User user;
+		user.set_nickname("TOTO");
+		add_user(user);
+		Channel chan("PROUT");
+		add_channel(chan);
+		chan.add_user(&admin);
 		parse_line();
 	};
 	server::server(std::string password,std::string port): _password(password), _port(port) {
@@ -22,6 +28,29 @@ namespace irc {
 		_map.clear();
 	};
 
+/* Operators */
+	server& server::operator=(server const &src) {
+		_name = src._name;
+		_label = src._label;
+		_hostname = src._hostname;
+		_password = src._password;
+		_port = src._port;
+		_ip = src._ip;
+		_version = src._version;
+		_motd = src._motd;
+		_date = src._date;
+		_oper_id = src._oper_id;
+		_oper_password = src._oper_password;
+		_time = src._time;
+		_user_list = src._user_list;
+		_channel_list = src._channel_list;
+		_ban_list = src._ban_list;
+		_line = src._line;
+		_map = src._map;
+		_cmd = src._cmd;
+		return *this;
+	};
+
 /* Getters */
 	irc::map_cmd const server::get_map() const {
 		return this->_map;
@@ -29,7 +58,7 @@ namespace irc {
 	std::vector<Channel *> const server::get_channel_list() const {
 		return (this->_channel_list);
 	}
-	std::vector<User *> const server::get_user_list() const {
+	std::vector<User *> server::get_user_list() const {
 		return (this->_user_list);
 	}
 	std::string const server::get_name() const {
@@ -69,12 +98,31 @@ namespace irc {
 	}
 
 /* Functions */
-	void server::_init_server(void) {
-
+	vec_cit_user const server::find_nickname(string const &nick, vec_user const &user) const {
+		vec_cit_user it = user.begin();
+		size_t i;
+		for (; it != user.end(); it++) {
+			string nickname = (*it)->get_nickname();
+			i = nickname.find(nick);
+			if (i != string::npos)
+				return it;
+		}
+		return user.end();
+	};
+	vec_cit_chan const server::find_chan_name(string const &chan, vec_chan const &channel) const {
+		vec_cit_chan it = channel.begin();
+		size_t i;
+		for (; it != channel.end(); it++) {
+			string nickname = (*it)->get_name();
+			i = nickname.find(chan);
+			if (i != string::npos)
+				return it;
+		}
+		return channel.end();
 	};
 
-	void server::parse_line(void) {
-		irc::parser parser(_line, _map);
+	void server::parse_line() {
+		parser parser(_line, _map);
 		_cmd = &parser.get_command();
 		try {
 			_cmd->is_valid_args(this);

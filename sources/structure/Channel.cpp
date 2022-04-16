@@ -1,5 +1,4 @@
 #include "../../headers/structure/Channel.hpp"
-#include "../../headers/structure/User.hpp"
 
 namespace irc {
 	const std::string& Channel::get_name() const{
