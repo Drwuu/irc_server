@@ -1,5 +1,5 @@
 #pragma once
-#include "../structure/server.hpp"
+#include "../structure/Server.hpp"
 
 namespace irc {
 	class server;

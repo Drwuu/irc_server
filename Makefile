@@ -10,14 +10,13 @@ FLAGS			+= -g3 -fsanitize=address
 OBJS_DIR		= objects
 INCLUDES		= headers
 
-				  
+
 SRCS			= \
 $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
 $(addprefix error/, error.cpp) \
 $(addprefix parser/, parser.cpp) \
 $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
-$(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
-irc.cpp \
+$(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp) \
 
 HEADERS			= \
 irc.hpp \
@@ -25,7 +24,7 @@ $(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
 $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
 $(addprefix error/, error.hpp) \
 $(addprefix parser/, parser.hpp) \
-$(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp)
+$(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp) \
 
 PATH_HEADERS	= $(addprefix $(INCLUDES)/, $(HEADERS))
 
@@ -42,7 +41,7 @@ clean_server_test:
 					rm -f server_test_
 					rm -f ./server_test/*.o
 
-exec:
+exec:				$(NAME)
 						./$(NAME) $(ARGS)
 
 $(NAME):			$(OBJS)

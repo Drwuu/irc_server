@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 20:39:51 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 21:55:48 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,14 @@
 #include <sys/event.h>
 
 #include "headers/proxy/Proxy.hpp"
+#include "headers/structure/Server.hpp"
 
 // Function list :
 // socket() - connect() - read() - write()
 // server oriented => bind() - listen() - accept()
 
 int		main(int ac, char **av) {
+	irc::server server;
 	if (ac < 2 || ac > 3) {
 		std::cerr << "usage : ircserv [port] [password]" << std::endl;
 		return -1;
@@ -121,6 +123,6 @@ int		main(int ac, char **av) {
 	// read(sockfd_use, &buff, 255);
 	// std::cout << "Message received by the client is : " << buff << std::endl;
 	// write(sockfd_use, &buff, 255);
-	
+
 
 }
