@@ -2,7 +2,7 @@
 #include "../structure/Server.hpp"
 
 namespace irc {
-	class server;
+	class Server;
 	class command {
 	/* Typedefs */
 		private:
@@ -31,7 +31,7 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			virtual void		is_valid_args(server const *server) const = 0;
+			virtual void		is_valid_args(Server const *Server) const = 0;
 			virtual void		exec_cmd(command const &cmd) const = 0;
 	};
 }

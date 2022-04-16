@@ -2,11 +2,13 @@
 #include "../error/error.hpp"
 #include "../commands/command.hpp"
 #include "../parser/parser.hpp"
+#include "../proxy/Event.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
+//#include <list>
 
 namespace irc {
-	class server {
+	class Server {
 	/* Typedefs */
 		private:
 		public:
@@ -33,19 +35,19 @@ namespace irc {
 			std::string					_line;
 			map_cmd						_map;
 			command						*_cmd;
-			std::list<Socket_event *> 		_event_list;
+			//std::list<Socket_event *> 		_event_list;
 		public:
 	/* Constructors & Destructors */
 		private:
-			server(server const &copy);
+			Server(Server const &copy);
 		public:
-			server();
-			server(std::string password, std::string port);
-			~server();
+			Server();
+			Server(std::string password, std::string port);
+			~Server();
 	/* Operators */
 		private:
 		public:
-			server& operator=(server const &src);
+			Server& operator=(Server const &src);
 	/* Getters */
 		private:
 		public:
@@ -74,8 +76,8 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			vec_cit_user const				find_nickname(string const &nick, vec_user const &user) const;
-			vec_cit_chan const				find_chan_name(string const &chan, vec_chan const &channel) const;
+			vec_cit_user const				find_nickname(std::string const &nick, vec_user const &user) const;
+			vec_cit_chan const				find_chan_name(std::string const &chan, vec_chan const &channel) const;
 			void							parse_line();
 			void							exec_cmd(User & user, command *command);
 
@@ -83,7 +85,7 @@ namespace irc {
 			void							add_channel(Channel & channel);
 			void							del_user(User & user);
 			void							del_channel(Channel & channel);
-			void							ban_user(std::string nick);//Use For UNKLINE unban USer from server
+			void							ban_user(std::string nick);//Use For UNKLINE unban USer from Server
 			void							unban_user(std::string nick);
 
 			void							print_link(); // Use For LINKS Command

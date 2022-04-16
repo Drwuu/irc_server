@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   test_client.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 19:12:55 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 18:00:17 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int main(int ac, char **av) {
 
 	int sockfd = 0, n = 0;
     struct sockaddr_in serv_addr;
-    struct hostent *server;
+    struct hostent *Server;
 	int	port_nb = std::atoi(av[1]);
 
     char buffer[256];
@@ -38,16 +38,16 @@ int main(int ac, char **av) {
     if (sockfd < 0)  {
 		std::cerr << " Error socket creation" << std::endl;
 	}
-    server = gethostbyname(av[2]);
-    if (server == NULL) {
+    Server = gethostbyname(av[2]);
+    if (Server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
         exit(0);
     }
     bzero((char *) &serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, 
+    bcopy((char *)Server->h_addr,
          (char *)&serv_addr.sin_addr.s_addr,
-         server->h_length);
+         Server->h_length);
     serv_addr.sin_port = htons(port_nb);
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		std::cerr << " Errr connect() " << std::endl;

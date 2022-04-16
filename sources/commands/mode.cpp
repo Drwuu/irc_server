@@ -11,7 +11,7 @@ namespace irc {
 	void mode::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
-	void mode::is_valid_args(server const *server) const {
-		(void)server;
+	void mode::is_valid_args(Server const *Server) const {
+		(void)Server;
 	};
 }

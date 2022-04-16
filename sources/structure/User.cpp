@@ -34,6 +34,8 @@ namespace irc {
 		std::cout << "Channel not found\n";
 		return nullptr;
 	}
+	bool User::get_operator_status() const{
+		return _is_irc_operator;}
 
 	void User::set_password(std::string password){
 		this->_password = password;}
@@ -64,13 +66,13 @@ namespace irc {
 		}
 		this->_nickname = nickname;}
 
-void User::leave_channel(std::string channel){
+void User::join_channel(Server & Server, std::string channel){
 	srand(time(NULL));
 	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
 		if ((*it).channel->get_name() == channel){
 			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
-				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){
-					(*it).channel->remove_user(this);
+				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){ // WIP pue la merde
+					(*it).channel->del_user(this);
 					get_chan_list().erase(it);
 					return ; // Channel found
 				}
@@ -78,18 +80,18 @@ void User::leave_channel(std::string channel){
 			// No operator left on the channel
 			(*it).channel->del_user(this);
 			get_chan_list().erase(it);
-			if ((*it).channel->get_user_list().size > 5){
-				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size()).get_chanstatus_from_list((*it).channel)->is_operator = true;
+			if ((*it).channel->get_user_list().size() > 5){
+				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size())->get_chanstatus_from_list((*it).channel)->is_operator = true;
 			}
 			else{
-				for (std::vector<User *>::iterator it2 = (*it).channel->get_user_list.begin(); it2 != (*it).channel->get_user_list.end(); ++it2){
+				for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
 					(*it2)->get_chanstatus_from_list((*it).channel)->is_operator = true;
 				} // If there is less than 6 user in the channel make them all op
 			}
 			}
 			break;
 		}
-		for (std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
+		for (std::vector<Channel *>::const_iterator it = Server.get_channel_list().begin(); it != Server.get_channel_list().end(); ++it){
 			if ((*it)->get_name() == channel){
 				ChanStatus chan(*it);
 				if ((*it)->is_moderated() == true)
@@ -102,7 +104,7 @@ void User::leave_channel(std::string channel){
 		// Channel not found in channel list : create it
 		// WIP need to add mod to the channel creation
 		Channel *new_chan = new Channel(channel);
-		server.add_channel(*new_chan);
+		Server.add_channel(*new_chan);
 		ChanStatus chan_status(new_chan);
 		chan_status.is_operator = true;
 		chan_status.is_mute = false;
@@ -120,29 +122,29 @@ void User::leave_channel(std::string channel){
 		}
 	}
 
-	void User::send_message(server & server, Channel & channel, std::string msg){
-		for(std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
+	void User::send_message(Server & Server, Channel & channel, std::string msg){
+		for(std::vector<Channel *>::const_iterator it = Server.get_channel_list().begin(); it != Server.get_channel_list().end(); ++it){
 			if ((*it)->get_name() == channel.get_name()){
 				if (channel.is_moderated() == true && get_chanstatus_from_list(&channel)->is_mute == true) // si le channel est restreint et que l'utilisateur est mute
-					return; // if the server is muted, the user can't send message
+					return; // if the Server is muted, the user can't send message
 				for(std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
-					(*it)->receive_message(server,channel,msg); // send message to all users in the channel
+					(*it)->receive_message(Server,channel,msg); // send message to all users in the channel
 				}
 			}
 		}
 		// Channel not found in channel list : send error
 	}
 
-	void User::send_message(server & server,User & user, std::string msg){
+	void User::send_message(Server & Server,User & user, std::string msg){
 		if (this->get_registered_status() == false)
 			return; // if the user is not registered, he can't send message : return error
-		for (std::vector<User *>::const_iterator it = server.get_user_list().begin(); it != server.get_user_list().end(); ++it){
+		for (std::vector<User *>::const_iterator it = Server.get_user_list().begin(); it != Server.get_user_list().end(); ++it){
 			if ((*it)->get_username() == user.get_username()){
-				(*it)->receive_message(server,*this,msg);
-				return; // user found in server list : send message
+				(*it)->receive_message(Server,*this,msg);
+				return; // user found in Server list : send message
 			}
 		}
-		// user not found in server list : send error
+		// user not found in Server list : send error
 	}
 
 	void User::kick_user(User & user, Channel & channel,std::string msg){
@@ -279,15 +281,14 @@ void User::leave_channel(std::string channel){
 			// User not operator: send error
 		}
 	}
-}
 
 int	User::disconnect_user(){
 	int ret = this->_socket->get_fd();
 	this->_socket = NULL;
-	for (std::vector<ChanStatus>::const_iterator it = this->_chanstatus_list.begin(); it != this->_chanstatus_list.end(); ++it){
+	for (std::vector<ChanStatus>::const_iterator it = this->_chan_list.begin(); it != this->_chan_list.end(); ++it){
 		(*it).channel->del_user(this);
 	}
 	this->_chan_list.clear();
 	return ret;
 }
-
+}

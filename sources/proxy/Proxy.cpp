@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 21:01:31 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ Proxy	&Proxy::operator=(const Proxy &source) {
 //////////////////////////////////////////////////////////////////////////
 // Methods
 
-// Clear all registered clients' sockets, but not the server socket.
-// Clears : Clients, cache, pollfd (without server socket)
+// Clear all registered clients' sockets, but not the Server socket.
+// Clears : Clients, cache, pollfd (without Server socket)
 void		Proxy::end_all_connexions() {
 	for (client_tree_type::iterator it = _clients.begin() ;
 			it != _clients.end(); ) {
@@ -122,7 +122,7 @@ void			Proxy::queuing() {
 
 	// Need to save the old pollfd size to secure the loop.
 	// The _poll_data vector is modified if there is a new connexion
-	// to the server.
+	// to the Server.
 	// As we loop on a vector that can be modified,
 	// this is not safe to use iterators or _poll_data.size().
 	int		size = _poll_data.size();
@@ -131,7 +131,7 @@ void			Proxy::queuing() {
 		// If there is no event trigered
 		if (_poll_data[i].revents == 0)
 			continue;
-		// If there is a new connexion to the server
+		// If there is a new connexion to the Server
 		else if (_poll_data[i].fd == server_fd) {
 			_flags[_poll_data[i].revents]->handle_server(&_server);
 		}
@@ -141,9 +141,9 @@ void			Proxy::queuing() {
 			if (tmp == _clients.end())
 				std::clog << " ---- [ERROR] Client not found. [" << _poll_data[i].fd << "] " << std::endl;
 			// FIXME -> the tree should always find a value. But it doesn't.
-			else { 
+			else {
 				flag_tree_type::iterator	it_event = _flags.find(_poll_data[i].revents);
-				if (it_event == _flags.end()) { 
+				if (it_event == _flags.end()) {
 					std::clog << " ---- [ERROR] Flag not found. [" << _poll_data[i].fd << "] ";
 					std::clog << " -- flag : " << _poll_data[i].revents << std::endl;
 					std::clog << " -- errno : " << " [" << errno << "] " << strerror(errno) << std::endl;
@@ -253,7 +253,7 @@ void	Proxy::init_poll_events() {
 //////////////////////////////////////////////////////////////////////////
 // Setters : SET
 
-// All pollfd.events are updated, even the server's one.
+// All pollfd.events are updated, even the Server's one.
 void		Proxy::set_flags() {
 	fd_type		server_fd = _server.get_fd();
 
@@ -356,7 +356,7 @@ int			Proxy::send_to_client(const socket_type *client, const data_type data) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Erasers : DELETE 
+// Erasers : DELETE
 
 void		Proxy::erase_cache(const socket_type &target) {
 	cache_queue_type	queue = _cache.find(target.get_fd())->second;
@@ -463,7 +463,7 @@ Proxy::Poll_priority_in::Poll_priority_in(Proxy *proxy) : IPoll_handling(proxy)
 void	Proxy::Poll_priority_in::handle(socket_type *) {
 }
 
-// Stay empty : server doesn't have POLLPRI flag.
+// Stay empty : Server doesn't have POLLPRI flag.
 void	Proxy::Poll_priority_in::handle_server(socket_type *) {
 }
 
@@ -499,7 +499,7 @@ Proxy::Poll_hang_up::Poll_hang_up(Proxy *proxy) : IPoll_handling(proxy)
 // Doesn't erase the client or the Server cannot identify
 // the disconnected socket.
 // Deletion will proced after deletion confirmation from
-// the server.
+// the Server.
 void	Proxy::Poll_hang_up::handle(socket_type *socket) {
 	std::clog << " ---> Client disconnected." << std::endl;
 	std::clog << " ---> Client disconnection handling ..." << std::endl;

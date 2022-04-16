@@ -2,7 +2,7 @@
 #include "Server.hpp"
 
 namespace irc {
-	class server;
+	class Server;
 	class Channel;
 	struct ChanStatus
 	{
@@ -35,7 +35,6 @@ namespace irc {
 		protected:
 			/*Arg*/
 		public:
-			User(User const & copy);
 			User();
 			User(Socket<Address_ipv6> * socket);
 			~User();
@@ -61,14 +60,14 @@ namespace irc {
 			void						set_username(std::string username);
 			void						set_nickname(std::string nickname); // Command NICK (optionnel)
 
-			void						join_channel(Server & server, std::string channel); // Command JOIN
-			void						join_channel(Server & server, std::string channel, std::string key); // Command JOIN with Key mode
+			void						join_channel(Server & Server, std::string channel); // Command JOIN
+			void						join_channel(Server & Server, std::string channel, std::string key); // Command JOIN with Key mode
 			void						leave_channel(std::string channel);
-			void						leave_channel(const Server & server, Channel *channel);// Command PART
+			void						leave_channel(const Server & Server, Channel *channel);// Command PART
 
-			void						send_message(Server & server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
+			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
 			void						send_message(Server & Server, User & User, std::string msg); // Command MSG et/ou PRIVMSG
-			void						receive_message(Server & server,	Channel& channel,std::string msg){(void)server;(void)channel;(void)msg;};
+			void						receive_message(Server & Server,	Channel& channel,std::string msg){(void)Server;(void)channel;(void)msg;};
 			void						receive_message(Server & Server,User& user, std::string msg){(void)Server;(void)user;(void)msg;};
 			void						send_invite(User & user, Channel & channel);
 			void						receive_invite(User & user, Channel & channel);
@@ -81,4 +80,4 @@ namespace irc {
 			void						change_topic(Channel & channel,std::string msg); // Used for TOPIC function
 			int							disconnect_user();
 };
-#endif
+}

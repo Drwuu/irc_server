@@ -2,7 +2,7 @@
 #include "command.hpp"
 
 namespace irc {
-	class server;
+	class Server;
 	class invite: public command {
 	/* Typedefs */
 		private:
@@ -24,6 +24,6 @@ namespace irc {
 		private:
 		public:
 			void	exec_cmd(command const &cmd) const;
-			void	is_valid_args(server const *server) const;
+			void	is_valid_args(Server const *Server) const;
 	};
 }

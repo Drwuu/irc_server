@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Proxy.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 20:25:13 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //// Requestable events.  If poll(2) finds any of these set, they are
 //// copied to revents on return.
-// #define POLLIN          0x0001     //	  1		any readable data available		
+// #define POLLIN          0x0001     //	  1		any readable data available
 // #define POLLPRI         0x0002     //	  2		OOB/Urgent readable data
 // #define POLLOUT         0x0004     //	  4		file descriptor is writeable
 // #define POLLRDNORM      0x0040     //	 40		non-OOB/URG data available
@@ -82,7 +82,7 @@
 
 
 class	Proxy {
-	
+
 	public:
 		typedef		Socket<Address_ipv6>		socket_type;
 		typedef		socket_type::port_type		port_type;
@@ -184,7 +184,7 @@ class	Proxy {
 		pollfd_type				_poll_data;
 		milisecond_type			_timeout;
 
-		// List destined to the server.
+		// List destined to the Server.
 		api_type				_to_server;
 
 		// There is only 3 sets of events :
@@ -201,7 +201,7 @@ class	Proxy {
 		short					_cl_hang_up;
 		short					_cl_invalid;
 		short					_cl_error;
-	
+
 	private:
 		// Should stay unaccessible
 		Proxy();

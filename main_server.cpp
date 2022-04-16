@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 21:55:48 by lwourms          ###   ########.fr       */
+/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,10 @@
 
 // Function list :
 // socket() - connect() - read() - write()
-// server oriented => bind() - listen() - accept()
+// Server oriented => bind() - listen() - accept()
 
 int		main(int ac, char **av) {
-	irc::server server;
+	irc::Server Server;
 	if (ac < 2 || ac > 3) {
 		std::cerr << "usage : ircserv [port] [password]" << std::endl;
 		return -1;
@@ -63,7 +63,7 @@ int		main(int ac, char **av) {
 
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
-	// Manual test for server socket -> connexion test
+	// Manual test for Server socket -> connexion test
 	///////////////////////////////////////////////////////////////////////////////////
 
 	// Socket<Address_ipv6>		server_socket(port_nb, SOCK_STREAM);
@@ -91,7 +91,7 @@ int		main(int ac, char **av) {
 	// int	sockfd_use = 0,
 		// sockfd_server = socket(AF_INET6, SOCK_STREAM, 0);
 	// if (sockfd_server == -1)
-		// std::cerr << " socket server failed " << std::endl;
+		// std::cerr << " socket Server failed " << std::endl;
 
 
 	// clilen = sizeof(client_address);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Event.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 20:46:04 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class	Socket_event {
 ///////////////////////////////////////////////////////////////////////////////////
 // PROXY HANDLING
 //
-// Inherited methods. These will be instanciated by the Server class, written in the 
+// Inherited methods. These will be instanciated by the Server class, written in the
 // Proxy class, used in the Proxy class. Feel free to add more polymorphique class.
 // This is a unified API form thanks to polymorphisme.
 // All the Proxy has to do, is receive data and run handle() on a for loop.
@@ -118,7 +118,7 @@ struct Proxy_queue {
 // Inherited methods. These will be instanciated by the Proxy class, written here,
 // used in the Server class.
 // This is a unified API form thanks to polymorphisme
-// All the server has to do, is receive data and run handle() on a for loop.
+// All the Server has to do, is receive data and run handle() on a for loop.
 
 struct Server_queue {
 	class	Message : public Socket_event {
@@ -156,7 +156,7 @@ struct Server_queue {
 	};
 
 	class	Client_disconnected : public Socket_event {
-		// Inform the server of a disconnection
+		// Inform the Server of a disconnection
 			const socket_type	*_socket;
 			Client_disconnected();
 		public:
@@ -166,7 +166,7 @@ struct Server_queue {
 	};
 
 	class	Error : public Socket_event {
-		// Inform the server of an error on sockets
+		// Inform the Server of an error on sockets
 		private:
 			// Data took from the error (if needed)
 			data_type		_data;

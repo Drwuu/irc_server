@@ -29,7 +29,6 @@ namespace irc {
 		public:
 			Channel();
 			Channel(std::string name);
-			Channel(std::string name);
 			Channel(std::string name,char prefix);
 			Channel(std::string name,char prefix, std::string key);
 			~Channel();

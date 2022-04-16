@@ -11,7 +11,7 @@ namespace irc {
 	void kick::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
-	void kick::is_valid_args(server const *server) const {
-		(void)server;
+	void kick::is_valid_args(Server const *Server) const {
+		(void)Server;
 	};
 }
