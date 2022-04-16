@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:58:42 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/13 19:59:42 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/16 20:59:13 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ Address_ipv6	&Address_ipv6::operator=(const Address_ipv6 &source) {
 }
 
 Address_ipv6::value_type		&Address_ipv6::operator*() { return _address; }
+Address_ipv6::value_type		Address_ipv6::data() { return _address; }
 
 void							Address_ipv6::set_len(const len_type &len) { _len = len; }
 void							Address_ipv6::set_port(const port_type &port) { _port = port; }
@@ -51,6 +52,7 @@ std::string						Address_ipv6::get_readable_address() const {
 	inet_ntop(_family, &_address.sin6_addr, tmp, (socklen_t)address_length);
 	return std::string(tmp, address_length);
 }
+
 
 Address_ipv6::len_type			Address_ipv6::get_len() const { return _len; }
 Address_ipv6::family_type		Address_ipv6::get_family() const { return _family; }
