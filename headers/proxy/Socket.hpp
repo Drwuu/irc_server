@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 19:36:45 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/17 00:15:21 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ class Socket {
 		socket_sort				_type; // STREAM_SOCK or others
 		protocol_type			_protocol; // 0 to let the machine decide
 		address_type			_address; //address IP, port. length...
-	
+
 	protected:
 		Socket()
 			: _sockfd(0), _type(0), _protocol(0), _address(0) { }
@@ -142,8 +142,8 @@ class Socket {
 
 			// bool	opt_val = true;
 			// if (setsockopt(new_client._sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(bool)) == -1) {
-				// std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR]" << std::endl;
-				// return new_client;
+			// std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR]" << std::endl;
+			// return new_client;
 			// }
 
 			if (new_client.get_fd() == -1) {
@@ -154,6 +154,18 @@ class Socket {
 			return new_client;
 		}
 
+		template <typename T>
+			friend bool		operator==(const T &rhs, const T &lhs) {
+				return rhs._sockfd == lhs._sockfd && rhs._type == lhs.fd_type
+					&& rhs._address == lhs._address && rhs._protocol == lhs._protocol;
+			}
+
+		template <typename T>
+			friend bool		operator!=(const T &rhs, const T &lhs) {
+				return !(rhs == lhs);
+			}
+
 };
+
 
 #endif

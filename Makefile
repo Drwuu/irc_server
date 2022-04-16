@@ -5,26 +5,26 @@ MAIN			:= main_server.cpp
 ARGS			:= 1234 lol
 
 FLAGS			= -Wall -Wextra -Werror -std=c++98
-FLAGS			+= -g3 -fsanitize=address
+# FLAGS			+= -g3 -fsanitize=address
 
 OBJS_DIR		= objects
 INCLUDES		= headers
 
 
 SRCS			= \
-$(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
-$(addprefix error/, error.cpp) \
-$(addprefix parser/, parser.cpp) \
-$(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
-$(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp) \
+				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
+				  $(addprefix error/, error.cpp) \
+				  $(addprefix parser/, parser.cpp) \
+				  $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
+				  $(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
 
 HEADERS			= \
-irc.hpp \
-$(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
-$(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
-$(addprefix error/, error.hpp) \
-$(addprefix parser/, parser.hpp) \
-$(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp) \
+				  irc.hpp \
+				  $(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
+				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
+				  $(addprefix error/, error.hpp) \
+				  $(addprefix parser/, parser.hpp) \
+				  $(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp)
 
 PATH_HEADERS	= $(addprefix $(INCLUDES)/, $(HEADERS))
 
