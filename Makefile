@@ -10,11 +10,12 @@ FLAGS			+= -g3 -fsanitize=address
 OBJS_DIR		= objects
 INCLUDES		= headers
 
-				  # parser_tester.cpp
+				  
 SRCS			= \
 				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
 				  $(addprefix error/, error.cpp) \
 				  $(addprefix parser/, parser.cpp) \
+				  # parser_tester.cpp
 				  $(addprefix structure/, Server.cpp) \
 				  $(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
 				  # server.cpp

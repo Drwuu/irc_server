@@ -15,26 +15,29 @@ const std::vector<User *> Channel::get_user_list() const{
 const std::vector<User *> Channel::get_banned_user() const{
 	return (this->_ban_list);}
 
-// const bool Channel::is_private() const{
-// 	return (this->_is_private);}
-// const bool Channel::is_secret() const{
-// 	return (this->_is_secret);}
-// const bool Channel::is_invite() const{
-// 	return (this->_is_invite);}
-// const bool Channel::is_topic() const{
-// 	return (this->_is_topic);}
-// const bool Channel::is_no_external_msg() const{
-// 	return (this->_is_no_external_msg);}
-// const bool Channel::is_moderated() const{
-// 	return (this->_is_moderated);}
-// const bool Channel::is_limited() const{
-// 	return (this->_is_limited);}
+bool Channel::is_private() const{
+	return (this->_is_private);}
+bool Channel::is_secret() const{
+	return (this->_is_secret);}
+bool Channel::is_invite() const{
+	return (this->_is_invite);}
+bool Channel::is_topic() const{
+	return (this->_is_topic);}
+bool Channel::is_no_external_msg() const{
+	return (this->_is_no_external_msg);}
+bool Channel::is_moderated() const{
+	return (this->_is_moderated);}
+bool Channel::is_limited() const{
+	return (this->_is_limited);}
 
 void Channel::set_name(const std::string & name){
 	this->_name = name;}
 
 void Channel::set_prefix(const std::string & prefix){
 	this->_prefix = prefix;}
+
+void Channel::set_topic(const std::string &topic){
+	this->_topic = topic;}
 
 void Channel::set_lifetime(const int & lifetime){
 	this->_lifetime = lifetime;}
