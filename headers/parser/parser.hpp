@@ -15,7 +15,6 @@ namespace irc {
 			map_cmd			&_commands;
 			command			*_command;
 		public:
-
 	/* Constructors & Destructors */
 		private:
 			parser();

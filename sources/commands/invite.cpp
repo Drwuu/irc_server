@@ -12,10 +12,11 @@ namespace irc {
 	void invite::exec_cmd(command const &cmd) const {
 		(void)cmd;
 	};
-	void invite::is_valid_args() const {
+	void invite::is_valid_args(server const *server) const {
 		if (_args.size() < 3)
 			throw error(string(_args[0]) + ": Not enough parameters", ERR_NEEDMOREPARAMS);
-		// if ()
+		(void)server;
+		// if (server->get_user_list().)
 		// 	throw error(args[1] + ": No such nick/channel", ERR_NOSUCHNICK);
 		// if (...)
 			// throw error(args[2] + ": You're not on that channel", ERR_NOTONCHANNEL);

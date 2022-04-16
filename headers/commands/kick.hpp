@@ -23,6 +23,6 @@ namespace irc {
 		private:
 		public:
 			void	exec_cmd(command const &cmd) const;
-			void	is_valid_args() const;
+			void	is_valid_args(server const *server) const;
 	};
 }

@@ -7,15 +7,15 @@ OBJS_DIR		= objects
 INCLUDES		= headers
 
 SRCS			= \
+irc.cpp \
+$(addprefix structure/, server.cpp User.cpp Channel.cpp) \
 $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
 $(addprefix error/, error.cpp) \
-$(addprefix parser/, parser_tester.cpp parser.cpp) \
-$(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
-#server.cpp
+$(addprefix parser/, parser.cpp) \
 
 HEADERS			= \
 irc.hpp \
-$(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
+$(addprefix structure/, server.hpp User.hpp Channel.hpp) \
 $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
 $(addprefix error/, error.hpp) \
 $(addprefix parser/, parser.hpp) \
@@ -29,7 +29,6 @@ all:				$(NAME)
 server_test:		./server_test/server_test.cpp
 						clang++ $< -o $@_
 						./$@_
-
 clean_server_test:
 					rm -f server_test_
 					rm -f ./server_test/*.o

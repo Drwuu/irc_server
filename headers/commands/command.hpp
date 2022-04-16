@@ -1,5 +1,6 @@
 #pragma once
 #include "../irc.hpp"
+#include "../structure/server.hpp"
 
 namespace irc {
 	class command {
@@ -30,7 +31,7 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			virtual void		is_valid_args() const = 0;
+			virtual void		is_valid_args(server const *server) const = 0;
 			virtual void		exec_cmd(command const &cmd) const = 0;
 	};
 }
