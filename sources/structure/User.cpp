@@ -292,3 +292,14 @@ void User::unmute_user(User & user, Channel & channel){
 		// User not operator: send error
 	}
 }
+
+int	User::disconnect_user(){
+	int ret = this->_socket->get_fd();
+	this->_socket = NULL;
+	for (std::vector<ChanStatus>::const_iterator it = this->_chanstatus_list.begin(); it != this->_chanstatus_list.end(); ++it){
+		(*it).channel->del_user(this);
+	}
+	this->_chan_list.clear();
+	return ret;
+}
+

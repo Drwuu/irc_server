@@ -82,5 +82,6 @@ class User
 		void						op_user(User & user, Channel & channel); // Use /mode #channel -o pseudo
 		void						unmute_user(User & user, Channel & Channel); // Use /mode username -v Authorize talking in moderated channel (mode m)
 		void						change_topic(Channel & channel,std::string msg); // Used for TOPIC function
+		int							disconnect_user();
 };
 #endif

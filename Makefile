@@ -27,7 +27,7 @@ OBJS			= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 all:				$(NAME)
 
 server_test:		./server_test/server_test.cpp
-						clang++ $< -o $@_
+						c++ $< -o $@_
 						./$@_
 
 clean_server_test:
@@ -35,13 +35,13 @@ clean_server_test:
 					rm -f ./server_test/*.o
 
 $(NAME):			$(OBJS)
-						clang++ $(FLAGS) $^ -o $@
+						c++ $(FLAGS) $^ -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(GREEN)Compiled [√]$(RESET)$(NO_COLOR)\n"
 						./$(NAME)
 
 $(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(addprefix $(INCLUDES)/, $(HEADERS))
 						mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
-						clang++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
+						c++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(PURPLE)$<$(RESET)$(NO_COLOR)"
 
 clean:
