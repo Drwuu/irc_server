@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 01:44:13 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 19:36:45 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,6 @@ class Socket {
 				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
 				return ;
 			}
-			if (setsockopt(_sockfd, TCP_PROTOCOL, SO_NOTIFYCONFLICT, &opt_val, sizeof(int)) == -1) {
-				std::cerr << " [ERROR] : adding socket option failed -- [SO_NOTIFYCONFLICT] " << strerror(errno) << std::endl;
-				return ;
-			}
 			std::clog << " ---- Endpoint created on the address " << "" << std::endl;
 		}
 
@@ -102,7 +98,7 @@ class Socket {
 			if (_sockfd != 0)
 				if (close(_sockfd) == -1)
 					std::clog << " [ERROR] closing socket on fd " << _sockfd
-							<< " using port " << get_port() << std::endl;
+						<< " using port " << get_port() << std::endl;
 			_sockfd = 0;
 		}
 
@@ -131,10 +127,12 @@ class Socket {
 		}
 
 		Socket			accept_connexion() {
-			std::clog << " ---> Accepting connexion on Server [" << this->get_address_readable() << "] -- identified by the fd [" << this->_sockfd
+			std::clog << " ---> Accepting connexion on Server [" << this->get_address_readable()
+				<< "] -- identified by the fd [" << this->_sockfd
 				<< "] -- bind to port [" << this->get_port() << "] ..." << std::endl;
 			Socket			new_client;
 			len_type		new_len;
+
 			new_client._sockfd = accept(_sockfd, (sockaddr *)&(*new_client._address), &new_len);
 			new_client._address.set_len(new_len);
 			new_client._address.set_port(this->get_port());

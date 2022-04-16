@@ -6,11 +6,12 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 02:20:00 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 20:30:15 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/proxy/Proxy.hpp"
+#include <sys/wait.h>
 
 // Should stay unaccessible
 Proxy::Proxy()
@@ -21,11 +22,12 @@ Proxy::Proxy()
 Proxy::Proxy(const port_type &port)
 	: _server(port, SOCK_STREAM), _clients(client_tree_type()), _cache(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
 	_timeout(60 * 1000), _to_server(api_type()),
-	_cl_base_pevents(0), _cl_message_pevents(0), _sv_pevents(0) {
+	_cl_base_pevents(0), _cl_message_pevents(0), _sv_pevents(0),
+	_cl_hang_up(0), _cl_invalid(0), _cl_error(0) {
 
 		std::clog << " |--| Proxy initialisation ..." << std::endl;
-		this->init_flags();
 		this->init_poll_events();
+		this->init_flags();
 		std::clog << " |--| Proxy initialisation done." << std::endl;
 	}
 
@@ -34,7 +36,8 @@ Proxy::Proxy(const Proxy &source)
 	_flags(source._flags), _poll_data(source._poll_data),
 	_timeout(source._timeout),  _to_server(source._to_server),
 	_cl_base_pevents(source._cl_base_pevents), _cl_message_pevents(source._cl_message_pevents),
-	_sv_pevents(source._sv_pevents) { }
+	_sv_pevents(source._sv_pevents),
+	_cl_hang_up(source._cl_hang_up), _cl_invalid(source._cl_invalid), _cl_error(source._cl_error) { }
 
 Proxy::~Proxy() {
 	std::clog << " |--| Proxy destruction ..." << std::endl;
@@ -55,6 +58,9 @@ Proxy	&Proxy::operator=(const Proxy &source) {
 	_cl_base_pevents = source._cl_base_pevents;
 	_cl_message_pevents = source._cl_message_pevents;
 	_sv_pevents = source._sv_pevents;
+	_cl_hang_up = source._cl_hang_up;
+	_cl_invalid = source._cl_invalid;
+	_cl_error = source._cl_error;
 	return *this;
 }
 
@@ -78,10 +84,12 @@ void		Proxy::end_all_connexions() {
 }
 
 void		Proxy::end_connexion(socket_type &target) {
-	std::clog << " ---- End connexion on [" << target.get_fd() << "] - [" << target.get_address_readable() << "] ... " << std::endl;
-	target.end_connexion();
+	int				sockfd = target.get_fd();
+	std::string		address = target.get_address_readable();
+
+	std::clog << " ---- End connexion on [" << sockfd << "] - [" << address << "] ... " << std::endl;
 	delete_client(target);
-	std::clog << " ---- Ended connexion on [" << target.get_fd() << "] - [" << target.get_address_readable() << "]." << std::endl;
+	std::clog << " ---- Ended connexion on [" << sockfd << "] - [" << address << "]." << std::endl;
 }
 
 void			Proxy::switch_on() {
@@ -102,6 +110,7 @@ void			Proxy::switch_off() {
 void			Proxy::set_timeout(Proxy::milisecond_type timeout) { _timeout = timeout; }
 
 void			Proxy::queuing() {
+	std::clog << std::endl << std::endl;
 	std::clog << " ---- Queuing ... " << std::endl;
 	fd_type		server_fd = _server.get_fd();
 	int			rtn = 0;
@@ -135,7 +144,9 @@ void			Proxy::queuing() {
 			else { 
 				flag_tree_type::iterator	it_event = _flags.find(_poll_data[i].revents);
 				if (it_event == _flags.end()) { 
-					std::clog << " ---- [ERROR] Flag not found. [" << _poll_data[i].fd << "] " << std::endl;
+					std::clog << " ---- [ERROR] Flag not found. [" << _poll_data[i].fd << "] ";
+					std::clog << " -- flag : " << _poll_data[i].revents << std::endl;
+					std::clog << " -- errno : " << " [" << errno << "] " << strerror(errno) << std::endl;
 					break;
 				}
 				it_event->second->handle(tmp->second);
@@ -145,6 +156,7 @@ void			Proxy::queuing() {
 	std::clog << " ---- Queuing done. " << std::endl;
 }
 
+// Should always preced 'receive_api'.
 Proxy::api_type		Proxy::send_api() {
 	std::clog << " <--- API Sending ... " << std::endl;
 	return _to_server;
@@ -153,8 +165,11 @@ Proxy::api_type		Proxy::send_api() {
 
 // Take the list to handle() instiated classes then delete them.
 // 'data' will be empty after function call.
+// Should always be preceded by 'send_api'
 void				Proxy::receive_api(api_type &data) {
 	std::clog << " ---> API Reception. " << std::endl;
+	_to_server.clear();
+
 	std::clog << " ---> API Handling ... " << std::endl;
 	while (!data.empty()) {
 		data.front()->handle();
@@ -182,11 +197,21 @@ void		Proxy::clear_flags() {
 
 void	Proxy::init_flags() {
 	std::clog << " |--| FLAG initialisation ... " << std::endl;
+
+	// _flags.insert(std::make_pair(POLLPRI, new Poll_priority_in(this)));
 	_flags.insert(std::make_pair(POLLIN, new Poll_in(this)));
-	_flags.insert(std::make_pair(POLLPRI, new Poll_priority_in(this)));
+
 	_flags.insert(std::make_pair(POLLNVAL, new Poll_invalid(this)));
+	_flags.insert(std::make_pair(_cl_invalid, new Poll_invalid(this)));
+
 	_flags.insert(std::make_pair(POLLHUP, new Poll_hang_up(this)));
+	_flags.insert(std::make_pair(_cl_hang_up, new Poll_hang_up(this)));
+
 	_flags.insert(std::make_pair(POLLERR, new Poll_error(this)));
+	_flags.insert(std::make_pair(_cl_error, new Poll_error(this)));
+
+	_flags.insert(std::make_pair(POLLOUT, new Poll_out(this)));
+	_flags.insert(std::make_pair(POLLWRNORM, new Poll_out(this)));
 	std::clog << " |--| FLAG inialised. " << std::endl;
 }
 
@@ -213,9 +238,16 @@ void	Proxy::init_server_socket() {
 
 void	Proxy::init_poll_events() {
 	// Initialise events that will be requested for each clients.
-	_cl_base_pevents = POLLIN | POLLPRI;
-	_cl_message_pevents = POLLIN | POLLPRI | POLLOUT;
+	_cl_base_pevents = POLLIN;
+	_cl_message_pevents = POLLIN | POLLOUT;
 	_sv_pevents = POLLIN;
+
+	_cl_hang_up =  POLLHUP | POLLIN;
+	_cl_invalid =  POLLNVAL | POLLIN;
+	_cl_error = POLLERR | POLLIN;
+	// 1 (POLLIN)
+	// 4 (POLLIN | POLLPRI)
+	// 5 (POLLIN | POLLOUT)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -239,6 +271,7 @@ void		Proxy::set_flags() {
 		}
 		else
 			it->events = _sv_pevents;
+		it->revents = 0;
 	}
 	std::clog << " ---- Flag updated." << std::endl;
 }
@@ -280,29 +313,46 @@ int			Proxy::receive(const socket_type *client) {
 
 	bzero(&buffer, buffer_len);
 	int		rtn = 0;
-	while (true) {
 	// MSG_DONTWAIT -> enable non-blocking operation.
-		rtn = recv(client->get_fd(), &buffer, buffer_len - 1, MSG_DONTWAIT);
-		if (rtn < 0) {
-			if (errno != EAGAIN) {
-				std::clog << "[ERROR] recv() failed. [" << client->get_fd()
-					<< "] [" << client->get_address_readable() << "]" << std::endl;
-				return EXIT_FAILURE;
-			}
-			return EXIT_SUCCESS;
-		}
-		else if (rtn == 0) {
-			std::clog << " --> Connexion closed. [" << client->get_fd() << "]"
-				<< " [" << client->get_address_readable() << "]" << std::endl;
-			// Connexion closed : launch POLLHUP after
-			return -1;
-		}
-		_to_server.push_back(new Server_queue::Message(buffer, client));
-		std::clog << " --> New message. [" << client->get_fd() << "]"
-				<< " [" << client->get_address_readable() << "]" << std::endl;
-		bzero(&buffer, buffer_len);
-		rtn = 0;
+	rtn = recv(client->get_fd(), &buffer, buffer_len - 1, MSG_DONTWAIT);
+	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+		std::clog << "[ERROR] recv() failed. [" << client->get_fd()
+			<< "] [" << client->get_address_readable() << "] :"
+			<< strerror(errno) << std::endl;
+		return EXIT_FAILURE;
 	}
+	else if (rtn == 0) {
+		std::clog << " ---> Connexion closed. [" << client->get_fd() << "]"
+			<< " [" << client->get_address_readable() << "]" << std::endl;
+		// Connexion closed : launch POLLHUP after
+		return -1;
+	}
+	_to_server.push_back(new Server_queue::Message(buffer, client));
+	std::clog << " ---> New message. [" << client->get_fd() << "]"
+		<< " [" << client->get_address_readable() << "]" << std::endl;
+	bzero(&buffer, buffer_len);
+	return EXIT_SUCCESS;
+}
+
+int			Proxy::send_to_client(const socket_type *client, const data_type data) {
+	int		rtn = 0;
+	size_t	buffer_len = 513;
+	char	buffer[buffer_len];
+
+	if (buffer_len >= strlcpy(buffer, data, buffer_len - 1))
+		std::clog << " ---- [ERROR] Data sent had been truncated. "
+			<< "[" << client->get_fd() << "] "
+			<< "[" << client->get_address_readable() << "]" << std::endl;
+
+	bzero(&buffer, buffer_len);
+	rtn = send(client->get_fd(), buffer, buffer_len, 0);
+	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+		std::clog << " ---- [ERROR] send() failed. [" << client->get_fd()
+			<< "] [" << client->get_address_readable() << "] : "
+			<< strerror(errno) << std::endl;
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -335,8 +385,10 @@ void		Proxy::erase_client_socket(const socket_type &target) {
 	client_tree_type::iterator	it = _clients.find(target.get_fd());
 
 	if (it != _clients.end()) {
+		int		sockfd = it->second->get_fd();
+		it->second->end_connexion();
 		delete it->second;
-		_clients.erase(target.get_fd());
+		_clients.erase(sockfd);
 	}
 }
 
@@ -346,9 +398,6 @@ void		Proxy::delete_client(const socket_type &client) {
 	erase_cache(client);
 	erase_client_socket(client);
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -383,13 +432,10 @@ void	Proxy::Poll_in::handle(socket_type *socket) {
 	int		rtn = 0;
 	rtn = _proxy->receive(socket);
 	// FIXME : Error on recv()
-	if (rtn == EXIT_FAILURE) {
-		std::clog << " ----> [ERROR] : recv() failed !" << std::endl;
+	if (rtn == EXIT_FAILURE)
 		return ;
-	}
-
 	// If client disconnects
-	if (rtn == -1)  {
+	else if (rtn == -1)  {
 		_proxy->_flags[POLLHUP]->handle(socket);
 	}
 }
@@ -450,10 +496,13 @@ Proxy::Poll_hang_up::~Poll_hang_up() {
 Proxy::Poll_hang_up::Poll_hang_up(Proxy *proxy) : IPoll_handling(proxy)
 { }
 
+// Doesn't erase the client or the Server cannot identify
+// the disconnected socket.
+// Deletion will proced after deletion confirmation from
+// the server.
 void	Proxy::Poll_hang_up::handle(socket_type *socket) {
 	std::clog << " ---> Client disconnected." << std::endl;
 	std::clog << " ---> Client disconnection handling ..." << std::endl;
-	_proxy->end_connexion(*socket);
 	_proxy->_to_server.push_back(new Server_queue::Client_disconnected(socket));
 	std::clog << " ---> Client disconnection done." << std::endl;
 }
@@ -480,3 +529,36 @@ void	Proxy::Poll_error::handle(socket_type *) {
 void	Proxy::Poll_error::handle_server(socket_type *) {
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Poll_out : POLLERR
+
+Proxy::Poll_out::Poll_out() {
+}
+
+Proxy::Poll_out::~Poll_out() {
+}
+
+Proxy::Poll_out::Poll_out(Proxy *proxy) : IPoll_handling(proxy)
+{ }
+
+void	Proxy::Poll_out::handle(socket_type *client) {
+	cache_tree_type::iterator		it_cache = _proxy->_cache.find(client->get_fd());
+	if (it_cache == _proxy->_cache.end()) {
+		std::clog << " <--- [ERROR] : Wrong flag, no data to send to client "
+			<< "[" << client->get_fd() << "] [" << client->get_address_readable() << "]"
+			<< std::endl;
+		return;
+	}
+	else if (it_cache->second.empty()) {
+		std::clog << " <--- [ERROR] : Wrong flag, no pending messages to send "
+			<< "[" << client->get_fd() << "] [" << client->get_address_readable() << "]"
+			<< std::endl;
+		return;
+	}
+	// FIXME : error on send ?
+	_proxy->send_to_client(client, it_cache->second.front());
+	it_cache->second.pop_front();
+}
+
+void	Proxy::Poll_out::handle_server(socket_type *) {
+}

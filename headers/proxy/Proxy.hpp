@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 00:31:15 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 20:25:13 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,38 @@
 # include <map>
 # include <vector>
 
+
+///////////////////////////////////////////////////////////////////////////////
+//// Requestable events.  If poll(2) finds any of these set, they are
+//// copied to revents on return.
+// #define POLLIN          0x0001     //	  1		any readable data available		
+// #define POLLPRI         0x0002     //	  2		OOB/Urgent readable data
+// #define POLLOUT         0x0004     //	  4		file descriptor is writeable
+// #define POLLRDNORM      0x0040     //	 40		non-OOB/URG data available
+// #define POLLWRNORM      POLLOUT    //	  4		no write type differentiation
+// #define POLLRDBAND      0x0080     //	128		OOB/Urgent readable data
+// #define POLLWRBAND      0x0100     //	256		OOB/Urgent data can be written
+//
+//
+//// FreeBSD extensions: polling on a regular file might return one
+//// of these events (currently only supported on local filesystems).
+// #define POLLEXTEND      0x0200     //	512		file may have been extended
+// #define POLLATTRIB      0x0400     //	1024	file attributes may have changed
+// #define POLLNLINK       0x0800     //	2048	(un)link/rename may have happened
+// #define POLLWRITE       0x1000     //	4096	file's contents may have changed
+//
+//
+//// These events are set if they occur regardless of whether they were
+//// requested.
+// #define POLLERR         0x0008     //		8	some poll error occurred
+// #define POLLHUP         0x0010     //		16	file descriptor was "hung up"
+// #define POLLNVAL        0x0020     //		32	requested events "invalid"
+//
+// #define POLLSTANDARD    (POLLIN|POLLPRI|POLLOUT|POLLRDNORM|POLLRDBAND|\
+					 // POLLWRBAND|POLLERR|POLLHUP|POLLNVAL)
+
+
+///////////////////////////////////////////////////////////////////////////////
 // struct sockaddr_in6 {
 // 		__uint8_t       sin6_len;       [> length of this struct(sa_family_t) <]
 // 		sa_family_t     sin6_family;    [> AF_INET6 (sa_family_t) <]
@@ -117,6 +149,15 @@ class	Proxy {
 				void	handle_server(socket_type *server_socket);
 		};
 
+		class Poll_out : public IPoll_handling {
+			public:
+				Poll_out();
+				~Poll_out();
+				Poll_out(Proxy *proxy);
+				void	handle(socket_type *socket);
+				void	handle_server(socket_type *server_socket);
+		};
+
 	public:
 		typedef		std::list<data_type>						cache_queue_type;
 
@@ -156,6 +197,10 @@ class	Proxy {
 		short					_cl_base_pevents;
 		short					_cl_message_pevents;
 		short					_sv_pevents;
+
+		short					_cl_hang_up;
+		short					_cl_invalid;
+		short					_cl_error;
 	
 	private:
 		// Should stay unaccessible
@@ -179,6 +224,9 @@ class	Proxy {
 		void		erase_client_socket(const socket_type &target);
 
 		int			receive(const socket_type *client);
+		int			send_to_client(const socket_type *client, const data_type data);
+
+		void		clean_api();
 
 	public:
 		Proxy(const port_type &port);

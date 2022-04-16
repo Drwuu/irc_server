@@ -31,3 +31,5 @@
 *.out
 *.app
 .vscode/
+irc_42
+client

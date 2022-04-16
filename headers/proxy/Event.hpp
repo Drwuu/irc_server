@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/15 20:02:14 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 20:46:04 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,10 @@ struct Proxy_queue {
 	class	Disconnect : public Socket_event {
 			// Disconnection message for the Client
 		private:
-			// data_type		data;
-		public:
+			fd_type			_socket_id;
 			Disconnect();
+		public:
+			Disconnect(const fd_type &socket_id);
 			~Disconnect();
 			void			handle();
 	};
@@ -114,11 +115,10 @@ struct Proxy_queue {
 ///////////////////////////////////////////////////////////////////////////////////
 // SERVER HANDLING
 //
-// Inherited methods. These will be instanciated by the Proxy class, written in the 
-// Server class, used in the Server class.
+// Inherited methods. These will be instanciated by the Proxy class, written here,
+// used in the Server class.
 // This is a unified API form thanks to polymorphisme
 // All the server has to do, is receive data and run handle() on a for loop.
-
 
 struct Server_queue {
 	class	Message : public Socket_event {
@@ -157,7 +157,6 @@ struct Server_queue {
 
 	class	Client_disconnected : public Socket_event {
 		// Inform the server of a disconnection
-			data_type		_data;
 			const socket_type	*_socket;
 			Client_disconnected();
 		public:

@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/15 16:40:50 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 02:02:26 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 20:44:56 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,13 @@ void			Proxy_queue::Disconnect_all::handle() { }
 ///////////////////////////////////////////////////////////////////////////////
 //
 Proxy_queue::Disconnect::Disconnect() { }
+Proxy_queue::Disconnect::Disconnect(const fd_type &socket_id)
+	:_socket_id(socket_id) { }
 Proxy_queue::Disconnect::~Disconnect() { }
-void			Proxy_queue::Disconnect::handle() { }
+void			Proxy_queue::Disconnect::handle() {
+	std::clog << " ------------------- DISCONNECT RECEIVED " << std::endl;
+	std::clog << " ---------- fd = " << _socket_id << std::endl;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -73,22 +78,19 @@ Server_queue::Message::Message(Server_queue::Message::data_type data,
 	_data(data), _socket(client) {
 	(void)client;
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
-	std::clog << " data = " << data << std::endl;
-	std::clog << " socket = " << client->get_fd() << std::endl;
+	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
 
 void			Server_queue::Message::handle() {
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
-	std::clog << " data = " << _data << std::endl;
-	std::clog << " socket = " << _socket->get_fd() << std::endl;
+	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 Server_queue::Message_priority::Message_priority() {
 	std::clog << " ------------------- PRIORITY MESSAGE RECEIVED " << std::endl;
-	std::clog << " data = " << _data << std::endl;
-	std::clog << " socket = " << _socket->get_fd() << std::endl;
+	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
 
 Server_queue::Message_priority::~Message_priority() { }
@@ -126,7 +128,6 @@ Server_queue::Client_disconnected::Client_disconnected(const socket_type *client
 
 	std::clog << " ------------------- CLIENT DISCONNECTION RECEIVED "
 		<< " socket = " << client->get_fd() << std::endl;
-	std::clog << " data = " << _data << std::endl;
 }
 Server_queue::Client_disconnected::~Client_disconnected(){ }
 

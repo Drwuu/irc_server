@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 01:46:17 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 20:39:51 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,15 +41,22 @@ int		main(int ac, char **av) {
 
 	server_proxy.set_timeout(10000);
 
-	while (true) {
+	for (int i = 0 ; i < 4 ; ++i) {
 		server_proxy.queuing();
 
-		Proxy::api_type		forward(server_proxy.send_api());
+		Proxy::api_type		from_proxy(server_proxy.send_api());
+		Proxy::api_type		to_proxy;
 
-		for (Proxy::api_type::iterator it = forward.begin() ;
-				it != forward.end() ; ++it) {
+		for (Proxy::api_type::iterator it = from_proxy.begin() ;
+				it != from_proxy.end() ; ++it) {
 			(*it)->handle();
 		}
+		while (!from_proxy.empty()) {
+			delete from_proxy.front();
+			from_proxy.pop_front();
+		}
+
+		server_proxy.receive_api(from_proxy);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
