@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/12 23:12:50 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 20:46:04 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ class	Socket_event {
 		fd_type			sockfd;
 
 	public:
+		Socket_event();
+		virtual ~Socket_event();
 		virtual void	handle() = 0;
 };
 
@@ -40,56 +42,71 @@ struct Proxy_queue {
 	class	Write : public Socket_event {
 		private:
 			// Message to sent to Client
-			data_type		data;
+			// data_type		data;
 		public:
+			Write();
+			~Write();
 			void			handle();
 	};
 
 	class	Write_priority : public Socket_event {
 		private:
 			// Message data to send to Client
-			data_type		data;
+			// data_type		data;
 		public:
+			Write_priority();
+			~Write_priority();
 			void			handle();
 	};
 
 	class	Confirm_connexion : public Socket_event {
 		private:
 			// Confirmation message for the Client
-			data_type		data;
+			// data_type		data;
 		public:
+			Confirm_connexion();
+			~Confirm_connexion();
 			void			handle();
 	};
 
 	class	Refuse_connexion : public Socket_event {
 		private:
 			// Refuse message for the Client
-			data_type		data;
+			// data_type		data;
 		public:
+			Refuse_connexion();
+			~Refuse_connexion();
 			void			handle();
 	};
 
 	class	Disconnect_all : public Socket_event {
 		private:
 			// Disconnection message for all Clients
-			data_type		data;
+			// data_type		data;
 		public:
+			Disconnect_all();
+			~Disconnect_all();
 			void			handle();
 	};
 
 	class	Disconnect : public Socket_event {
 			// Disconnection message for the Client
 		private:
-			data_type		data;
+			fd_type			_socket_id;
+			Disconnect();
 		public:
+			Disconnect(const fd_type &socket_id);
+			~Disconnect();
 			void			handle();
 	};
 
 	class	Signal : public Socket_event {
 		private:
 			// Signal response for the Client
-			data_type		data;
+			// data_type		data;
 		public:
+			Signal();
+			~Signal();
 			void			handle();
 	};
 };
@@ -98,42 +115,53 @@ struct Proxy_queue {
 ///////////////////////////////////////////////////////////////////////////////////
 // SERVER HANDLING
 //
-// Inherited methods. These will be instanciated by the Proxy class, written in the 
-// Server class, used in the Server class.
+// Inherited methods. These will be instanciated by the Proxy class, written here,
+// used in the Server class.
 // This is a unified API form thanks to polymorphisme
 // All the server has to do, is receive data and run handle() on a for loop.
 
-
 struct Server_queue {
-
 	class	Message : public Socket_event {
 		private:
 			// Content of the message from the Client
-			data_type		data;
+			data_type			_data;
+			const socket_type *_socket;
+			Message();
 		public:
-			Message(data_type data);
+			~Message();
+			Message(data_type data, const socket_type *client);
 			void			handle();
 	};
 
 	class	Message_priority : public Socket_event {
 		private:
 			// Content of the priority message from the Client
-			data_type		data;
+			data_type		_data;
+			const socket_type *_socket;
+			Message_priority();
 		public:
+			~Message_priority();
 			void			handle();
 	};
 
 	class	Request_connexion : public Socket_event {
 		private:
 			// Request details from the Client
-			data_type		data;
+			const socket_type	*_socket;
+			Request_connexion();
 		public:
+			Request_connexion(const socket_type *client);
+			~Request_connexion();
 			void			handle();
 	};
 
-	class	Disconnect : public Socket_event {
+	class	Client_disconnected : public Socket_event {
 		// Inform the server of a disconnection
+			const socket_type	*_socket;
+			Client_disconnected();
 		public:
+			Client_disconnected(const socket_type *socket);
+			~Client_disconnected();
 			void			handle();
 	};
 
@@ -141,16 +169,22 @@ struct Server_queue {
 		// Inform the server of an error on sockets
 		private:
 			// Data took from the error (if needed)
-			data_type		data;
+			data_type		_data;
+			const socket_type	*_socket;
 		public:
+			Error();
+			~Error();
 			void			handle();
 	};
 
 	class	Signal : public Socket_event {
 		private:
 			// Signal receive from the Client
-			data_type		data;
+			data_type		_data;
+			const socket_type	*_socket;
 		public:
+			Signal();
+			~Signal();
 			void			handle();
 	};
 
