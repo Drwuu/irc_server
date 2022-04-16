@@ -33,6 +33,7 @@ namespace irc {
 			std::string					_line;
 			map_cmd						_map;
 			command						*_cmd;
+			std::list<Socket_event *> 		_event_list;
 		public:
 	/* Constructors & Destructors */
 		private:

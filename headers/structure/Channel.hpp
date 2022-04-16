@@ -21,12 +21,17 @@ namespace irc {
 			bool		_is_limited;
 			std::vector<User *>	_user_list;
 			std::vector<User *> _ban_list; // Needed for ISBANNED function
+			std::vector<User *> _invite_list;
+			std::vector<User *> _operator_list;
 			Channel(Channel const & copy);
 		protected:
 			/*Arg*/
 		public:
 			Channel();
 			Channel(std::string name);
+			Channel(std::string name);
+			Channel(std::string name,char prefix);
+			Channel(std::string name,char prefix, std::string key);
 			~Channel();
 			const std::string&			get_name() const;
 			const std::string&			get_prefix() const;
@@ -51,6 +56,7 @@ namespace irc {
 			void						set_lifetime(const int& lifetime);
 			void						set_opdelay(const int& opdelay);
 			void						set_userlimit(const int& userlimit);
+			void						set_channel_identifier(const std::string& channel_identifier);
 
 			void						add_user(User * user);
 			void						del_user(User * user);

@@ -64,17 +64,30 @@ namespace irc {
 		}
 		this->_nickname = nickname;}
 
-	void User::join_channel(server & server,std::string channel){
-		if (this->get_registered_status() == false)
-			return ; // User not registered : send error message
-		for(std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
-			if ((*it).channel->get_name() == channel){
-				if ((*it).is_banned == true)
-				{
-					return ; // User banned from channel : send error message
+void User::leave_channel(std::string channel){
+	srand(time(NULL));
+	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
+		if ((*it).channel->get_name() == channel){
+			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
+				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){
+					(*it).channel->remove_user(this);
+					get_chan_list().erase(it);
+					return ; // Channel found
 				}
-				return ; // Channel already joined : send error message
 			}
+			// No operator left on the channel
+			(*it).channel->del_user(this);
+			get_chan_list().erase(it);
+			if ((*it).channel->get_user_list().size > 5){
+				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size()).get_chanstatus_from_list((*it).channel)->is_operator = true;
+			}
+			else{
+				for (std::vector<User *>::iterator it2 = (*it).channel->get_user_list.begin(); it2 != (*it).channel->get_user_list.end(); ++it2){
+					(*it2)->get_chanstatus_from_list((*it).channel)->is_operator = true;
+				} // If there is less than 6 user in the channel make them all op
+			}
+			}
+			break;
 		}
 		for (std::vector<Channel *>::const_iterator it = server.get_channel_list().begin(); it != server.get_channel_list().end(); ++it){
 			if ((*it)->get_name() == channel){
@@ -267,3 +280,14 @@ namespace irc {
 		}
 	}
 }
+
+int	User::disconnect_user(){
+	int ret = this->_socket->get_fd();
+	this->_socket = NULL;
+	for (std::vector<ChanStatus>::const_iterator it = this->_chanstatus_list.begin(); it != this->_chanstatus_list.end(); ++it){
+		(*it).channel->del_user(this);
+	}
+	this->_chan_list.clear();
+	return ret;
+}
+
