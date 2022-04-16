@@ -1,27 +1,36 @@
 NAME			=  irc_42
 
+MAIN			:= main_server.cpp
+
+ARGS			:= 1234 lol
+
 FLAGS			= -Wall -Wextra -Werror -std=c++98
 FLAGS			+= -g3 -fsanitize=address
 
 OBJS_DIR		= objects
 INCLUDES		= headers
 
+				  # parser_tester.cpp
 SRCS			= \
-$(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
-$(addprefix error/, error.cpp) \
-$(addprefix parser/, parser_tester.cpp parser.cpp) \
-$(addprefix structure/, Server.cpp) \
-# server.cpp
+				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
+				  $(addprefix error/, error.cpp) \
+				  $(addprefix parser/, parser.cpp) \
+				  $(addprefix structure/, Server.cpp) \
+				  $(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
+				  # server.cpp
 
 HEADERS			= \
-irc.hpp \
-$(addprefix structure/, Server.hpp) \
-$(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
-$(addprefix error/, error.hpp) \
-$(addprefix parser/, parser.hpp) \
+				  irc.hpp \
+				  $(addprefix structure/, Server.hpp) \
+				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
+				  $(addprefix error/, error.hpp) \
+				  $(addprefix parser/, parser.hpp) \
+				  $(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp)
+
+PATH_HEADERS	= $(addprefix $(INCLUDES)/, $(HEADERS))
 
 SOURCES			= sources
-FOLDERS			= commands error parser structure
+FOLDERS			= commands error parser structure proxy
 OBJS			= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 all:				$(NAME)
@@ -35,11 +44,11 @@ clean_server_test:
 					rm -f ./server_test/*.o
 
 $(NAME):			$(OBJS)
-						clang++ $(FLAGS) $^ -o $@
+						clang++ $(FLAGS) $(MAIN) $^ -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(GREEN)Compiled [√]$(RESET)$(NO_COLOR)\n"
-						./$(NAME)
+						./$(NAME) $(ARGS)
 
-$(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(addprefix $(INCLUDES)/, $(HEADERS))
+$(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(PATH_HEADERS)
 						mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
 						clang++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(PURPLE)$<$(RESET)$(NO_COLOR)"

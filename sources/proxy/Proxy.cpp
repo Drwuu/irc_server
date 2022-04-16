@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/15 17:46:48 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 02:20:00 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,19 @@
 
 // Should stay unaccessible
 Proxy::Proxy()
-	: _server(0, SOCK_STREAM), _clients(), _cache(), _flags(), _poll_data(),
-	_timeout(), _to_server(),
+	: _server(0, SOCK_STREAM), _clients(client_tree_type()), _cache(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
+	_timeout(60 * 1000), _to_server(api_type()),
 	_cl_base_pevents(), _cl_message_pevents(), _sv_pevents() { }
 
 Proxy::Proxy(const port_type &port)
-	: _server(port, SOCK_STREAM), _clients(), _cache(), _flags(), _poll_data(),
-	_timeout(), _to_server(),
-	_cl_base_pevents(), _cl_message_pevents(), _sv_pevents() {
+	: _server(port, SOCK_STREAM), _clients(client_tree_type()), _cache(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
+	_timeout(60 * 1000), _to_server(api_type()),
+	_cl_base_pevents(0), _cl_message_pevents(0), _sv_pevents(0) {
+
+		std::clog << " |--| Proxy initialisation ..." << std::endl;
 		this->init_flags();
 		this->init_poll_events();
+		std::clog << " |--| Proxy initialisation done." << std::endl;
 	}
 
 Proxy::Proxy(const Proxy &source)
@@ -34,8 +37,10 @@ Proxy::Proxy(const Proxy &source)
 	_sv_pevents(source._sv_pevents) { }
 
 Proxy::~Proxy() {
+	std::clog << " |--| Proxy destruction ..." << std::endl;
 	this->switch_off();
 	this->clear_flags();
+	std::clog << " |--| Proxy destruction done" << std::endl;
 }
 
 Proxy	&Proxy::operator=(const Proxy &source) {
@@ -63,67 +68,100 @@ void		Proxy::end_all_connexions() {
 	for (client_tree_type::iterator it = _clients.begin() ;
 			it != _clients.end(); ) {
 		client_tree_type::iterator tmp = it;
+		erase_cache(*tmp->second);
+		erase_pollfd(*tmp->second);
 		it->second->end_connexion();
 		delete it->second;
 		++it;
-		erase_cache(*tmp->second);
-		erase_pollfd(*tmp->second);
 		_clients.erase(tmp);
 	}
 }
 
 void		Proxy::end_connexion(socket_type &target) {
+	std::clog << " ---- End connexion on [" << target.get_fd() << "] - [" << target.get_address_readable() << "] ... " << std::endl;
 	target.end_connexion();
 	delete_client(target);
+	std::clog << " ---- Ended connexion on [" << target.get_fd() << "] - [" << target.get_address_readable() << "]." << std::endl;
 }
 
 void			Proxy::switch_on() {
+	std::clog << " |--| Proxy switch on ..." << std::endl;
 	this->init_server_socket();
+	std::clog << " |--| Proxy started." << std::endl;
 }
 
 void			Proxy::switch_off() {
+	std::clog << " |--| Proxy switch off ..." << std::endl;
 	this->end_all_connexions();
 	this->_poll_data.clear();
 	this->_to_server.clear();
 	this->_server.end_connexion();
+	std::clog << " |--| Proxy shut down " << std::endl;
 }
 
 void			Proxy::set_timeout(Proxy::milisecond_type timeout) { _timeout = timeout; }
 
 void			Proxy::queuing() {
+	std::clog << " ---- Queuing ... " << std::endl;
 	fd_type		server_fd = _server.get_fd();
+	int			rtn = 0;
 
 	set_flags();
+	rtn = poll(_poll_data.data(), _poll_data.size(), _timeout);
+	if (rtn == -1)
+		std::clog << "POLL ERROR : " << strerror(errno) << std::endl;
 
-	poll(_poll_data.data(), _poll_data.size(), _timeout);
+	// Need to save the old pollfd size to secure the loop.
+	// The _poll_data vector is modified if there is a new connexion
+	// to the server.
+	// As we loop on a vector that can be modified,
+	// this is not safe to use iterators or _poll_data.size().
+	int		size = _poll_data.size();
 
-	for (pollfd_type::iterator it = _poll_data.begin() ;
-			it != _poll_data.end() ;
-			++it) {
-		if (it->revents == 0)
+	for (int i = 0 ; i < size ; ++i) {
+		// If there is no event trigered
+		if (_poll_data[i].revents == 0)
 			continue;
-		else if (it->fd == server_fd)
-			_flags[it->revents]->handle_server(&_server);
+		// If there is a new connexion to the server
+		else if (_poll_data[i].fd == server_fd) {
+			_flags[_poll_data[i].revents]->handle_server(&_server);
+		}
+		// Else, a pending connexion trigered an event
 		else {
-			client_tree_type::iterator tmp = _clients.find(it->fd);
+			client_tree_type::iterator tmp = _clients.find(_poll_data[i].fd);
 			if (tmp == _clients.end())
-				std::clog << " -- [ERROR] Client not found. [" << it->fd << "] " << std::endl;
-			else
-				_flags[it->revents]->handle(tmp->second);
+				std::clog << " ---- [ERROR] Client not found. [" << _poll_data[i].fd << "] " << std::endl;
+			// FIXME -> the tree should always find a value. But it doesn't.
+			else { 
+				flag_tree_type::iterator	it_event = _flags.find(_poll_data[i].revents);
+				if (it_event == _flags.end()) { 
+					std::clog << " ---- [ERROR] Flag not found. [" << _poll_data[i].fd << "] " << std::endl;
+					break;
+				}
+				it_event->second->handle(tmp->second);
+			}
 		}
 	}
+	std::clog << " ---- Queuing done. " << std::endl;
 }
 
-Proxy::api_type		Proxy::send_api() { return _to_server; }
+Proxy::api_type		Proxy::send_api() {
+	std::clog << " <--- API Sending ... " << std::endl;
+	return _to_server;
+	std::clog << " <--- API Sent. " << std::endl;
+}
 
 // Take the list to handle() instiated classes then delete them.
 // 'data' will be empty after function call.
 void				Proxy::receive_api(api_type &data) {
+	std::clog << " ---> API Reception. " << std::endl;
+	std::clog << " ---> API Handling ... " << std::endl;
 	while (!data.empty()) {
 		data.front()->handle();
 		delete data.front();
 		data.pop_front();
 	}
+	std::clog << " ---> API Handled. " << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -143,11 +181,13 @@ void		Proxy::clear_flags() {
 // Initialisation : INIT
 
 void	Proxy::init_flags() {
-	_flags.insert(std::make_pair(POLLIN, new Poll_in()));
-	_flags.insert(std::make_pair(POLLPRI, new Poll_priority_in()));
-	_flags.insert(std::make_pair(POLLNVAL, new Poll_invalid()));
-	_flags.insert(std::make_pair(POLLHUP, new Poll_hang_up()));
-	_flags.insert(std::make_pair(POLLERR, new Poll_error()));
+	std::clog << " |--| FLAG initialisation ... " << std::endl;
+	_flags.insert(std::make_pair(POLLIN, new Poll_in(this)));
+	_flags.insert(std::make_pair(POLLPRI, new Poll_priority_in(this)));
+	_flags.insert(std::make_pair(POLLNVAL, new Poll_invalid(this)));
+	_flags.insert(std::make_pair(POLLHUP, new Poll_hang_up(this)));
+	_flags.insert(std::make_pair(POLLERR, new Poll_error(this)));
+	std::clog << " |--| FLAG inialised. " << std::endl;
 }
 
 // Create, bind, listen.
@@ -155,6 +195,7 @@ void	Proxy::init_flags() {
 // Set events in pollfd structure as a precaution.
 // Only call in switch_on().
 void	Proxy::init_server_socket() {
+	std::clog << " |--| Server Socket initialisation ... " << std::endl;
 	_server.create_endpoint();
 	_server.bind_socket();
 	_server.listen_for_connexion(); // set on 5 maximum requested connexion (default)
@@ -167,6 +208,7 @@ void	Proxy::init_server_socket() {
 	server_sock.fd = _server.get_fd();
 	server_sock.events = POLLIN;
 	_poll_data.push_back(server_sock);
+	std::clog << " |--| Server Socket initialised." << std::endl;
 }
 
 void	Proxy::init_poll_events() {
@@ -198,6 +240,7 @@ void		Proxy::set_flags() {
 		else
 			it->events = _sv_pevents;
 	}
+	std::clog << " ---- Flag updated." << std::endl;
 }
 
 
@@ -315,15 +358,15 @@ Proxy::IPoll_handling::IPoll_handling()
 	: _proxy(NULL) {
 }
 
-Proxy::IPoll_handling::IPoll_handling(Proxy &proxy)
-	: _proxy(&proxy) { }
+Proxy::IPoll_handling::IPoll_handling(Proxy *proxy)
+	: _proxy(proxy) { }
 
 Proxy::IPoll_handling::~IPoll_handling() {
 }
 
-void	Proxy::IPoll_handling::handle(socket_type *socket) {
+void	Proxy::IPoll_handling::handle(socket_type *) {
 }
-void	Proxy::IPoll_handling::handle_server(socket_type *server_socket) {
+void	Proxy::IPoll_handling::handle_server(socket_type *) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -331,25 +374,31 @@ void	Proxy::IPoll_handling::handle_server(socket_type *server_socket) {
 
 Proxy::Poll_in::Poll_in() { }
 
-Proxy::Poll_in::Poll_in(Proxy &proxy) : IPoll_handling(proxy) { }
+Proxy::Poll_in::Poll_in(Proxy *proxy) : IPoll_handling(proxy) { }
 
 Proxy::Poll_in::~Poll_in() { }
 
 void	Proxy::Poll_in::handle(socket_type *socket) {
+	std::clog << " ---> New message incomming ..." << std::endl;
 	int		rtn = 0;
 	rtn = _proxy->receive(socket);
 	// FIXME : Error on recv()
-	// if (rtn == EXIT_FAILURE)
-		// return ;
+	if (rtn == EXIT_FAILURE) {
+		std::clog << " ----> [ERROR] : recv() failed !" << std::endl;
+		return ;
+	}
 
 	// If client disconnects
-	if (rtn == -1)
+	if (rtn == -1)  {
 		_proxy->_flags[POLLHUP]->handle(socket);
+	}
 }
 
 void	Proxy::Poll_in::handle_server(socket_type *server_socket) {
+	std::clog << " ---> New requested connexion ..." << std::endl;
 	_proxy->add_client(server_socket->accept_connexion());
 	_proxy->_to_server.push_back(new Server_queue::Request_connexion(server_socket));
+	std::clog << " ---> New requested connexion done." << std::endl;
 }
 
 
@@ -362,14 +411,14 @@ Proxy::Poll_priority_in::Poll_priority_in() {
 Proxy::Poll_priority_in::~Poll_priority_in() {
 }
 
-Proxy::Poll_priority_in::Poll_priority_in(Proxy &proxy) : IPoll_handling(proxy)
+Proxy::Poll_priority_in::Poll_priority_in(Proxy *proxy) : IPoll_handling(proxy)
 { }
 
-void	Proxy::Poll_priority_in::handle(socket_type *socket) {
+void	Proxy::Poll_priority_in::handle(socket_type *) {
 }
 
 // Stay empty : server doesn't have POLLPRI flag.
-void	Proxy::Poll_priority_in::handle_server(socket_type *socket) {
+void	Proxy::Poll_priority_in::handle_server(socket_type *) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -381,12 +430,12 @@ Proxy::Poll_invalid::Poll_invalid() {
 Proxy::Poll_invalid::~Poll_invalid() {
 }
 
-Proxy::Poll_invalid::Poll_invalid(Proxy &proxy) : IPoll_handling(proxy)
+Proxy::Poll_invalid::Poll_invalid(Proxy *proxy) : IPoll_handling(proxy)
 { }
 
-void	Proxy::Poll_invalid::handle(socket_type *socket) {
+void	Proxy::Poll_invalid::handle(socket_type *) {
 }
-void	Proxy::Poll_invalid::handle_server(socket_type *socket) {
+void	Proxy::Poll_invalid::handle_server(socket_type *) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -398,16 +447,20 @@ Proxy::Poll_hang_up::Poll_hang_up() {
 Proxy::Poll_hang_up::~Poll_hang_up() {
 }
 
-Proxy::Poll_hang_up::Poll_hang_up(Proxy &proxy) : IPoll_handling(proxy)
+Proxy::Poll_hang_up::Poll_hang_up(Proxy *proxy) : IPoll_handling(proxy)
 { }
 
 void	Proxy::Poll_hang_up::handle(socket_type *socket) {
-	socket->end_connexion();
+	std::clog << " ---> Client disconnected." << std::endl;
+	std::clog << " ---> Client disconnection handling ..." << std::endl;
+	_proxy->end_connexion(*socket);
 	_proxy->_to_server.push_back(new Server_queue::Client_disconnected(socket));
+	std::clog << " ---> Client disconnection done." << std::endl;
 }
 
 void	Proxy::Poll_hang_up::handle_server(socket_type *socket) {
-	// FIXME : error to handle
+	std::clog << " |--| ERROR POLLHUP " << std::endl;
+	std::clog << "socket : " << socket->get_fd() << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -419,11 +472,11 @@ Proxy::Poll_error::Poll_error() {
 Proxy::Poll_error::~Poll_error() {
 }
 
-Proxy::Poll_error::Poll_error(Proxy &proxy) : IPoll_handling(proxy)
+Proxy::Poll_error::Poll_error(Proxy *proxy) : IPoll_handling(proxy)
 { }
 
-void	Proxy::Poll_error::handle(socket_type *socket) {
+void	Proxy::Poll_error::handle(socket_type *) {
 }
-void	Proxy::Poll_error::handle_server(socket_type *socket) {
+void	Proxy::Poll_error::handle_server(socket_type *) {
 }
 

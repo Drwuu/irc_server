@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   main_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/13 14:54:30 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 01:46:17 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@
 #include <sys/time.h>
 #include <sys/event.h>
 
-#include "Socket.hpp"
-
+#include "headers/proxy/Proxy.hpp"
 
 // Function list :
 // socket() - connect() - read() - write()
@@ -33,47 +32,59 @@ int		main(int ac, char **av) {
 		return -1;
 	}
 
-	// FIX : check overflow or invalid port number
-	int				port_nb = std::atoi(av[1]);
+	// FIXME : check overflow or invalid port number
+	int		port_nb = std::atoi(av[1]);
 
-	
-	Socket<Address_ipv6>		server_socket(port_nb, SOCK_STREAM);
+	Proxy	server_proxy(port_nb);
 
-	server_socket.create_endpoint();
-	server_socket.bind_socket();
-	server_socket.listen_for_connexion(5);
-	Socket<Address_ipv6>	client_socket = server_socket.accept_connexion();
+	server_proxy.switch_on();
 
-	std::clog << client_socket.get_fd() << std::endl;
+	server_proxy.set_timeout(10000);
 
-	char buff[10];
-	bzero(buff, 10);
-	if (read(client_socket.get_fd(), buff, 9) != -1)
-		std::cout << "Message received by the client is : " << buff << std::endl;
-	bzero(buff, 10);
+	while (true) {
+		server_proxy.queuing();
+
+		Proxy::api_type		forward(server_proxy.send_api());
+
+		for (Proxy::api_type::iterator it = forward.begin() ;
+				it != forward.end() ; ++it) {
+			(*it)->handle();
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////
+	// Manual test for server socket -> connexion test
+	///////////////////////////////////////////////////////////////////////////////////
+
+	// Socket<Address_ipv6>		server_socket(port_nb, SOCK_STREAM);
+
+	// server_socket.create_endpoint();
+	// server_socket.bind_socket();
+	// server_socket.listen_for_connexion(5);
+	// Socket<Address_ipv6>	client_socket = server_socket.accept_connexion();
+
+	// std::clog << client_socket.get_fd() << std::endl;
+
+	// char buff[10];
+	// bzero(buff, 10);
+	// if (read(client_socket.get_fd(), buff, 9) != -1)
+		// std::cout << "Message received by the client is : " << buff << std::endl;
+	// bzero(buff, 10);
 	// write(client_socket.get_fd(), buff, 9);
 
 
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
 	// Connection side
+	///////////////////////////////////////////////////////////////////////////////////
 
-	// FIX : check if the socket creation succed.
 	// int	sockfd_use = 0,
 		// sockfd_server = socket(AF_INET6, SOCK_STREAM, 0);
 	// if (sockfd_server == -1)
 		// std::cerr << " socket server failed " << std::endl;
-	//
-	// // Struct to bind address on sockfd
-	// struct sockaddr_in6		serv_address;
-	// struct sockaddr_in6		client_address;
-	// bzero(&serv_address, sizeof(sockaddr_in6));
-	// serv_address.sin6_family = AF_INET6;
-	// serv_address.sin6_port = htons(port_nb);
-	// serv_address.sin6_addr = in6addr_any;
-	// serv_address.sin6_len = sizeof(serv_address);
-	// // serv_address.sin6_flowinfo = 0; // already set with bzero()
-//
+
+
 	// clilen = sizeof(client_address);
 	// if (bind(sockfd_server, (sockaddr *)&serv_address, serv_address.sin6_len) == -1) {
 		// std::cerr << " bind failed " << std::endl;
@@ -82,7 +93,7 @@ int		main(int ac, char **av) {
 		// // The sockfd is broken
 		// std::cerr << " listen failed " << std::endl;
 	// }
-//
+
 	// // The rest can be managed by I/O Multiplexing
 	// // with the poll() function.
 	// std::cerr << " [SERVER] REACH ACCEPT" << std::endl;
@@ -94,7 +105,7 @@ int		main(int ac, char **av) {
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
 	// Conversation side
-
+	///////////////////////////////////////////////////////////////////////////////////
 
 	//// Basic read/write message :
 	//

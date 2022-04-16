@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/15 14:39:03 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 00:31:15 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,55 +66,55 @@ class	Proxy {
 				IPoll_handling();
 				Proxy	*_proxy;
 			public:
-				IPoll_handling(Proxy &proxy);
+				IPoll_handling(Proxy *proxy);
 				virtual ~IPoll_handling();
-				virtual void	handle(const socket_type *socket) = 0;
-				virtual void	handle_server(const socket_type *socket) = 0;
+				virtual void	handle(socket_type *socket) = 0;
+				virtual void	handle_server(socket_type *socket) = 0;
 		};
 
 		class Poll_in : public IPoll_handling {
 			public:
 				Poll_in();
 				~Poll_in();
-				Poll_in(Proxy &proxy);
-				void	handle(const socket_type *socket);
-				void	handle_server(const socket_type *server_socket);
+				Poll_in(Proxy *proxy);
+				void	handle(socket_type *socket);
+				void	handle_server(socket_type *server_socket);
 		};
 
 		class Poll_priority_in : public IPoll_handling {
 			public:
 				Poll_priority_in();
 				~Poll_priority_in();
-				Poll_priority_in(Proxy &proxy);
-				void	handle(const socket_type *socket);
-				void	handle_server(const socket_type *socket);
+				Poll_priority_in(Proxy *proxy);
+				void	handle(socket_type *socket);
+				void	handle_server(socket_type *server_socket);
 		};
 
 		class Poll_invalid : public IPoll_handling {
 			public:
 				Poll_invalid();
 				~Poll_invalid();
-				Poll_invalid(Proxy &proxy);
-				void	handle(const socket_type *socket);
-				void	handle_server(const socket_type *socket);
+				Poll_invalid(Proxy *proxy);
+				void	handle(socket_type *socket);
+				void	handle_server(socket_type *server_socket);
 		};
 
 		class Poll_hang_up : public IPoll_handling {
 			public:
 				Poll_hang_up();
 				~Poll_hang_up();
-				Poll_hang_up(Proxy &proxy);
-				void	handle(const socket_type *socket);
-				void	handle_server(const socket_type *socket);
+				Poll_hang_up(Proxy *proxy);
+				void	handle(socket_type *socket);
+				void	handle_server(socket_type *server_socket);
 		};
 
 		class Poll_error : public IPoll_handling {
 			public:
 				Poll_error();
 				~Poll_error();
-				Poll_error(Proxy &proxy);
-				void	handle(const socket_type *socket);
-				void	handle_server(const socket_type *socket);
+				Poll_error(Proxy *proxy);
+				void	handle(socket_type *socket);
+				void	handle_server(socket_type *server_socket);
 		};
 
 	public:
@@ -122,12 +122,12 @@ class	Proxy {
 
 		typedef		std::map<fd_type, socket_type *>			client_tree_type;
 		typedef		std::map<fd_type, cache_queue_type >		cache_tree_type;
-		typedef		std::vector<struct pollfd>					pollfd_type;
+		typedef		std::vector<pollfd>							pollfd_type;
 
 		typedef		std::map<flag_type, IPoll_handling *>		flag_tree_type;
 
 		typedef		Socket_event								event_type;
-		typedef		std::list<const event_type *>				api_type;
+		typedef		std::list<event_type *>						api_type;
 
 	private:
 
