@@ -43,10 +43,12 @@ clean_server_test:
 					rm -f server_test_
 					rm -f ./server_test/*.o
 
+exec:
+						./$(NAME) $(ARGS)
+
 $(NAME):			$(OBJS)
 						clang++ $(FLAGS) $(MAIN) $^ -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(GREEN)Compiled [√]$(RESET)$(NO_COLOR)\n"
-						./$(NAME) $(ARGS)
 
 $(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(PATH_HEADERS)
 						mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
