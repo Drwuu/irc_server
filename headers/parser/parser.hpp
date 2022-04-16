@@ -12,8 +12,9 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-			string	_line;
-			map_cmd	&_commands;
+			string			_line;
+			map_cmd			&_commands;
+			command			*_command;
 		public:
 
 	/* Constructors & Destructors */
@@ -30,11 +31,12 @@ namespace irc {
 	/* Getters & Setters */
 		private:
 		public:
+			command const		*get_command() const;
 	/* Functions */
 		private:
-			string					_get_arg(string::const_iterator &it) const;
-			map_citerator_cmd const	_get_command() const;
+			void				_fill_command();
+			map_citerator_cmd	_get_command() const;
+			string				_get_arg(string::const_iterator &it) const;
 		public:
-			void					fill_command() const;
 	};
 }
