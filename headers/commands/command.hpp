@@ -1,7 +1,8 @@
 #pragma once
-#include "../irc.hpp"
+#include "../structure/server.hpp"
 
 namespace irc {
+	class server;
 	class command {
 	/* Typedefs */
 		private:
@@ -9,14 +10,14 @@ namespace irc {
 	/* Variables */
 		private:
 		protected:
-			vector_args	_args;
+			vector_string	_args;
 		public:
 	/* Constructors & Destructors */
 		private:
 			command(command const &src);
 		public:
 			command();
-			command(vector_args const &args);
+			command(vector_string const &args);
 			virtual ~command();
 	/* Operators */
 		private:
@@ -25,13 +26,15 @@ namespace irc {
 	/* Getters & Setters */
 		private:
 		public:
-			vector_args const	&get_args() const;
-			void				set_args(vector_args const &args);
+			vector_string const	&get_args() const;
+			void				set_args(vector_string const &args);
 	/* Functions */
 		private:
-		protected:
-			virtual void		_is_valid_args(vector_args const &args) throw() = 0;
 		public:
+			virtual void		is_valid_args(server const *server) const = 0;
 			virtual void		exec_cmd(command const &cmd) const = 0;
 	};
 }
+#include "../commands/invite.hpp"
+#include "../commands/kick.hpp"
+#include "../commands/mode.hpp"

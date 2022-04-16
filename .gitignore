@@ -15,6 +15,7 @@
 *.so
 *.dylib
 *.dll
+*.dSYM
 
 # Fortran module files
 *.mod
@@ -31,3 +32,5 @@
 *.out
 *.app
 .vscode/
+irc_42
+client

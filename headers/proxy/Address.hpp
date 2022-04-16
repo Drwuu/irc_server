@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:40:21 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/13 15:21:34 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/14 19:21:08 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class	Address_ipv6 {
 		Address_ipv6	&operator=(const Address_ipv6 &source);
 
 		value_type		&operator*();
+		value_type		data();
 
 		void			set_len(const len_type &len);
 		void			set_port(const port_type &port);

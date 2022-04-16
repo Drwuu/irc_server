@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.cpp                                         :+:      :+:    :+:   */
+/*   test_client.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 19:12:55 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/09 13:34:38 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/16 18:00:17 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ int main(int ac, char **av) {
 		std::cerr << " Error writting " << std::endl;
 	}
     bzero(buffer,256);
-    n = read(sockfd,buffer,255);
-    if (n < 0) {
+	n = read(sockfd,buffer,255);
+	if (n < 0) {
 		std::cerr << " Error reading " << std::endl;
 	}
     printf("%s\n",buffer);
