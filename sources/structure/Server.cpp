@@ -16,12 +16,12 @@ namespace irc {
 		add_channel(chan);
 		chan.add_user(&user);
 		// admin.join_channel(*this, "PROUT"); //FIXME : doubled user in chan
-		vec_user vec =  get_user_list();
-		for (vec_cit_user it = vec.begin(); it != vec.end(); it++)
-			dprintf (2, "it =  %s\n", (*it)->get_nickname().c_str());
-		vec_user chans =  chan.get_user_list();
-		for (vec_cit_user it = chans.begin(); it != chans.end(); it++)
-			dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
+		// vec_user vec =  get_user_list();
+		// for (vec_cit_user it = vec.begin(); it != vec.end(); it++)
+		// 	dprintf (2, "it =  %s\n", (*it)->get_nickname().c_str());
+		// vec_user chans =  chan.get_user_list();
+		// for (vec_cit_user it = chans.begin(); it != chans.end(); it++)
+		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
 		parse_command(user);
 	};
 	Server::Server(std::string password,std::string port): _password(password), _port(port) {

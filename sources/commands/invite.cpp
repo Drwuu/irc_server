@@ -23,7 +23,7 @@ namespace irc {
 		vec_chan const serv_chans = Server->get_channel_list();
 		vec_cit_chan mchan = Server->find_chan_name(_args[2], serv_chans);
 		if (serv_chans.size() == 0 || mchan == serv_chans.end())
-			throw error(_args[2] + ": No such channel", ERR_NOSUCHNICK);
+			throw error(_args[2] + ": No such channel", ERR_NOSUCHCHANNEL);
 
 	/* Admin errors */
 		/* User that invite is not on channel */
