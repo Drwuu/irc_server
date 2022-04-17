@@ -31,10 +31,13 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			virtual void		is_valid_args(Server const *Server) const = 0;
-			virtual void		exec_cmd(command const &cmd) const = 0;
+			virtual void		is_valid_args(Server const *Server, User const &user) const = 0;
+			virtual void		exec_cmd(command const &cmd, User const &user) const = 0;
 	};
 }
 #include "../commands/invite.hpp"
 #include "../commands/kick.hpp"
 #include "../commands/mode.hpp"
+#include "../commands/Join.hpp"
+#include "../commands/Nick.hpp"
+#include "../commands/Message.hpp"

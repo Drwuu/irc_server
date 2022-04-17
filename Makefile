@@ -63,7 +63,7 @@ fclean:				clean
 
 re:					fclean all
 
-.PHONY:				all clean fclean re $(NAME)
+.PHONY:				all clean fclean re $(NAME) server_test clean_server_test
 .SILENT:
 
 BLACK			=	\033[0;30m

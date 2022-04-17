@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_server.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/17 19:54:36 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,38 +28,67 @@
 // Server oriented => bind() - listen() - accept()
 
 int		main(int ac, char **av) {
-	irc::Server Server;
 	if (ac < 2 || ac > 3) {
 		std::cerr << "usage : ircserv [port] [password]" << std::endl;
 		return -1;
 	}
+	(void)av;
+	irc::Server Server;
+
+	// irc::Server	server;
+	// int		port_nb = std::atoi(av[1]);
+	// Proxy	server_proxy(port_nb);
+
+	// server_proxy.switch_on();
+
+	// server_proxy.set_timeout(10000);
+
+	// for (int i = 0 ; i < 4 ; ++i) {
+	// 	server_proxy.queuing();
+
+	// // Reception of the list of Events
+	// 	Proxy::api_type		from_proxy = server_proxy.send_api();
+	// 	Proxy::api_type		to_proxy;
+
+	// 	// Loop on the list
+	// 	while (!from_proxy.empty()) {
+	// 		from_proxy.front()->handle(server);
+	// 		delete from_proxy.front();
+	// 		from_proxy.pop_front();
+	// 	}
+
+	// // The Server send instruction to the proxy
+	// // with the same type of list
+	// 	to_proxy = server.send_api();
+	// 	server_proxy.receive_api(to_proxy);
+	// }
+
 
 	// FIXME : check overflow or invalid port number
-	int		port_nb = std::atoi(av[1]);
+	// int		port_nb = std::atoi(av[1]);
+	// Proxy	server_proxy(port_nb);
 
-	Proxy	server_proxy(port_nb);
+	// server_proxy.switch_on();
 
-	server_proxy.switch_on();
+	// server_proxy.set_timeout(10000);
 
-	server_proxy.set_timeout(10000);
+	// for (int i = 0 ; i < 4 ; ++i) {
+	// 	server_proxy.queuing();
 
-	for (int i = 0 ; i < 4 ; ++i) {
-		server_proxy.queuing();
+	// 	Proxy::api_type		from_proxy(server_proxy.send_api());
+	// 	Proxy::api_type		to_proxy;
 
-		Proxy::api_type		from_proxy(server_proxy.send_api());
-		Proxy::api_type		to_proxy;
+	// 	for (Proxy::api_type::iterator it = from_proxy.begin() ;
+	// 			it != from_proxy.end() ; ++it) {
+	// 		(*it)->handle();
+	// 	}
+	// 	while (!from_proxy.empty()) {
+	// 		delete from_proxy.front();
+	// 		from_proxy.pop_front();
+	// 	}
 
-		for (Proxy::api_type::iterator it = from_proxy.begin() ;
-				it != from_proxy.end() ; ++it) {
-			(*it)->handle();
-		}
-		while (!from_proxy.empty()) {
-			delete from_proxy.front();
-			from_proxy.pop_front();
-		}
-
-		server_proxy.receive_api(from_proxy);
-	}
+	// 	server_proxy.receive_api(from_proxy);
+	// }
 
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +107,7 @@ int		main(int ac, char **av) {
 	// char buff[10];
 	// bzero(buff, 10);
 	// if (read(client_socket.get_fd(), buff, 9) != -1)
-		// std::cout << "Message received by the client is : " << buff << std::endl;
+	// 	std::cout << "Message received by the client is : " << buff << std::endl;
 	// bzero(buff, 10);
 	// write(client_socket.get_fd(), buff, 9);
 
