@@ -1,20 +1,28 @@
 #include "../../headers/structure/Server.hpp"
+#include <cstddef>
 
 namespace irc {
 /* Constructors & Destructors */
-	Server::Server(): _line("/invite toto prout"), _map(), _cmd(nullptr) {
+	Server::Server(): _line("/invite toto prout"), _map(), _parser(NULL) {
 		_map.insert(std::make_pair("INVITE", new invite()));
 		// _map.insert(std::make_pair("KICK", new irc::kick()));
 		// _map.insert(std::make_pair("MODE", new irc::mode()));
-		User admin;
-		admin.set_nickname("COCO");
+		parser parser(_line, _map);
+		_parser =  &parser;
 		User user;
-		user.set_nickname("PUTE");
+		user.set_nickname("TOTO");
 		add_user(user);
 		Channel chan("PROUT");
 		add_channel(chan);
-		chan.add_user(&admin);
-		parse_line();
+		chan.add_user(&user);
+		// admin.join_channel(*this, "PROUT"); //FIXME : doubled user in chan
+		// vec_user vec =  get_user_list();
+		// for (vec_cit_user it = vec.begin(); it != vec.end(); it++)
+		// 	dprintf (2, "it =  %s\n", (*it)->get_nickname().c_str());
+		// vec_user chans =  chan.get_user_list();
+		// for (vec_cit_user it = chans.begin(); it != chans.end(); it++)
+		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
+		parse_command(user);
 	};
 	Server::Server(std::string password,std::string port): _password(password), _port(port) {
 	}
@@ -47,7 +55,6 @@ namespace irc {
 		_ban_list = src._ban_list;
 		_line = src._line;
 		_map = src._map;
-		_cmd = src._cmd;
 		return *this;
 	};
 
@@ -98,16 +105,27 @@ namespace irc {
 	}
 
 /* Functions */
-	vec_cit_user const Server::find_nickname(string const &nick, vec_user const &user) const {
-		vec_cit_user it = user.begin();
+	vec_cit_user const Server::find_nickname(string const &nick, vec_user const &users) const {
+		vec_cit_user it = users.begin();
 		size_t i;
-		for (; it != user.end(); it++) {
+		for (; it != users.end(); it++) {
 			string nickname = (*it)->get_nickname();
 			i = nickname.find(nick);
 			if (i != string::npos)
 				return it;
 		}
-		return user.end();
+		return users.end();
+	};
+	vec_cit_user const Server::find_username(string const &name, vec_user const &users) const {
+		vec_cit_user it = users.begin();
+		size_t i;
+		for (; it != users.end(); it++) {
+			string username = (*it)->get_username();
+			i = username.find(username);
+			if (i != string::npos)
+				return it;
+		}
+		return users.end();
 	};
 	vec_cit_chan const Server::find_chan_name(string const &chan, vec_chan const &channel) const {
 		vec_cit_chan it = channel.begin();
@@ -121,11 +139,9 @@ namespace irc {
 		return channel.end();
 	};
 
-	void Server::parse_line() {
-		parser parser(_line, _map);
-		_cmd = &parser.get_command();
+	void Server::parse_command(User const &user) const {
 		try {
-			_cmd->is_valid_args(this);
+			_parser->get_command().is_valid_args(this, user);
 		}
 		catch (irc::error &e) {
 			std::cout << e.what() << std::endl;

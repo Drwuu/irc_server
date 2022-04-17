@@ -39,19 +39,21 @@ namespace irc {
 			User(Socket<Address_ipv6> * socket);
 			~User();
 
-			const std::string			get_username() const;
-			const std::string			get_nickname() const;
-			const std::string			get_password() const;
-			const std::string			get_uuid() const;
-			const std::string			get_port() const;
-			const std::string			get_ip() const;
-			const std::string			get_mode() const;
-			bool						get_operator_status() const;
-			bool						get_registered_status()const ;
-			bool						get_away_status() const;
-			std::vector<std::string>	get_past_username();
-			std::vector<ChanStatus>		get_chan_list();
-			ChanStatus					*get_chanstatus_from_list(Channel * channel);
+			const std::string				get_username() const;
+			const std::string				get_nickname() const;
+			const std::string				get_password() const;
+			const std::string				get_uuid() const;
+			const std::string				get_port() const;
+			const std::string				get_ip() const;
+			const std::string				get_mode() const;
+			bool							get_operator_status() const;
+			bool							get_registered_status()const ;
+			bool							get_away_status() const;
+			std::vector<std::string>		get_past_username();
+			std::vector<ChanStatus>			get_chan_list();
+			const std::vector<ChanStatus>	get_chan_list() const;
+			ChanStatus						*get_chanstatus_from_list(Channel * channel);
+			const ChanStatus				*get_chanstatus_from_list(Channel * channel) const;
 
 			void						set_password(std::string password);
 			void						set_ip(std::string ip);

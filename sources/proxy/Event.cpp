@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Event.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/15 16:40:50 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 20:44:56 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/17 16:40:12 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ Server_queue::Message::~Message() { }
 Server_queue::Message::Message(Server_queue::Message::data_type data,
 		const Server_queue::Message::socket_type *client) :
 	_data(data), _socket(client) {
-	(void)client;
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
@@ -108,14 +107,14 @@ Server_queue::Request_connexion::Request_connexion(){ }
 
 Server_queue::Request_connexion::Request_connexion(const socket_type *client)
 	: _socket(client) {
-	std::clog << " ------------------- CONNEXION REQUEST RECEIVED " 
+	std::clog << " ------------------- CONNEXION REQUEST RECEIVED "
 		<< " socket = " << client->get_fd() << std::endl;
 }
 
 Server_queue::Request_connexion::~Request_connexion(){ }
 
 void			Server_queue::Request_connexion::handle(){
-	std::clog << " ------------------- HANDLING CONNEXION REQUEST " 
+	std::clog << " ------------------- HANDLING CONNEXION REQUEST "
 		<< " socket = " << _socket->get_fd() << std::endl;
 }
 
@@ -132,7 +131,7 @@ Server_queue::Client_disconnected::Client_disconnected(const socket_type *client
 Server_queue::Client_disconnected::~Client_disconnected(){ }
 
 void			Server_queue::Client_disconnected::handle(){
-	std::clog << " ------------------- HANDLING DISCONNECTION " 
+	std::clog << " ------------------- HANDLING DISCONNECTION "
 		<< " socket = " << _socket->get_fd() << std::endl;
 }
 
@@ -140,13 +139,13 @@ void			Server_queue::Client_disconnected::handle(){
 //
 
 Server_queue::Error::Error(){
-	std::clog << " ------------------- ERROR RECEIVED " 
+	std::clog << " ------------------- ERROR RECEIVED "
 		<< " socket = " << _socket->get_fd() << std::endl;
 	std::clog << " data = " << _data << std::endl;
 }
 Server_queue::Error::~Error(){ }
 void			Server_queue::Error::handle(){
-	std::clog << " ------------------- HANDLING ERROR " 
+	std::clog << " ------------------- HANDLING ERROR "
 		<< " socket = " << _socket->get_fd() << std::endl;
 	std::clog << " data = " << _data << std::endl;
 }
@@ -155,13 +154,13 @@ void			Server_queue::Error::handle(){
 //
 
 Server_queue::Signal::Signal(){
-	std::clog << " ------------------- SIGNAL RECEIVED " 
+	std::clog << " ------------------- SIGNAL RECEIVED "
 		<< " socket = " << _socket->get_fd() << std::endl;
 	std::clog << " data = " << _data << std::endl;
 }
 Server_queue::Signal::~Signal(){ }
 void			Server_queue::Signal::handle(){
-	std::clog << " ------------------- HANDLING SIGNAL " 
+	std::clog << " ------------------- HANDLING SIGNAL "
 		<< " socket = " << _socket->get_fd() << std::endl;
 	std::clog << " data = " << _data << std::endl;
 }
