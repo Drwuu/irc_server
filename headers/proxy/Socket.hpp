@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 19:36:45 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/17 01:55:26 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Socket {
 		typedef		int											protocol_type;
 		typedef		int											socket_sort;
 		typedef		const int									const_fd_type;
-		typedef		char	*									data_type;
+		typedef		const char	*									data_type;
 		typedef		unsigned int								len_type;
 
 		typedef		AddSock										address_type;
@@ -47,7 +47,7 @@ class Socket {
 		socket_sort				_type; // STREAM_SOCK or others
 		protocol_type			_protocol; // 0 to let the machine decide
 		address_type			_address; //address IP, port. length...
-	
+
 	protected:
 		Socket()
 			: _sockfd(0), _type(0), _protocol(0), _address(0) { }

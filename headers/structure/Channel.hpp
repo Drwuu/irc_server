@@ -38,6 +38,8 @@ namespace irc {
 			const int&					get_userlimit() const;
 			const std::vector<User *>	get_user_list() const;
 			const std::vector<User *>	get_banned_user() const; // Needed for ISBANNED function
+			const std::vector<User *>	get_invite_list() const;
+			const std::vector<User *>	get_operator_list() const;
 			bool						is_private() const;
 			bool						is_secret() const;
 			bool						is_invite() const;
@@ -46,9 +48,10 @@ namespace irc {
 			bool						is_moderated() const;
 			bool						is_limited() const;
 
+			User *						find_user(std::string nickname, std::vector<User *> list);
+
 			void						set_name(const std::string& name);
 			void						set_prefix(const std::string& prefix);
-			void						set_mask(const std::string& mask);
 			void						set_mode(const std::string& mode);
 			void						set_flag(const std::string& flag);
 			void						set_topic(const std::string& topic); // Use for TOPIC function
@@ -61,5 +64,8 @@ namespace irc {
 			void						del_user(User * user);
 			void						ban_user(std::string nick);
 			void						unban_user(std::string nick);
+			void						invite_user(User * user);
+			void						op_user(std::string nick);
+			void						transmit_message(std::string msg, User * user);
 	};
 }

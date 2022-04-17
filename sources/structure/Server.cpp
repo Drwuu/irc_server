@@ -10,7 +10,7 @@ namespace irc {
 		admin.set_nickname("COCO");
 		User user;
 		user.set_nickname("PUTE");
-		add_user(user);
+		add_user(&user);
 		Channel chan("PROUT");
 		add_channel(chan);
 		chan.add_user(&admin);
@@ -96,6 +96,9 @@ namespace irc {
 	void Server::set_ip(std::string ip){
 		this->_ip = ip;
 	}
+	void Server::set_motd(std::string motd){
+		this->_motd = motd;
+	}
 
 /* Functions */
 	vec_cit_user const Server::find_nickname(string const &nick, vec_user const &user) const {
@@ -121,6 +124,18 @@ namespace irc {
 		return channel.end();
 	};
 
+
+	User * Server::get_user_from_socket(Socket<Address_ipv6> *sock) {
+		vec_cit_user it = _user_list.begin();
+		for (; it != _user_list.end(); it++) {
+			if ((*it)->get_socket() == sock)
+				return (*it);
+		}
+		User * user = new User(sock);
+		this->add_user(user);
+		return user;
+	};
+
 	void Server::parse_line() {
 		parser parser(_line, _map);
 		_cmd = &parser.get_command();
@@ -131,8 +146,8 @@ namespace irc {
 			std::cout << e.what() << std::endl;
 		}
 	};
-	void Server::add_user(User & user) {
-		this->_user_list.push_back(&user);
+	void Server::add_user(User * user) {
+		this->_user_list.push_back(user);
 	}
 	void Server::add_channel(Channel & channel) {
 		this->_channel_list.push_back(&channel);

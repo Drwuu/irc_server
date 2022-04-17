@@ -5,7 +5,7 @@
 #include "../proxy/Event.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
-//#include <list>
+#include <list>
 
 namespace irc {
 	class Server {
@@ -19,23 +19,20 @@ namespace irc {
 			std::string					_hostname;
 			std::string					_password;
 			std::string					_port;
-			std::string					_ip;
-			std::string					_version;
+			std::string					_ip; // Not used
+			std::string					_version; // Not used
 			std::string					_motd;
-			std::string					_date;
-			std::string					_oper_id;
-			std::string					_oper_password;
-
-			int							_time;
+			std::string					_date; // Not used
+			std::string					_oper_id; // Not used
+			std::string					_oper_password; // Not used
+			int							_time; // Not used
 			std::vector<User *>			_user_list;
 			std::vector<Channel *>		_channel_list;
-			std::vector<std::string>	_ban_list;
-			//std::list<Obj *> 			_obj_list;
-
+			std::vector<std::string>	_ban_list; // Not used
 			std::string					_line;
 			map_cmd						_map;
 			command						*_cmd;
-			//std::list<Socket_event *> 		_event_list;
+			std::list<Socket_event *> 	_event_list;
 		public:
 	/* Constructors & Destructors */
 		private:
@@ -78,10 +75,11 @@ namespace irc {
 		public:
 			vec_cit_user const				find_nickname(std::string const &nick, vec_user const &user) const;
 			vec_cit_chan const				find_chan_name(std::string const &chan, vec_chan const &channel) const;
+			User *							get_user_from_socket(Socket<Address_ipv6> *sock);
 			void							parse_line();
 			void							exec_cmd(User & user, command *command);
 
-			void							add_user(User & user);
+			void							add_user(User * user);
 			void							add_channel(Channel & channel);
 			void							del_user(User & user);
 			void							del_channel(Channel & channel);

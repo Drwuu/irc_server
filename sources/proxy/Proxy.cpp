@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/17 01:16:19 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,7 +363,7 @@ void		Proxy::erase_cache(const socket_type &target) {
 
 	while (!queue.empty()) {
 		if (queue.front())
-			free(queue.front());
+			delete queue.front();
 		queue.pop_front();
 	}
 }

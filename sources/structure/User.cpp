@@ -1,8 +1,10 @@
 #include "../../headers/structure/User.hpp"
+#include "../../headers/proxy/Event.hpp"
 
 namespace irc {
 	User::User(){}
 	User::~User(){}
+	User::User(Socket<Address_ipv6> * socket):_socket(socket){}
 	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
 
 	const std::string User::get_username() const{
@@ -32,8 +34,12 @@ namespace irc {
 				return &(*it);
 		}
 		std::cout << "Channel not found\n";
-		return nullptr;
+		return NULL;
 	}
+
+	Socket<Address_ipv6> * User::get_socket(){
+		return (this->_socket);}
+
 	bool User::get_operator_status() const{
 		return _is_irc_operator;}
 
@@ -66,55 +72,60 @@ namespace irc {
 		}
 		this->_nickname = nickname;}
 
-void User::join_channel(Server & Server, std::string channel){
-	srand(time(NULL));
-	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
-		if ((*it).channel->get_name() == channel){
-			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
-				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){ // WIP pue la merde
-					(*it).channel->del_user(this);
-					get_chan_list().erase(it);
-					return ; // Channel found
-				}
-			}
-			// No operator left on the channel
-			(*it).channel->del_user(this);
-			get_chan_list().erase(it);
-			if ((*it).channel->get_user_list().size() > 5){
-				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size())->get_chanstatus_from_list((*it).channel)->is_operator = true;
-			}
-			else{
-				for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
-					(*it2)->get_chanstatus_from_list((*it).channel)->is_operator = true;
-				} // If there is less than 6 user in the channel make them all op
-			}
-			}
-			break;
-		}
-		for (std::vector<Channel *>::const_iterator it = Server.get_channel_list().begin(); it != Server.get_channel_list().end(); ++it){
-			if ((*it)->get_name() == channel){
-				ChanStatus chan(*it);
-				if ((*it)->is_moderated() == true)
-					chan.is_mute = true;
-				chan.channel->add_user(this);
-				get_chan_list().push_back(chan);
-				return ; // Channel found
-			}
-		}
-		// Channel not found in channel list : create it
-		// WIP need to add mod to the channel creation
-		Channel *new_chan = new Channel(channel);
-		Server.add_channel(*new_chan);
-		ChanStatus chan_status(new_chan);
-		chan_status.is_operator = true;
-		chan_status.is_mute = false;
-		get_chan_list().push_back(chan_status);
-		new_chan->add_user(this);
+	void User::join_channel(Channel * channel){
+		channel->add_user(this);
+		this->_chan_list.push_back(ChanStatus(channel));
 	}
 
-	void User::leave_channel(std::string channel){
+// void User::join_channel(Server & Server, std::string channel){
+// 	srand(time(NULL));
+// 	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
+// 		if ((*it).channel->get_name() == channel){
+// 			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
+// 				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){ // WIP pue la merde
+// 					(*it).channel->del_user(this);
+// 					get_chan_list().erase(it);
+// 					return ; // Channel found
+// 				}
+// 			}
+// 			// No operator left on the channel
+// 			(*it).channel->del_user(this);
+// 			get_chan_list().erase(it);
+// 			if ((*it).channel->get_user_list().size() > 5){
+// 				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size())->get_chanstatus_from_list((*it).channel)->is_operator = true;
+// 			}
+// 			else{
+// 				for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
+// 					(*it2)->get_chanstatus_from_list((*it).channel)->is_operator = true;
+// 				} // If there is less than 6 user in the channel make them all op
+// 			}
+// 			}
+// 			break;
+// 		}
+// 		for (std::vector<Channel *>::const_iterator it = Server.get_channel_list().begin(); it != Server.get_channel_list().end(); ++it){
+// 			if ((*it)->get_name() == channel){
+// 				ChanStatus chan(*it);
+// 				if ((*it)->is_moderated() == true)
+// 					chan.is_mute = true;
+// 				chan.channel->add_user(this);
+// 				get_chan_list().push_back(chan);
+// 				return ; // Channel found
+// 			}
+// 		}
+// 		// Channel not found in channel list : create it
+// 		// WIP need to add mod to the channel creation
+// 		Channel *new_chan = new Channel(channel);
+// 		Server.add_channel(*new_chan);
+// 		ChanStatus chan_status(new_chan);
+// 		chan_status.is_operator = true;
+// 		chan_status.is_mute = false;
+// 		get_chan_list().push_back(chan_status);
+// 		new_chan->add_user(this);
+// 	}
+
+	void User::leave_channel(Channel * channel){
 		for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
-			if ((*it).channel->get_name() == channel){
+			if ((*it).channel->get_name() == channel.get_name()){
 				(*it).channel->del_user(this);
 				get_chan_list().erase(it);
 				break;
@@ -122,17 +133,8 @@ void User::join_channel(Server & Server, std::string channel){
 		}
 	}
 
-	void User::send_message(Server & Server, Channel & channel, std::string msg){
-		for(std::vector<Channel *>::const_iterator it = Server.get_channel_list().begin(); it != Server.get_channel_list().end(); ++it){
-			if ((*it)->get_name() == channel.get_name()){
-				if (channel.is_moderated() == true && get_chanstatus_from_list(&channel)->is_mute == true) // si le channel est restreint et que l'utilisateur est mute
-					return; // if the Server is muted, the user can't send message
-				for(std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
-					(*it)->receive_message(Server,channel,msg); // send message to all users in the channel
-				}
-			}
-		}
-		// Channel not found in channel list : send error
+	void User::send_message(std::string msg, Channel & channel){
+		channel.transmit_message(msg, this);
 	}
 
 	void User::send_message(Server & Server,User & user, std::string msg){
@@ -145,6 +147,24 @@ void User::join_channel(Server & Server, std::string channel){
 			}
 		}
 		// user not found in Server list : send error
+	}
+
+	void User::receive_message(User * user,std::string msg){
+		std::string ret = user->get_nickname() + " :" + msg + "\r\n";
+		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
+		user->_event_list.push_back(new_msg);
+	}
+
+	void User::send_invite(User & user, Channel & channel){
+		channel.invite_user(user,this);
+		std::string ret = channel.get_name() + user.get_nickname() + " has been invited to join the channel\r\n";
+		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
+	}
+
+	void User::receive_invite(Channel & channel){
+		std::string ret = "You have been invited to " + channel.get_name() + "\r\n";
+		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
+		this->_event_list.push_back(new_msg);
 	}
 
 	void User::kick_user(User & user, Channel & channel,std::string msg){

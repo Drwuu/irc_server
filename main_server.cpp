@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/17 02:07:38 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,17 @@ int		main(int ac, char **av) {
 		std::cerr << "usage : ircserv [port] [password]" << std::endl;
 		return -1;
 	}
+	Server.set_port(av[1]);
+	Server.set_password(av[2]);
+	Server.set_name("irc.42lyon.fr");
+	Server.set_motd("Welcome to 42lyon irc server");
 
 	// FIXME : check overflow or invalid port number
-	int		port_nb = std::atoi(av[1]);
+	int		port_nb = std::atoi(av[1]); // FIXME : check overflow
+	if (port_nb > 65535 || port_nb < 1024) {
+		std::cerr << "invalid port number: " << port_nb << std::endl;
+		return -1;
+	}
 
 	Proxy	server_proxy(port_nb);
 
