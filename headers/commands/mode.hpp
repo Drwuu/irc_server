@@ -22,7 +22,7 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			void	exec_cmd(command const &cmd) const;
-			void	is_valid_args(Server const *Server) const;
+			void	exec_cmd(command const &cmd, User const &user) const;
+			void	is_valid_args(Server const *Server, User const &user) const;
 	};
 }

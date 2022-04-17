@@ -121,7 +121,7 @@ namespace irc {
 		size_t i;
 		for (; it != users.end(); it++) {
 			string username = (*it)->get_username();
-			i = username.find(username);
+			i = username.find(name);
 			if (i != string::npos)
 				return it;
 		}

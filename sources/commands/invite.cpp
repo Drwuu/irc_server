@@ -10,6 +10,7 @@ namespace irc {
 /* Functions */
 	void invite::exec_cmd(command const &cmd, User const &user) const {
 		(void)cmd;
+		(void)user;
 	};
 
 	void invite::is_valid_args(Server const *Server, User const &user) const {
