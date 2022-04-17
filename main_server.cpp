@@ -6,7 +6,7 @@
 /*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/17 19:54:36 by lwourms          ###   ########.fr       */
+/*   Updated: 2022/04/17 21:06:27 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ int		main(int ac, char **av) {
 		std::cerr << "usage : ircserv [port] [password]" << std::endl;
 		return -1;
 	}
+
+/////////////////////////// LUDO TESTS ///////////////////////////
 	(void)av;
 	irc::Server Server;
-
-	// irc::Server	server;
 	// int		port_nb = std::atoi(av[1]);
 	// Proxy	server_proxy(port_nb);
 
@@ -62,33 +62,34 @@ int		main(int ac, char **av) {
 	// 	to_proxy = server.send_api();
 	// 	server_proxy.receive_api(to_proxy);
 	// }
+/////////////////////////// LUDO TESTS ///////////////////////////
 
 
 	// FIXME : check overflow or invalid port number
-	// int		port_nb = std::atoi(av[1]);
-	// Proxy	server_proxy(port_nb);
+	int		port_nb = std::atoi(av[1]);
+	Proxy	server_proxy(port_nb);
 
-	// server_proxy.switch_on();
+	server_proxy.switch_on();
 
-	// server_proxy.set_timeout(10000);
+	server_proxy.set_timeout(10000);
 
-	// for (int i = 0 ; i < 4 ; ++i) {
-	// 	server_proxy.queuing();
+	for (int i = 0 ; i < 4 ; ++i) {
+		server_proxy.queuing();
 
-	// 	Proxy::api_type		from_proxy(server_proxy.send_api());
-	// 	Proxy::api_type		to_proxy;
+		Proxy::api_type		from_proxy(server_proxy.send_api());
+		Proxy::api_type		to_proxy;
 
-	// 	for (Proxy::api_type::iterator it = from_proxy.begin() ;
-	// 			it != from_proxy.end() ; ++it) {
-	// 		(*it)->handle();
-	// 	}
-	// 	while (!from_proxy.empty()) {
-	// 		delete from_proxy.front();
-	// 		from_proxy.pop_front();
-	// 	}
+		for (Proxy::api_type::iterator it = from_proxy.begin() ;
+				it != from_proxy.end() ; ++it) {
+			(*it)->handle();
+		}
+		while (!from_proxy.empty()) {
+			delete from_proxy.front();
+			from_proxy.pop_front();
+		}
 
-	// 	server_proxy.receive_api(from_proxy);
-	// }
+		server_proxy.receive_api(from_proxy);
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
