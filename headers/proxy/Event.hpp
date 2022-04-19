@@ -6,7 +6,7 @@
 /*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 14:47:12 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 17:23:26 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,12 @@ struct Proxy_queue {
 	class	Write : public Socket_event {
 		private:
 			// Message to sent to Client
-			// data_type		data;
+			data_type		_data;
+			fd_type			_socketfd;
 			void			handle();
-		public:
 			Write();
+		public:
+			Write(fd_type socketfd, data_type data);
 			~Write();
 			void			handle(Proxy &);
 	};
@@ -62,33 +64,13 @@ struct Proxy_queue {
 	class	Write_priority : public Socket_event {
 		private:
 			// Message data to send to Client
-			// data_type		data;
+			data_type		_data;
+			fd_type			_socketfd;
 			void			handle();
-		public:
 			Write_priority();
+		public:
+			Write_priority(fd_type socketfd, data_type data);
 			~Write_priority();
-			void			handle(Proxy &);
-	};
-
-	class	Confirm_connexion : public Socket_event {
-		private:
-			// Confirmation message for the Client
-			// data_type		data;
-			void			handle();
-		public:
-			Confirm_connexion();
-			~Confirm_connexion();
-			void			handle(Proxy &);
-	};
-
-	class	Refuse_connexion : public Socket_event {
-		private:
-			// Refuse message for the Client
-			// data_type		data;
-			void			handle();
-		public:
-			Refuse_connexion();
-			~Refuse_connexion();
 			void			handle(Proxy &);
 	};
 
@@ -112,17 +94,6 @@ struct Proxy_queue {
 		public:
 			Disconnect(const fd_type &socket_id);
 			~Disconnect();
-			void			handle(Proxy &);
-	};
-
-	class	Signal : public Socket_event {
-		private:
-			// Signal response for the Client
-			// data_type		data;
-			void			handle();
-		public:
-			Signal();
-			~Signal();
 			void			handle(Proxy &);
 	};
 };
