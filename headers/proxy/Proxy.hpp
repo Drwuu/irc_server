@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 19:51:29 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 21:24:55 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,16 @@ namespace irc {
 					void	handle(socket_type *socket);
 					void	handle_server(socket_type *server_socket);
 			};
+
+			// class Poll_hup_in : public IPoll_handling {
+				// public:
+					// Poll_hup_in();
+					// ~Poll_hup_in();
+					// Poll_hup_in(Proxy *proxy);
+					// void	handle(socket_type *socket);
+					// void	handle_server(socket_type *server_socket);
+			// };
+
 
 		public:
 			typedef		std::list<data_type>						cache_queue_type;

@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 20:06:45 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 21:25:45 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,9 @@ void			irc::Server_queue::Message::handle() { }
 void			irc::Server_queue::Message::handle(Server &) {
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
-}
 
-///////////////////////////////////////////////////////////////////////////////
-//
-irc::Server_queue::Message_priority::Message_priority() {
-	std::clog << " ------------------- PRIORITY MESSAGE RECEIVED " << std::endl;
-	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
-}
-
-irc::Server_queue::Message_priority::~Message_priority() { }
-
-void			irc::Server_queue::Message_priority::handle() { }
-
-void			irc::Server_queue::Message_priority::handle(Server &) {
-	std::clog << " ------------------- HANDLING PRIORITY MESSAGE" << std::endl;
-	std::clog << " data = " << _data << std::endl;
-	std::clog << " socket = " << _socket->get_fd() << std::endl;
+	// Call parser
+	// Call client
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,8 +54,7 @@ void			irc::Server_queue::Request_connexion::handle() { }
 void			irc::Server_queue::Request_connexion::handle(Server &) {
 	std::clog << " ------------------- HANDLING CONNEXION REQUEST "
 		<< " socket = " << _socket->get_fd() << std::endl;
-	// Call parser
-	// Call client
+	// server.get_user_from_socket(_socket);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,20 +94,3 @@ void			irc::Server_queue::Error::handle(Server &){
 	std::clog << " data = " << _data << std::endl;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-
-irc::Server_queue::Signal::Signal() {
-	std::clog << " ------------------- SIGNAL RECEIVED "
-		<< " socket = " << _socket->get_fd() << std::endl;
-	std::clog << " data = " << _data << std::endl;
-}
-irc::Server_queue::Signal::~Signal() { }
-
-void			irc::Server_queue::Signal::handle(){ }
-
-void			irc::Server_queue::Signal::handle(Server &){
-	std::clog << " ------------------- HANDLING SIGNAL "
-		<< " socket = " << _socket->get_fd() << std::endl;
-	std::clog << " data = " << _data << std::endl;
-}

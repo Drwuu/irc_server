@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 18:46:28 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 19:35:01 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 20:38:23 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,6 @@ namespace irc {
 			public:
 				~Message();
 				Message(data_type data, const socket_type *client);
-				void			handle(irc::Server &server);
-		};
-
-		class	Message_priority : public Socket_event {
-			private:
-				// Content of the priority message from the Client
-				data_type		_data;
-				const socket_type *_socket;
-				Message_priority();
-				void			handle();
-			public:
-				~Message_priority();
 				void			handle(irc::Server &server);
 		};
 
@@ -86,18 +74,6 @@ namespace irc {
 			public:
 				Error();
 				~Error();
-				void			handle(irc::Server &server);
-		};
-
-		class	Signal : public Socket_event {
-			private:
-				// Signal receive from the Client
-				data_type		_data;
-				const socket_type	*_socket;
-				void			handle();
-			public:
-				Signal();
-				~Signal();
 				void			handle(irc::Server &server);
 		};
 

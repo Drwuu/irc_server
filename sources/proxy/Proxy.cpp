@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 19:49:03 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 21:02:23 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -539,7 +539,7 @@ void	irc::Proxy::Poll_error::handle_server(socket_type *) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-// Poll_out : POLLERR
+// Poll_out : POLLOUT
 
 irc::Proxy::Poll_out::Poll_out() {
 }
@@ -571,3 +571,18 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 
 void	irc::Proxy::Poll_out::handle_server(socket_type *) {
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Poll_hup_in : POLLHUP | POLLIN
+
+// irc::Proxy::Poll_hup_in::Poll_hup_in() { }
+// irc::Proxy::Poll_hup_in::~Poll_hup_in() { }
+//
+// irc::Proxy::Poll_hup_in::Poll_hup_in(Proxy *proxy) : IPoll_handling(proxy) { }
+//
+// void	irc::Proxy::Poll_hup_in::handle(socket_type *socket) {
+	// _proxy->_flags[POLLIN]->handle(socket);
+	// _proxy->_flags[POLLHUP]->handle(socket);
+// }
+//
+// void	irc::Proxy::Poll_hup_in::handle_server(socket_type *) { }
