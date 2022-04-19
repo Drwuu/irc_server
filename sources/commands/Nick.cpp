@@ -17,7 +17,7 @@ namespace irc {
 	}
 	bool Nick::is_nickname_valid() {
 			string::iterator it = argv[1].begin();
-			if (!isalpha(*it) or )
+			if (!isalpha(*it) or !is_special_char(*it))
 				return false;
 			it++;
 			for (;it != args[1].end();++it)
@@ -39,6 +39,6 @@ namespace irc {
 			throw error("Invalid nickname", ERR_ERRONEUSNICKNAME);
 
 		// if (Server->find_nickname(this->_args[1]) != NULL && Server->find_nickname(this->_args[1]).get_socket() != NULL) Possible integration
-		if (Server->find_nickname(_args[1]) != NULL)
+		if (Server->find_nickname(_args[1]) != user.end())
 			throw error("Nickname already in use", ERR_NICKNAMEINUSE);
 	}
