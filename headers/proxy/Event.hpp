@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Event.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/17 17:25:23 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Socket.hpp"
 
+class	server;
 class	Socket_event {
 	public:
 		typedef		Socket<Address_ipv6>	socket_type;
@@ -190,4 +191,5 @@ struct Server_queue {
 
 };
 
+# include "../structure/Server.hpp"
 #endif

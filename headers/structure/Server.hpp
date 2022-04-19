@@ -31,7 +31,7 @@ namespace irc {
 			std::vector<std::string>	_ban_list; // Not used
 			std::string					_line;
 			map_cmd						_map;
-			command						*_cmd;
+			parser						*_parser;
 			std::list<Socket_event *> 	_event_list;
 		public:
 	/* Constructors & Destructors */
@@ -73,10 +73,12 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			vec_cit_user const				find_nickname(std::string const &nick, vec_user const &user) const;
-			vec_cit_chan const				find_chan_name(std::string const &chan, vec_chan const &channel) const;
+			vec_cit_user const				find_nickname(std::string const &nick, vec_user const &users) const;
+			vec_cit_user const				find_username(std::string const &username, vec_user const &users) const;
+			vec_cit_chan const				find_chan_name(std::string const &chan, vec_chan const &channels) const;
 			User *							get_user_from_socket(Socket<Address_ipv6> *sock);
-			void							parse_line();
+
+			void							parse_command(User const &user) const;
 			void							exec_cmd(User & user, command *command);
 			User *							check_user_existance(User & user);
 

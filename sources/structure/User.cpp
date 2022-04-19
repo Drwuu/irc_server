@@ -1,5 +1,6 @@
 #include "../../headers/structure/User.hpp"
 #include "../../headers/proxy/Event.hpp"
+#include <vector>
 
 namespace irc {
 	User::User(){}
@@ -25,10 +26,23 @@ namespace irc {
 		return _is_registered;}
 	std::vector<std::string> User::get_past_username(){
 		return (this->_past_username);}
-	std::vector<ChanStatus> User::get_chan_list(){
+	std::vector<ChanStatus> User::get_chan_list() {
 		return (this->_chan_list);}
-	ChanStatus * User::get_chanstatus_from_list(Channel * channel){
-		for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end();++it)
+	const std::vector<ChanStatus> User::get_chan_list() const {
+		return (this->_chan_list);}
+	ChanStatus *User::get_chanstatus_from_list(Channel * channel) {
+		std::vector<ChanStatus> chans = get_chan_list();
+		for (std::vector<ChanStatus>::iterator it = chans.begin(); it != chans.end();++it)
+		{
+			if ((*(it)).channel->get_name() == channel->get_name())
+				return &(*it);
+		}
+		std::cout << "Channel not found\n";
+		return nullptr;
+	}
+	const ChanStatus *User::get_chanstatus_from_list(Channel * channel) const {
+		std::vector<ChanStatus> chans = get_chan_list();
+		for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
 		{
 			if ((*(it)).channel->get_name() == channel->get_name())
 				return &(*it);

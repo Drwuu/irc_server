@@ -2,7 +2,8 @@
 #include "command.hpp"
 
 namespace irc {
-	class kick: public command {
+	class Server;
+	class Join: public command {
 	/* Typedefs */
 		private:
 		public:
@@ -11,13 +12,13 @@ namespace irc {
 		public:
 	/* Constructors & Destructors */
 		private:
-			kick(kick const &src);
+			Join(Join const &src);
 		public:
-			kick();
-			virtual ~kick();
+			Join();
+			virtual ~Join();
 	/* Operators */
 		private:
-			kick &operator=(kick const &src);
+			Join &operator=(Join const &src);
 		public:
 	/* Functions */
 		private:
