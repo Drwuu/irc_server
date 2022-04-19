@@ -9,11 +9,11 @@ namespace irc {
 		// _map.insert(std::make_pair("MODE", new irc::mode()));
 		User user;
 		user.set_nickname("toto");
+		user.set_username("toto");
 		add_user(&user);
 		Channel chan("prout");
+		chan.add_user(&user);
 		add_channel(chan);
-		// chan.add_user(&user);
-		// dprintf (2, "Server() | chan =  %s\n", chan.get_name().c_str());
 		command *cmd = parse_line(user);
 		(void)cmd;
 		// admin.join_channel(*this, "PROUT"); //FIXME : doubled user in chan
