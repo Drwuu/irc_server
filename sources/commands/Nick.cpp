@@ -29,6 +29,8 @@ namespace irc {
 	}
 	void Nick::exec_cmd(command const &cmd, User const &user) const {
 		user.set_nickname(cmd.get_args()[1]);
+		if (user.get_username().c_str() != "" && user.get_realname().c_str() != "")
+		user.get_registered_status() = true;
 	};
 
 	void Nick::is_valid_args(Server const *Server, User const &user) const {
