@@ -2,7 +2,7 @@
 #include "../error/error.hpp"
 #include "../commands/command.hpp"
 #include "../parser/parser.hpp"
-#include "../proxy/Event.hpp"
+#include "../proxy/Proxy_queue.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
 #include <list>
