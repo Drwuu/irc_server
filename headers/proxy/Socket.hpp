@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 06:32:19 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/19 13:58:15 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,13 +155,13 @@ class Socket {
 		}
 
 		template <typename T>
-			friend bool		operator==(const T &rhs, const T &lhs) {
+			friend bool		operator==(const Socket<T> &rhs, const Socket<T> &lhs) {
 				return rhs._sockfd == lhs._sockfd && rhs._type == lhs.fd_type
 					&& rhs._address == lhs._address && rhs._protocol == lhs._protocol;
 			}
 
 		template <typename T>
-			friend bool		operator!=(const T &rhs, const T &lhs) {
+			friend bool		operator!=(const Socket<T> &rhs, const Socket<T> &lhs) {
 				return !(rhs == lhs);
 			}
 
