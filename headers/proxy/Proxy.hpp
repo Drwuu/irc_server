@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 22:31:49 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/19 19:51:29 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define PROXY_HPP
 
 # include "Socket.hpp"
-# include "Event.hpp"
 # include "Address.hpp"
 
 # include <sys/types.h>
@@ -80,175 +79,187 @@
 
 // FIXME : manage Signal Handling ?
 
+class Socket_event;
 
-class	Proxy {
+namespace irc {
 
-	public:
-		typedef		Socket<Address_ipv6>		socket_type;
-		typedef		socket_type::port_type		port_type;
-		typedef		socket_type::fd_type		fd_type;
-		typedef		socket_type::data_type		data_type;
-		typedef		short int					flag_type;
-		typedef		int							milisecond_type;
+	class	Proxy {
 
-	private:
-		class	IPoll_handling {
+		public:
+			typedef		Socket<Address_ipv6>		socket_type;
+			typedef		socket_type::port_type		port_type;
+			typedef		socket_type::fd_type		fd_type;
+			typedef		socket_type::data_type		data_type;
+			typedef		short int					flag_type;
+			typedef		int							milisecond_type;
 
-			protected:
-				IPoll_handling();
-				Proxy	*_proxy;
-			public:
-				IPoll_handling(Proxy *proxy);
-				virtual ~IPoll_handling();
-				virtual void	handle(socket_type *socket) = 0;
-				virtual void	handle_server(socket_type *socket) = 0;
-		};
+		private:
+			class	IPoll_handling {
 
-		class Poll_in : public IPoll_handling {
-			public:
-				Poll_in();
-				~Poll_in();
-				Poll_in(Proxy *proxy);
-				void	handle(socket_type *socket);
-				void	handle_server(socket_type *server_socket);
-		};
+				protected:
+					IPoll_handling();
+					Proxy	*_proxy;
+				public:
+					IPoll_handling(Proxy *proxy);
+					virtual ~IPoll_handling();
+					virtual void	handle(socket_type *socket) = 0;
+					virtual void	handle_server(socket_type *socket) = 0;
+			};
 
-		class Poll_priority_in : public IPoll_handling {
-			public:
-				Poll_priority_in();
-				~Poll_priority_in();
-				Poll_priority_in(Proxy *proxy);
-				void	handle(socket_type *socket);
-				void	handle_server(socket_type *server_socket);
-		};
+			class Poll_in : public IPoll_handling {
+				public:
+					Poll_in();
+					~Poll_in();
+					Poll_in(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
-		class Poll_invalid : public IPoll_handling {
-			public:
-				Poll_invalid();
-				~Poll_invalid();
-				Poll_invalid(Proxy *proxy);
-				void	handle(socket_type *socket);
-				void	handle_server(socket_type *server_socket);
-		};
+			class Poll_priority_in : public IPoll_handling {
+				public:
+					Poll_priority_in();
+					~Poll_priority_in();
+					Poll_priority_in(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
-		class Poll_hang_up : public IPoll_handling {
-			public:
-				Poll_hang_up();
-				~Poll_hang_up();
-				Poll_hang_up(Proxy *proxy);
-				void	handle(socket_type *socket);
-				void	handle_server(socket_type *server_socket);
-		};
+			class Poll_invalid : public IPoll_handling {
+				public:
+					Poll_invalid();
+					~Poll_invalid();
+					Poll_invalid(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
-		class Poll_error : public IPoll_handling {
-			public:
-				Poll_error();
-				~Poll_error();
-				Poll_error(Proxy *proxy);
-				void	handle(socket_type *socket);
-				void	handle_server(socket_type *server_socket);
-		};
+			class Poll_hang_up : public IPoll_handling {
+				public:
+					Poll_hang_up();
+					~Poll_hang_up();
+					Poll_hang_up(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
-		class Poll_out : public IPoll_handling {
-			public:
-				Poll_out();
-				~Poll_out();
-				Poll_out(Proxy *proxy);
-				void	handle(socket_type *socket);
-				void	handle_server(socket_type *server_socket);
-		};
+			class Poll_error : public IPoll_handling {
+				public:
+					Poll_error();
+					~Poll_error();
+					Poll_error(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
-	public:
-		typedef		std::list<data_type>						cache_queue_type;
+			class Poll_out : public IPoll_handling {
+				public:
+					Poll_out();
+					~Poll_out();
+					Poll_out(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
-		typedef		std::map<fd_type, socket_type *>			client_tree_type;
-		typedef		std::map<fd_type, cache_queue_type >		cache_tree_type;
-		typedef		std::vector<pollfd>							pollfd_type;
+		public:
+			typedef		std::list<data_type>						cache_queue_type;
 
-		typedef		std::map<flag_type, IPoll_handling *>		flag_tree_type;
+			typedef		std::map<fd_type, socket_type *>			client_tree_type;
+			typedef		std::map<fd_type, cache_queue_type >		cache_tree_type;
+			typedef		std::vector<pollfd>							pollfd_type;
 
-		typedef		Socket_event								event_type;
-		typedef		std::list<event_type *>						api_type;
+			typedef		std::map<flag_type, IPoll_handling *>		flag_tree_type;
 
-	private:
+			typedef		Socket_event								event_type;
+			typedef		std::list<event_type *>						api_type;
 
-		// Server socket is isolated from clients.
-		socket_type				_server;
+		private:
 
-		// Tree to find and use : connected clients, flags actions, pending messages.
-		client_tree_type		_clients;
-		cache_tree_type			_cache;
-		flag_tree_type			_flags;
+			// Server socket is isolated from clients.
+			socket_type				_server;
 
-		// Poll() arguments : pollfd *, timeout.
-		pollfd_type				_poll_data;
-		milisecond_type			_timeout;
+			// Tree to find and use : connected clients, flags actions, pending messages.
+			client_tree_type		_clients;
+			cache_tree_type			_cache;
+			flag_tree_type			_flags;
 
-		// List destined to the Server.
-		api_type				_to_server;
+			// Poll() arguments : pollfd *, timeout.
+			pollfd_type				_poll_data;
+			milisecond_type			_timeout;
 
-		// There is only 3 sets of events :
-		// 		Client base : POLLIN | POLLPRI (read)
-		// 		Client message : POLLIN | POLLPRI | POLLOUT (read | write)
-		// 		Server : POLLIN (listen connexion)
-		// Constructors' initialise.
-		// Server one's should never change but the dev can implement it.
-		// Every pollfd.events is acutalised at each poll() loop.
-		short					_cl_base_pevents;
-		short					_cl_message_pevents;
-		short					_sv_pevents;
+			// List destined to the Server.
+			api_type				_to_server;
 
-		short					_cl_hang_up;
-		short					_cl_invalid;
-		short					_cl_error;
+			// There is only 3 sets of events :
+			// 		Client base : POLLIN | POLLPRI (read)
+			// 		Client message : POLLIN | POLLPRI | POLLOUT (read | write)
+			// 		Server : POLLIN (listen connexion)
+			// Constructors' initialise.
+			// Server one's should never change but the dev can implement it.
+			// Every pollfd.events is acutalised at each poll() loop.
+			short					_cl_base_pevents;
+			short					_cl_message_pevents;
+			short					_sv_pevents;
 
-	private:
-		// Should stay unaccessible
-		Proxy();
+			short					_cl_hang_up;
+			short					_cl_invalid;
+			short					_cl_error;
 
-		void		init_flags();
-		void		init_server_socket();
-		void		init_poll_events();
+		private:
+			// Should stay unaccessible
+			Proxy();
 
-		void		set_flags();
-		void		clear_flags();
+			void		init_flags();
+			void		init_server_socket();
+			void		init_poll_events();
 
-		void		add_client(const socket_type &new_client);
-		void		insert_client(const socket_type &new_client);
-		void		insert_empty_cache(const socket_type &new_client);
-		void		insert_pollfd(const socket_type &new_client);
+			void		set_flags();
+			void		clear_flags();
 
-		void		delete_client(const socket_type &target);
-		void		erase_cache(const socket_type &target);
-		void		erase_pollfd(const socket_type &target);
-		void		erase_client_socket(const socket_type &target);
+			void		add_client(const socket_type &new_client);
+			void		insert_client(const socket_type &new_client);
+			void		insert_empty_cache(const socket_type &new_client);
+			void		insert_pollfd(const socket_type &new_client);
 
-		int			receive(const socket_type *client);
-		int			send_to_client(const socket_type *client, const data_type data);
+			void		delete_client(const socket_type &target);
+			void		erase_cache(const socket_type &target);
+			void		erase_pollfd(const socket_type &target);
+			void		erase_client_socket(const socket_type &target);
 
-		void		clean_api();
+			int			receive(const socket_type *client);
 
-	public:
-		Proxy(const port_type &port);
-		Proxy(const Proxy &source);
-		~Proxy();
+			void		push_back_queue(fd_type client_fd, data_type data);
+			int			send_to_client(const socket_type *client, const data_type data);
 
-		Proxy	&operator=(const Proxy &source);
+			void		clean_api();
 
-		void		end_all_connexions();
-		// Usefull to Server class : Proxy gives sockets to the Server (among other things)
-		void		end_connexion(socket_type &target);
+			friend	class Socket_event;
+			friend	struct Proxy_queue;
+			friend	struct Server_queue;
 
-		void		switch_on();
-		void		switch_off();
+		public:
+			Proxy(const port_type &port);
+			Proxy(const Proxy &source);
+			~Proxy();
 
-		void		set_timeout(milisecond_type timeout);
+			Proxy	&operator=(const Proxy &source);
 
-		// main poll() loop
-		void		queuing();
+			void		end_all_connexions();
+			// Usefull to Server class : Proxy gives sockets to the Server (among other things)
+			void		end_connexion(socket_type &target);
 
-		api_type	send_api();
-		void		receive_api(api_type &data);
-};
+			void		switch_on();
+			void		switch_off();
+
+			void		set_timeout(milisecond_type timeout);
+
+			// main poll() loop
+			void		queuing();
+
+			api_type	send_api();
+			void		receive_api(api_type &data);
+	};
+}
+
+# include "Server_queue.hpp"
 
 #endif

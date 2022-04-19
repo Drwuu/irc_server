@@ -1,5 +1,5 @@
 #include "../../headers/structure/User.hpp"
-#include "../../headers/proxy/Event.hpp"
+#include "../../headers/proxy/Server_queue.hpp"
 #include <vector>
 
 namespace irc {
