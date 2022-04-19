@@ -11,7 +11,7 @@ namespace irc {
 		_parser =  &parser;
 		User user;
 		user.set_nickname("TOTO");
-		add_user(user);
+		add_user(&user);
 		Channel chan("PROUT");
 		add_channel(chan);
 		chan.add_user(&user);
@@ -103,9 +103,6 @@ namespace irc {
 	void Server::set_ip(std::string ip){
 		this->_ip = ip;
 	}
-	void Server::set_uuid(){
-		this->_uuid = this->_nickname + this->_username + this->_hostname + this->_servername + this->_realname + this->_password;
-	}
 	void Server::set_motd(std::string motd){
 		this->_motd = motd;
 	}
@@ -195,12 +192,15 @@ namespace irc {
 	User * Server::check_user_existance(User & user) {
 		for( vec_cit_user it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if ((*it)->get_uuid() == user.get_uuid()) {
-					if ((*it)->get_socket() =! NULL)
-						return; // user already exists in the server and is connected
+					if ((*it)->get_socket() != NULL)
+						return *it; // user already exists in the server and is connected
 					else {
 						(*it)->set_socket(user.get_socket());
 						this->del_user(user);
+						return NULL;
 					}
 			}
 		}
+		return NULL;
 	}
+}

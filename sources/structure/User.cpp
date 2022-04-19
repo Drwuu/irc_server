@@ -71,24 +71,17 @@ namespace irc {
 		}
 		this->_username = username;}
 	void User::set_nickname(std::string nickname){ //nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
-		if (nickname.size() > 9 || (!isalpha(nickname.at(0)) && !isspecial(nickname.at(0))))
-		{
-			std::cout << irc::ERR_ERRONEUSNICKNAME <<"\n"<< nickname << " :Erroneous nickname" << std::endl;
-			return;
-		}
-		for (std::string::iterator it = ++nickname.begin(); it != nickname.end(); ++it)
-		{
-			if (!isalpha(*it) && !isdigit(*it) && !isspecial(*it) && *it != '-')
-			{
-				std::cout << irc::ERR_ERRONEUSNICKNAME <<"\n"<< nickname << " :Erroneous nickname" << std::endl;
-				return;
-			}
-		}
 		this->_nickname = nickname;}
 
-	void User::join_channel(Channel * channel){
+	// FIXME : why do you use server ?
+	void	User::join_channel(Server & Server, Channel * channel) {
+		(void)Server; // FIXME
 		channel->add_user(this);
 		this->_chan_list.push_back(ChanStatus(channel));
+	}
+
+	void	User::set_socket(Socket<Address_ipv6> * socket) {
+		(void)socket; // FIXME : fix that shit. The function wasn't created.
 	}
 
 // void User::join_channel(Server & Server, std::string channel){
@@ -138,8 +131,10 @@ namespace irc {
 // 	}
 
 	void User::leave_channel(Channel * channel){
-		for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
-			if ((*it).channel->get_name() == channel.get_name()){
+
+		std::vector<ChanStatus>		chan_list = this->get_chan_list();
+		for (std::vector<ChanStatus>::iterator it = chan_list.begin(); it != chan_list.end(); ++it){
+			if ((*it).channel->get_name() == channel->get_name()){
 				(*it).channel->del_user(this);
 				get_chan_list().erase(it);
 				break;
@@ -154,7 +149,8 @@ namespace irc {
 	void User::send_message(Server & Server,User & user, std::string msg){
 		if (this->get_registered_status() == false)
 			return; // if the user is not registered, he can't send message : return error
-		for (std::vector<User *>::const_iterator it = Server.get_user_list().begin(); it != Server.get_user_list().end(); ++it){
+		std::vector<User*>	user_list = Server.get_user_list();
+		for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
 			if ((*it)->get_username() == user.get_username()){
 				(*it)->receive_message(Server,*this,msg);
 				return; // user found in Server list : send message
@@ -170,9 +166,10 @@ namespace irc {
 	}
 
 	void User::send_invite(User & user, Channel & channel){
-		channel.invite_user(user,this);
+		channel.invite_user(&user);
 		std::string ret = channel.get_name() + user.get_nickname() + " has been invited to join the channel\r\n";
 		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
+		_event_list.push_back(new_msg); // This is how you should do it
 	}
 
 	void User::receive_invite(Channel & channel){
@@ -186,9 +183,10 @@ namespace irc {
 			return; // user not found in channel list : send error
 		if (this->get_chanstatus_from_list(&channel)->is_operator == true)
 		{
-			for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			const std::vector<User *>	user_list;
+			for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
 				if ((*it)->get_username() == user.get_username()){
-					user.leave_channel(channel.get_name());
+					user.leave_channel(&channel);
 					std::cout << msg << std::endl;
 					return; // user found in channel list : kick user
 				}
@@ -207,7 +205,8 @@ namespace irc {
 			return; // user not found in channel list : send error
 		if (this->get_chanstatus_from_list(&channel)->is_operator == true)
 		{
-			for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			const std::vector<User *>	user_list;
+			for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
 				if ((*it)->get_username() == user.get_username()){
 
 					if (user.get_chanstatus_from_list(&channel)->is_banned == true)
@@ -232,7 +231,8 @@ namespace irc {
 			return; // user not found in channel list : send error
 		if (this->get_chanstatus_from_list(&channel)->is_operator == true)
 		{
-			for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			const std::vector<User *>	user_list;
+			for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
 				if ((*it)->get_username() == user.get_username()){
 					if (user.get_chanstatus_from_list(&channel)->is_banned == false)
 						return; // user not banned from the channel
@@ -255,7 +255,8 @@ namespace irc {
 			return; // user not found in channel list : send error
 		if (this->get_chanstatus_from_list(&channel)->is_operator == true)
 		{
-			for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			const std::vector<User *>	user_list;
+			for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
 				if ((*it)->get_username() == user.get_username()){
 					if (user.get_chanstatus_from_list(&channel)->is_operator == true)
 					{
@@ -296,7 +297,8 @@ namespace irc {
 			return; // user not found in channel list : send error
 		if (this->get_chanstatus_from_list(&channel)->is_operator == true)
 		{
-			for (std::vector<User *>::const_iterator it = channel.get_user_list().begin(); it != channel.get_user_list().end(); ++it){
+			const std::vector<User *>	user_list;
+			for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
 				if ((*it)->get_username() == user.get_username()){
 					if (user.get_chanstatus_from_list(&channel)->is_mute == true){
 						user.get_chanstatus_from_list(&channel)->is_mute = false;

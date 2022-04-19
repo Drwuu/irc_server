@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 06:32:19 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/19 14:00:18 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,12 +140,6 @@ class Socket {
 			new_client._type = this->_type;
 			new_client._protocol = this->_protocol;
 
-			// bool	opt_val = true;
-			// if (setsockopt(new_client._sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(bool)) == -1) {
-			// std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR]" << std::endl;
-			// return new_client;
-			// }
-
 			if (new_client.get_fd() == -1) {
 				std::cerr << " [ERROR] accept failed " << std::endl;
 			}
@@ -155,13 +149,13 @@ class Socket {
 		}
 
 		template <typename T>
-			friend bool		operator==(const T &rhs, const T &lhs) {
+			friend bool		operator==(const Socket<T> &rhs, const Socket<T> &lhs) {
 				return rhs._sockfd == lhs._sockfd && rhs._type == lhs.fd_type
 					&& rhs._address == lhs._address && rhs._protocol == lhs._protocol;
 			}
 
 		template <typename T>
-			friend bool		operator!=(const T &rhs, const T &lhs) {
+			friend bool		operator!=(const Socket<T> &rhs, const Socket<T> &lhs) {
 				return !(rhs == lhs);
 			}
 
