@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 13:58:15 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 14:00:18 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,12 +139,6 @@ class Socket {
 			new_client._address.set_family(this->_address.get_family());
 			new_client._type = this->_type;
 			new_client._protocol = this->_protocol;
-
-			// bool	opt_val = true;
-			// if (setsockopt(new_client._sockfd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(bool)) == -1) {
-			// std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR]" << std::endl;
-			// return new_client;
-			// }
 
 			if (new_client.get_fd() == -1) {
 				std::cerr << " [ERROR] accept failed " << std::endl;
