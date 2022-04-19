@@ -96,6 +96,9 @@ namespace irc {
 	void Server::set_ip(std::string ip){
 		this->_ip = ip;
 	}
+	void Server::set_uuid(){
+		this->_uuid = this->_nickname + this->_username + this->_hostname + this->_servername + this->_realname + this->_password;
+	}
 	void Server::set_motd(std::string motd){
 		this->_motd = motd;
 	}
@@ -152,7 +155,7 @@ namespace irc {
 	void Server::add_channel(Channel & channel) {
 		this->_channel_list.push_back(&channel);
 	}
-	void Server::del_channel(Channel & channel) {
+	void Server::del_channel(Channel & channel) { // WIP need to delete user chan list and chanstatus
 		for (std::vector<Channel *>::iterator it = this->_channel_list.begin(); it != this->_channel_list.end(); ++it) {
 			if (*it == &channel) {
 				this->_channel_list.erase(it);
@@ -160,7 +163,7 @@ namespace irc {
 			}
 		}
 	}
-	void Server::del_user(User & user) {
+	void Server::del_user(User & user) { // WIP need to delete user from channel before delete user
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if (*it == &user) {
 				this->_user_list.erase(it);
@@ -174,4 +177,15 @@ namespace irc {
 		// command->get_args();
 		// command->exec_cmd(const command &cmd);
 	}
-}
+	User * Server::check_user_existance(User & user) {
+		for( vec_cit_user it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
+			if ((*it)->get_uuid() == user.get_uuid()) {
+					if ((*it)->get_socket() =! NULL)
+						return; // user already exists in the server and is connected
+					else {
+						(*it)->set_socket(user.get_socket());
+						this->del_user(user);
+					}
+			}
+		}
+	}

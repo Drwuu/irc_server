@@ -45,8 +45,11 @@ namespace irc {
 			User(Socket<Address_ipv6> * socket);
 			~User();
 
-			const std::string			get_username() const;
 			const std::string			get_nickname() const;
+			const std::string			get_username() const;
+			const std::string			get_hostname() const;
+			const std::string			get_servername() const;
+			const std::string			get_realname() const;
 			const std::string			get_password() const;
 			const std::string			get_uuid() const; // Not in use
 			const std::string			get_port() const; // Not in use
@@ -63,7 +66,7 @@ namespace irc {
 			void						set_password(std::string password);
 			void						set_ip(std::string ip);
 			void						set_port(std::string port);
-			void						set_uuid(std::string uuid);
+			void						set_uuid();
 			void						set_username(std::string username);
 			void						set_nickname(std::string nickname); // Command NICK
 

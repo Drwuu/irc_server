@@ -78,6 +78,7 @@ namespace irc {
 			User *							get_user_from_socket(Socket<Address_ipv6> *sock);
 			void							parse_line();
 			void							exec_cmd(User & user, command *command);
+			User *							check_user_existance(User & user);
 
 			void							add_user(User * user);
 			void							add_channel(Channel & channel);
