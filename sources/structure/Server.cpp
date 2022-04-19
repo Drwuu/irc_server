@@ -192,12 +192,15 @@ namespace irc {
 	User * Server::check_user_existance(User & user) {
 		for( vec_cit_user it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if ((*it)->get_uuid() == user.get_uuid()) {
-					if ((*it)->get_socket() =! NULL)
-						return; // user already exists in the server and is connected
+					if ((*it)->get_socket() != NULL)
+						return *it; // user already exists in the server and is connected
 					else {
 						(*it)->set_socket(user.get_socket());
 						this->del_user(user);
+						return NULL;
 					}
 			}
 		}
+		return NULL;
 	}
+}

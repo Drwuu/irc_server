@@ -72,9 +72,10 @@ namespace irc {
 		}
 	}
 
-	void Channel::invite_user(User * user)
-	{
-		user->receive_invite(this);
+	void Channel::invite_user(User * user) {
+		// You need to dereference 'this' to transform it in reference.
+		// Use your fucking brain.
+		user->receive_invite(*this); 
 	}
 
 	void Channel::transmit_message(std::string msg, User * user)
@@ -89,9 +90,9 @@ namespace irc {
 
 	Channel::Channel(std::string name): _name(name){}
 
-	Channel::Channel(std::string name, std::string prefix): _name(name), _prefix(prefix){}
+	Channel::Channel(std::string name, char *prefix): _name(name), _prefix(prefix){}
 
-	Channel::Channel(std::string name, std::string prefix, std::string key): _name(name), _prefix(prefix), _key(key){}
+	Channel::Channel(std::string name, char *prefix, std::string key): _name(name), _prefix(prefix), _key(key){}
 
 	Channel::Channel(Channel const & copy){*this = copy;}
 
