@@ -3,7 +3,7 @@
 
 namespace irc {
 	class Server;
-	class Nick: public command {
+	class User_cmd: public command {
 	/* Typedefs */
 		private:
 		public:
@@ -12,18 +12,16 @@ namespace irc {
 		public:
 	/* Constructors & Destructors */
 		private:
-			Nick(Nick const &src);
+			User_cmd(User_cmd const &src);
 		public:
-			Nick();
-			virtual ~Nick();
+			User_cmd();
+			virtual ~User_cmd();
 	/* Operators */
 		private:
-			Nick &operator=(Nick const &src);
+			User_cmd &operator=(User_cmd const &src);
 		public:
 	/* Functions */
 		private:
-			bool 	is_nickname_valid();
-			bool	is_special_char(int c);
 		public:
 			void	exec_cmd(command const &cmd,  User const &user) const;
 			void	is_valid_args(Server const *Server, User const &user) const;

@@ -63,8 +63,8 @@ namespace irc {
 		this->_ip = ip;}
 	void User::set_port(std::string port){
 		this->_port = port;}
-	void User::set_uuid(std::string uuid){
-		this->_uuid = uuid;}
+	void User::set_uuid(){
+		this->_uuid = this->_nickname + this->_username + this->_realname + this->_password;}
 	void User::set_username(std::string username){
 		if (this->_username.c_str()){
 			this->_past_username.push_back(this->_username);
