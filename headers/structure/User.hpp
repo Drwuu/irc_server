@@ -71,7 +71,7 @@ namespace irc {
 			void						set_uuid();
 			void						set_username(std::string username);
 			void						set_nickname(std::string nickname); // Command NICK
-
+			void						set_socket(Socket<Address_ipv6> * socket);
 			void						join_channel(Server & Server, Channel * channel); // Command JOIN
 			void						join_channel(Server & Server, std::string channel, std::string key); // Command JOIN with Key mode
 			void						leave_channel(Channel * channel);

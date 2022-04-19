@@ -11,7 +11,7 @@ namespace irc {
 		_parser =  &parser;
 		User user;
 		user.set_nickname("TOTO");
-		add_user(user);
+		add_user(&user);
 		Channel chan("PROUT");
 		add_channel(chan);
 		chan.add_user(&user);
@@ -102,9 +102,6 @@ namespace irc {
 	}
 	void Server::set_ip(std::string ip){
 		this->_ip = ip;
-	}
-	void Server::set_uuid(){
-		this->_uuid = this->_nickname + this->_username + this->_hostname + this->_servername + this->_realname + this->_password;
 	}
 	void Server::set_motd(std::string motd){
 		this->_motd = motd;
