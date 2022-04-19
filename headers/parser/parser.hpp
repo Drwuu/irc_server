@@ -9,31 +9,27 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-			string			_line;
-			map_cmd			&_commands;
-			command			*_command;
 		public:
 	/* Constructors & Destructors */
 		private:
+		public:
 			parser();
 			parser(parser const &src);
-		public:
-			parser(string const &line, map_cmd &commands);
 			virtual ~parser();
 	/* Operators */
 		private:
 		public:
-			parser		&operator=(parser const &src);
+			parser				&operator=(parser const &src);
 	/* Getters & Setters */
 		private:
 		public:
-			command				&get_command() const;
 	/* Functions */
 		private:
-			void				_fill_command();
-			map_citerator_cmd	_find_command() const;
-			string				_get_arg(string::const_iterator &it) const;
+			void				_skip_param(string const &line, string::const_iterator &it, char const separator) const;
 		public:
+			string const		get_user(string const &line) const;
+			map_citerator_cmd	get_command(string const &line, map_cmd const &_commands) const;
+			vector_string const	get_args(string const &line) const;
 	};
 }
 #include "../commands/command.hpp"
