@@ -15,6 +15,12 @@ namespace irc {
 	const std::vector<User *> Channel::get_banned_user() const{
 		return (this->_ban_list);}
 
+	const std::vector<User *> Channel::get_invite_list() const{
+		return (this->_invite_list);}
+
+	const std::vector<User *> Channel::get_operator_list() const{
+		return (this->_operator_list);}
+
 	bool Channel::is_private() const{
 		return (this->_is_private);}
 	bool Channel::is_secret() const{
@@ -66,9 +72,26 @@ namespace irc {
 		}
 	}
 
+	void Channel::invite_user(User * user)
+	{
+		user->receive_invite(this);
+	}
+
+	void Channel::transmit_message(std::string msg, User * user)
+	{
+		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
+		{
+			(*it)->receive_message(user,msg);
+		}
+	}
+
 	Channel::Channel(){}
 
 	Channel::Channel(std::string name): _name(name){}
+
+	Channel::Channel(std::string name, std::string prefix): _name(name), _prefix(prefix){}
+
+	Channel::Channel(std::string name, std::string prefix, std::string key): _name(name), _prefix(prefix), _key(key){}
 
 	Channel::Channel(Channel const & copy){*this = copy;}
 

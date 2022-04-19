@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/17 00:15:21 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/19 06:32:19 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Socket {
 		typedef		int											protocol_type;
 		typedef		int											socket_sort;
 		typedef		const int									const_fd_type;
-		typedef		char	*									data_type;
+		typedef		const char	*									data_type;
 		typedef		unsigned int								len_type;
 
 		typedef		AddSock										address_type;
