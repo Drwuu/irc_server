@@ -26,6 +26,7 @@
 *.la
 *.a
 *.lib
+compile_commands.json
 
 # Executables
 *.exe
@@ -34,3 +35,6 @@
 .vscode/
 irc_42
 client
+
+# Cache
+.cache/*
