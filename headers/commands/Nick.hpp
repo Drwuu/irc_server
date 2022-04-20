@@ -23,7 +23,6 @@ namespace irc {
 	/* Functions */
 		private:
 			bool 	is_nickname_valid() const;
-			bool	is_special_char(int c) const;
 		public:
 			void	exec_cmd(command const &cmd,  User &user) const;
 			void	is_valid_args(Server const *Server, User const &user) const;

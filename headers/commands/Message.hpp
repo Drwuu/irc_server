@@ -22,8 +22,13 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
+			bool	find_receiver(Server const *server,const std::string receiver) const;
+			bool	is_valid_channel(const std::string &channel) const;
+			bool	is_valid_nickname(const std::string &nickname) const;
+			bool	is_valid_receiver(const std::string &receiver) const;
+			bool	is_authorized(const Channel & channel, const User & user) const;
 		public:
-			void	exec_cmd(command const &cmd,  User const &user) const;
+			void	exec_cmd(Server const *server,command const &cmd,  User &user) const;
 			void	is_valid_args(Server const *Server, User const &user) const;
 	};
 }

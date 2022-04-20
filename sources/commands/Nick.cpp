@@ -8,21 +8,14 @@ namespace irc {
 	};
 /* Operators */
 /* Functions */
-	bool Nick::is_special_char(int c)const {
-		if (c == '[' or c == ']' or c == '\\' or
-		c == '`' or c == '_' or c == '^' or
-		c == '{' or c == '}' or c == '|' or c == '-' )
-			return true;
-		return false;
-	}
 	bool Nick::is_nickname_valid() const{
 			string::const_iterator it = _args[1].begin();
-			if (!isalpha(*it) or !is_special_char(*it))
+			if (!(*it >= 65 && *it <= 125))
 				return false;
 			it++;
 			for (;it != _args[1].end();++it)
 			{
-				if (!isalpha(*it) or !isdigit(*it) or !is_special_char(*it))
+				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125))
 					return false;
 			}
 			return true;
@@ -30,8 +23,12 @@ namespace irc {
 	void Nick::exec_cmd(command const &cmd, User &user) const {
 		user.set_nickname(cmd.get_args()[1]);
 		if (user.get_username() != "" && user.get_realname() != "")
-		if (user.get_registered_status() == false)
-			user.set_registered_status(true);
+			if (user.get_registered_status() == false)
+			{
+				user.set_registered_status(true);
+				user.set_uuid();
+				throw error("You are now registered", RPL_WELCOME);
+			}
 	};
 
 	void Nick::is_valid_args(Server const *Server, User const &user) const {

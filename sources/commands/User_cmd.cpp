@@ -11,10 +11,12 @@ namespace irc {
 	void User_cmd::exec_cmd(command const &cmd, User &user) const {
 		user.set_username(_args[1]);
 		user.set_realname(_args[4]);
-		if (user.get_nickname().empty() == false){ // If nickname exist the user is now registered
-			user.set_registered_status(true);
-			user.set_uuid();
-		}
+			if (user.get_registered_status() == false)
+			{
+				user.set_registered_status(true);
+				user.set_uuid();
+				throw error("You are now registered", RPL_WELCOME);
+			}
 	};
 
 	void User_cmd::is_valid_args(Server const *Server, User const &user) const {
