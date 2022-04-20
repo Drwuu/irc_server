@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 18:46:28 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 20:38:23 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:07:53 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ namespace irc {
 				data_type			_data;
 				const socket_type *_socket;
 				Message();
-				void			handle();
+				void			handle(irc::Proxy &proxy);
 			public:
 				~Message();
 				Message(data_type data, const socket_type *client);
@@ -46,7 +46,7 @@ namespace irc {
 				// Request details from the Client
 				const socket_type	*_socket;
 				Request_connexion();
-				void			handle();
+				void			handle(irc::Proxy &proxy);
 			public:
 				Request_connexion(const socket_type *client);
 				~Request_connexion();
@@ -57,7 +57,7 @@ namespace irc {
 			// Inform the irc::Server of a disconnection
 			const socket_type	*_socket;
 			Client_disconnected();
-			void			handle();
+			void			handle(irc::Proxy &proxy);
 			public:
 			Client_disconnected(const socket_type *socket);
 			~Client_disconnected();
@@ -70,7 +70,7 @@ namespace irc {
 				// Data took from the error (if needed)
 				data_type		_data;
 				const socket_type	*_socket;
-				void			handle();
+				void			handle(irc::Proxy &proxy);
 			public:
 				Error();
 				~Error();

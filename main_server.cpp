@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 19:50:46 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:21:51 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,28 +76,26 @@ int		main(int ac, char **av) {
 		return -1;
 	}
 
-	irc::Proxy	server_proxy(port_nb);
+	irc::Proxy	proxy(port_nb);
 
-	server_proxy.switch_on();
+	proxy.switch_on();
 
-	server_proxy.set_timeout(10000);
+	proxy.set_timeout(10000);
 
 	for (int i = 0 ; i < 4 ; ++i) {
-		server_proxy.queuing();
+		proxy.queuing();
 
-		irc::Proxy::api_type		from_proxy(server_proxy.send_api());
+		irc::Proxy::api_type		from_proxy(proxy.send_api());
 		irc::Proxy::api_type		to_proxy;
 
-		for (irc::Proxy::api_type::iterator it = from_proxy.begin() ;
-				it != from_proxy.end() ; ++it) {
-			(*it)->handle();
-		}
 		while (!from_proxy.empty()) {
+			from_proxy.front()->handle(server);
 			delete from_proxy.front();
 			from_proxy.pop_front();
 		}
 
-		server_proxy.receive_api(from_proxy);
+
+		proxy.receive_api(from_proxy);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
