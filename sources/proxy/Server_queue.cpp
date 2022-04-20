@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 21:25:45 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:10:02 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ irc::Server_queue::Message::Message(irc::Server_queue::Message::data_type data,
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
 
-void			irc::Server_queue::Message::handle() { }
+void			irc::Server_queue::Message::handle(Proxy &) { }
 
 void			irc::Server_queue::Message::handle(Server &) {
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
@@ -49,7 +49,7 @@ irc::Server_queue::Request_connexion::Request_connexion(const socket_type *clien
 
 irc::Server_queue::Request_connexion::~Request_connexion(){ }
 
-void			irc::Server_queue::Request_connexion::handle() { }
+void			irc::Server_queue::Request_connexion::handle(Proxy &) { }
 
 void			irc::Server_queue::Request_connexion::handle(Server &) {
 	std::clog << " ------------------- HANDLING CONNEXION REQUEST "
@@ -69,7 +69,7 @@ irc::Server_queue::Client_disconnected::Client_disconnected(const socket_type *c
 }
 irc::Server_queue::Client_disconnected::~Client_disconnected(){ }
 
-void			irc::Server_queue::Client_disconnected::handle() { }
+void			irc::Server_queue::Client_disconnected::handle(Proxy &) { }
 
 void			irc::Server_queue::Client_disconnected::handle(Server &) {
 	std::clog << " ------------------- HANDLING DISCONNECTION "
@@ -86,7 +86,7 @@ irc::Server_queue::Error::Error() {
 }
 irc::Server_queue::Error::~Error() { }
 
-void			irc::Server_queue::Error::handle(){ }
+void			irc::Server_queue::Error::handle(Proxy &){ }
 
 void			irc::Server_queue::Error::handle(Server &){
 	std::clog << " ------------------- HANDLING ERROR "
