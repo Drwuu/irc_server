@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 18:46:28 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:07:53 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 17:49:49 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ namespace irc {
 		class	Message : public Socket_event {
 			private:
 				// Content of the message from the Client
-				data_type			_data;
+				char			_data[513];
 				const socket_type *_socket;
 				Message();
 				void			handle(irc::Proxy &proxy);
@@ -68,11 +68,12 @@ namespace irc {
 			// Inform the irc::Server of an error on sockets
 			private:
 				// Data took from the error (if needed)
-				data_type		_data;
+				char				_data[513];
 				const socket_type	*_socket;
 				void			handle(irc::Proxy &proxy);
-			public:
 				Error();
+			public:
+				Error(data_type data, const socket_type *socket);
 				~Error();
 				void			handle(irc::Server &server);
 		};

@@ -1,5 +1,5 @@
 #include "../../headers/structure/User.hpp"
-#include "../../headers/proxy/Server_queue.hpp"
+#include "../../headers/proxy/Proxy_queue.hpp"
 #include <vector>
 
 namespace irc {
@@ -173,22 +173,22 @@ namespace irc {
 		// user not found in Server list : send error
 	}
 
-	void User::receive_message(User * user,std::string msg){
+	void User::receive_message(User * user,std::string msg) {
 		std::string ret = user->get_nickname() + " :" + msg + "\r\n";
-		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
+		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(), ret.c_str());
 		user->_event_list.push_back(new_msg);
 	}
 
-	void User::send_invite(User & user, Channel & channel){
+	void User::send_invite(User & user, Channel & channel) {
 		channel.invite_user(&user);
 		std::string ret = channel.get_name() + user.get_nickname() + " has been invited to join the channel\r\n";
-		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
-		_event_list.push_back(new_msg); // This is how you should do it
+		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(),ret.c_str());
+		this->_event_list.push_back(new_msg); // This is how you should do it
 	}
 
-	void User::receive_invite(Channel & channel){
+	void User::receive_invite(Channel & channel) {
 		std::string ret = "You have been invited to " + channel.get_name() + "\r\n";
-		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
+		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(), ret.c_str());
 		this->_event_list.push_back(new_msg);
 	}
 
