@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 21:24:55 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:14:09 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Socket.hpp"
 # include "Address.hpp"
+
 
 # include <sys/types.h>
 # include <sys/time.h>
@@ -25,6 +26,7 @@
 # include <unistd.h>
 # include <iostream>
 
+# include <stdlib.h>
 # include <poll.h>
 # include <list>
 # include <map>
@@ -79,10 +81,10 @@
 
 // FIXME : manage Signal Handling ?
 
-class Socket_event;
 
 namespace irc {
 
+	class Socket_event;
 	class	Proxy {
 
 		public:
@@ -160,14 +162,14 @@ namespace irc {
 					void	handle_server(socket_type *server_socket);
 			};
 
-			// class Poll_hup_in : public IPoll_handling {
-				// public:
-					// Poll_hup_in();
-					// ~Poll_hup_in();
-					// Poll_hup_in(Proxy *proxy);
-					// void	handle(socket_type *socket);
-					// void	handle_server(socket_type *server_socket);
-			// };
+			class Poll_hup_in : public IPoll_handling {
+				public:
+					Poll_hup_in();
+					~Poll_hup_in();
+					Poll_hup_in(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
 
 
 		public:
@@ -235,10 +237,10 @@ namespace irc {
 			void		erase_pollfd(const socket_type &target);
 			void		erase_client_socket(const socket_type &target);
 
-			int			receive(const socket_type *client);
+			void		receive(socket_type *client);
 
 			void		push_back_queue(fd_type client_fd, data_type data);
-			int			send_to_client(const socket_type *client, const data_type data);
+			void		send_to_client(const socket_type *client, const data_type data);
 
 			void		clean_api();
 
@@ -267,6 +269,41 @@ namespace irc {
 
 			api_type	send_api();
 			void		receive_api(api_type &data);
+
+			class	Disconnection_exception : public std::exception {
+				Disconnection_exception() throw();
+				const char	*_content;
+				socket_type	*_client;
+				public:
+					Disconnection_exception(const char *content, socket_type *client) throw();
+					Disconnection_exception(const Disconnection_exception& other) throw();
+					~Disconnection_exception() throw();
+					Disconnection_exception		&operator=(const Disconnection_exception& other);
+					const char	*what() const throw();
+					socket_type		*get_socket() const;
+			};
+
+			class	Unknown_client_exception : public std::exception {
+				Unknown_client_exception() throw();
+				const char *_content;
+				public:
+					Unknown_client_exception(const char *content) throw();
+					Unknown_client_exception(const Unknown_client_exception& other) throw();
+					~Unknown_client_exception() throw();
+					Unknown_client_exception		&operator=(const Unknown_client_exception& other);
+					const char	*what() const throw();
+			};
+			
+			class	Error_exception : public std::exception {
+				Error_exception() throw();
+				const char *_content;
+				public:
+					Error_exception(const char *content) throw();
+					Error_exception(const Error_exception& other) throw();
+					~Error_exception() throw();
+					Error_exception		&operator=(const Error_exception& other);
+					const char	*what() const throw();
+			};
 	};
 }
 
