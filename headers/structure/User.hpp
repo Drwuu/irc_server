@@ -59,10 +59,10 @@ namespace irc {
 			bool							get_registered_status()const ;
 			bool							get_away_status() const;
 			std::vector<std::string>		get_past_username();
-			std::vector<ChanStatus>			get_chan_list();
+			std::vector<ChanStatus>			get_chan_list() ;
 			const std::vector<ChanStatus>	get_chan_list() const;
 			ChanStatus						*get_chanstatus_from_list(Channel * channel);
-			const ChanStatus				*get_chanstatus_from_list(Channel * channel) const;
+			const ChanStatus				*get_chanstatus_from_list(const Channel * channel) const;
 			const Socket<Address_ipv6>		*get_socket() const;
 
 			void						set_password(std::string password);
@@ -70,16 +70,18 @@ namespace irc {
 			void						set_port(std::string port);
 			void						set_uuid();
 			void						set_username(std::string username);
+			void						set_realname(std::string hostname);
 			void						set_nickname(std::string nickname); // Command NICK
 			void						set_socket(Socket<Address_ipv6> const *socket);
+			void						set_registered_status(bool status);
 			void						join_channel(Server & Server, Channel * channel); // Command JOIN
 			void						join_channel(Server & Server, std::string channel, std::string key); // Command JOIN with Key mode
 			void						leave_channel(Channel * channel);
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
 
 			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
-			void						send_message(Server & Server, User & User, std::string msg); // Command MSG et/ou PRIVMSG
-			void						send_message(std::string msg,Channel & channel);
+			void						send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG
+			void						send_message(std::string msg, Channel & channel);
 			void						receive_message(Server & Server,	Channel& channel,std::string msg){(void)Server;(void)channel;(void)msg;};
 			void						receive_message(User * user,std::string msg);
 			void						receive_message(Server & Server,User& user, std::string msg){(void)Server;(void)user;(void)msg;};
