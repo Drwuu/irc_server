@@ -60,7 +60,6 @@ namespace irc {
 			std::string const				get_motd() const;
 			std::vector<User *>				get_user_list() const;
 			std::vector<Channel *> const	get_channel_list() const;
-			std::list<Socket_event *> const	get_event_list() const;
 			map_cmd const					get_map() const;
 			std::list<Socket_event *>		get_event_list() const;
 
