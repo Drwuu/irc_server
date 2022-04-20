@@ -26,7 +26,7 @@ namespace irc {
 		it++;
 		for (; it != line.end(); it++) {
 			if (*it == ' ') {
-				while (*it == ' ')
+				while (*it && *it == ' ')
 					it++; // line parameters can be separated by multiple spaces
 				break ;
 			}
@@ -46,8 +46,11 @@ namespace irc {
 		for (; it != line.end(); it++) {
 			if (*(it-1) && *(it-1) == ' ' && *it == ':') //fixme: client send ':command' sometimes, but maybe not necessary ?
 				it++;
-			else if (*it == ' ')
+			else if (*it == ' ') {
+				while (*it && *it == ' ')
+					it++; // line parameters can be separated by multiple spaces
 				break ;
+			}
 			cmd.push_back(*it);
 		}
 		map_citerator_cmd cmd_it = _commands.find(cmd);
