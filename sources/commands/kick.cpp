@@ -3,9 +3,7 @@
 namespace irc {
 /* Constructors & Destructors */
 	kick::~kick() {};
-	kick::kick() {
-		_args.push_back("KICK");
-	};
+	kick::kick() {};
 /* Operators */
 /* Functions */
 	void kick::exec_cmd(command const &cmd, User const &user) const {

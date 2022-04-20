@@ -3,9 +3,7 @@
 namespace irc {
 /* Constructors & Destructors */
 	mode::~mode() {};
-	mode::mode() {
-		_args.push_back("MODE");
-	};
+	mode::mode() {};
 /* Operators */
 /* Functions */
 	void mode::exec_cmd(command const &cmd, User const &user) const {
