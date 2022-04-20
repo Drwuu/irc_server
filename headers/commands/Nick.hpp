@@ -24,7 +24,7 @@ namespace irc {
 		private:
 			bool 	is_nickname_valid() const;
 		public:
-			void	exec_cmd(command const &cmd,  User &user) const;
 			void	is_valid_args(Server const *Server, User const &user) const;
+			void	exec_cmd(User &user);
 	};
 }

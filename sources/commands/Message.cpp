@@ -27,7 +27,10 @@ namespace irc {
 		}
 		return true;
 	}
-	bool Privmsg::is_valid_nickname(const std::string &nickname) const{
+
+	// Big problem : std::string 'nickname' is not used :P 
+	// I think this is a malfunction or an error
+	bool Privmsg::is_valid_nickname(const std::string &) const{
 			string::const_iterator it = _args[1].begin();
 			if (!(*it >= 65 && *it <= 125))
 				return false;
@@ -58,14 +61,14 @@ namespace irc {
 		return true;
 	}
 
-	void	Privmsg::exec_cmd(Server const * server, const command &cmd, User &user) const {
-		if (is_valid_channel(cmd.get_args()[1]))
-			user.send_message(server->find_chan_name(cmd.get_args()[1], server->get_channel_list()),cmd.get_args()[2]);
-		if (is_valid_nickname(cmd.get_args()[1]))
-			user.send_message(cmd.get_args()[2],server->find_nickname(cmd.get_args()[1],server->get_user_list()));
+	void	Privmsg::exec_cmd(User &) {
+		// if (is_valid_channel(this->get_args()[1]))
+			// user.send_message(server->find_chan_name(this->get_args()[1], server->get_channel_list()),this->get_args()[2]);
+		// if (is_valid_nickname(this->get_args()[1]))
+			// user.send_message(this->get_args()[2], server->find_nickname(this->get_args()[1], server->get_user_list()));
 	}
 
-	void	Privmsg::is_valid_args(Server const *Server, User const &user)const{
+	void	Privmsg::is_valid_args(Server const *Server, User const &user) const {
 		// Possible numeric reply ERR_NORECIPIENT ERR_NOTEXTTOSEND ERR_CANNOTSENDTOCHAN
 		//ERR_NOTOPLEVEL ERR_WILDTOPLEVEL ERR_TOOMANYTARGETS ERR_NOSUCHNICK RPL_AWAY
 		// WIP mask a gere Oui ? Non
@@ -79,8 +82,12 @@ namespace irc {
 			throw error("No recipient given", ERR_NORECIPIENT);
 		if (!find_receiver(Server,this->_args[1]))
 			throw error(_args[1],ERR_NOSUCHNICK);
-		if (is_valid_channel(_args[1])){
-			if (!is_authorized(Server->find_chan_name(_args[1], Server->get_channel_list()), user))
+
+		// FIXME : This is a bit shady. Maybe `is_authorized()` should be authorized to take
+		// a `const Channel *` instead of a reference.
+		if (is_valid_channel(_args[1])) {
+			irc::vec_cit_chan	it = Server->find_chan_name(_args[1], Server->get_channel_list());
+			if (!is_authorized(*(*it), user)) // <- HERE
 				throw error("You are not authorized to send messages to this channel", ERR_CANNOTSENDTOCHAN);
 		}
 	}

@@ -7,12 +7,11 @@ namespace irc {
 	Join::Join() {};
 /* Operators */
 /* Functions */
-	void Join::exec_cmd(command const &cmd, User const &user) const {
-		(void)cmd;
+	void Join::exec_cmd(User &user) {
 		(void)user;
 	};
 
-	void Join::is_valid_args(Server const *Server, User const &user) const {
+	void Join::is_valid_args(Server const *Server, User const &) const {
 		if (_args.size() < 2)
 			throw error(_args[0] + ": Not enough parameters", ERR_NEEDMOREPARAMS);
 

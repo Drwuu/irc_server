@@ -6,8 +6,7 @@ namespace irc {
 	mode::mode() {};
 /* Operators */
 /* Functions */
-	void mode::exec_cmd(command const &cmd, User const &user) const {
-		(void)cmd;
+	void mode::exec_cmd(User &user) {
 		(void)user;
 	};
 	void mode::is_valid_args(Server const *Server, User const &user) const {

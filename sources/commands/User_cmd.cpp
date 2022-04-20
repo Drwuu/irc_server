@@ -8,7 +8,7 @@ namespace irc {
 	};
 /* Operators */
 /* Functions */
-	void User_cmd::exec_cmd(command const &cmd, User &user) const {
+	void User_cmd::exec_cmd(User &user) {
 		user.set_username(_args[1]);
 		user.set_realname(_args[4]);
 			if (user.get_registered_status() == false)
@@ -19,7 +19,8 @@ namespace irc {
 			}
 	};
 
-	void User_cmd::is_valid_args(Server const *Server, User const &user) const {
+	// Server is unused here.
+	void User_cmd::is_valid_args(Server const *, User const &user) const {
 		// Possible Error : ERR_NEEDMOREPARAMS ERR_ALREADYREGISTRED
 		if (this->_args.size() < 5)
 			throw error(this->_args[0] + ": Not enough parameters", ERR_NEEDMOREPARAMS);

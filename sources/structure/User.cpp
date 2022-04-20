@@ -26,11 +26,11 @@ namespace irc {
 		return _is_registered;}
 	std::vector<std::string> User::get_past_username(){
 		return (this->_past_username);}
-	std::vector<ChanStatus> User::get_chan_list()const {
+	std::vector<ChanStatus> User::get_chan_list() {
 		return (this->_chan_list);}
 	const std::vector<ChanStatus> User::get_chan_list() const {
 		return (this->_chan_list);}
-	ChanStatus *User::get_chanstatus_from_list(Channel * channel) {
+	ChanStatus 				*User::get_chanstatus_from_list(Channel * channel) {
 		std::vector<ChanStatus> chans = get_chan_list();
 		for (std::vector<ChanStatus>::iterator it = chans.begin(); it != chans.end();++it)
 		{
@@ -40,7 +40,7 @@ namespace irc {
 		std::cout << "Channel not found\n";
 		return nullptr;
 	}
-	const ChanStatus *User::get_chanstatus_from_list(Channel * channel) const {
+	const ChanStatus				*User::get_chanstatus_from_list(const Channel * channel) const {
 		std::vector<ChanStatus> chans = get_chan_list();
 		for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
 		{

@@ -59,7 +59,7 @@ namespace irc {
 			bool							get_registered_status()const ;
 			bool							get_away_status() const;
 			std::vector<std::string>		get_past_username();
-			std::vector<ChanStatus>			get_chan_list();
+			std::vector<ChanStatus>			get_chan_list() ;
 			const std::vector<ChanStatus>	get_chan_list() const;
 			ChanStatus						*get_chanstatus_from_list(Channel * channel);
 			const ChanStatus				*get_chanstatus_from_list(const Channel * channel) const;

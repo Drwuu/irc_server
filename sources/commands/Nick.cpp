@@ -20,8 +20,8 @@ namespace irc {
 			}
 			return true;
 	}
-	void Nick::exec_cmd(command const &cmd, User &user) const {
-		user.set_nickname(cmd.get_args()[1]);
+	void	Nick::exec_cmd(User &user) {
+		user.set_nickname(this->get_args()[1]);
 		if (user.get_username() != "" && user.get_realname() != "")
 			if (user.get_registered_status() == false)
 			{
@@ -31,7 +31,7 @@ namespace irc {
 			}
 	};
 
-	void Nick::is_valid_args(Server const *Server, User const &user) const {
+	void Nick::is_valid_args(Server const *Server, User const &) const {
 		// Possible Error : ERR_NONICKNAMEGIVEN  ERR_ERRONEUSNICKNAME ERR_NICKNAMEINUSE ERR_NICKCOLLISION
 		if (this->_args.size() < 1)
 			throw error("No nickname given", ERR_NONICKNAMEGIVEN);
