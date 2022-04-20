@@ -1,11 +1,11 @@
 #include "../../headers/structure/User.hpp"
-#include "../../headers/proxy/Event.hpp"
+#include "../../headers/proxy/Server_queue.hpp"
 #include <vector>
 
 namespace irc {
 	User::User(){}
 	User::~User(){}
-	User::User(Socket<Address_ipv6> * socket):_socket(socket){}
+	User::User(Socket<Address_ipv6> const *socket): _socket(socket){}
 	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
 
 	const std::string User::get_username() const{
@@ -51,7 +51,7 @@ namespace irc {
 		return NULL;
 	}
 
-	Socket<Address_ipv6> * User::get_socket(){
+	Socket<Address_ipv6> const *User::get_socket() const{
 		return (this->_socket);}
 
 	bool User::get_operator_status() const{
@@ -80,7 +80,7 @@ namespace irc {
 		this->_chan_list.push_back(ChanStatus(channel));
 	}
 
-	void	User::set_socket(Socket<Address_ipv6> * socket) {
+	void	User::set_socket(Socket<Address_ipv6> const *socket) {
 		(void)socket; // FIXME : fix that shit. The function wasn't created.
 	}
 

@@ -2,7 +2,7 @@
 #include "../error/error.hpp"
 #include "../commands/command.hpp"
 #include "../parser/parser.hpp"
-#include "../proxy/Event.hpp"
+#include "../proxy/Proxy_queue.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
 #include <list>
@@ -31,8 +31,8 @@ namespace irc {
 			std::vector<std::string>	_ban_list; // Not used
 			std::string					_line;
 			map_cmd						_map;
-			parser						*_parser;
-			std::list<Socket_event *> 	_event_list;
+			parser						_parser;
+			std::list<Socket_event *>	_event_list;
 		public:
 	/* Constructors & Destructors */
 		private:
@@ -76,9 +76,9 @@ namespace irc {
 			vec_cit_user const				find_nickname(std::string const &nick, vec_user const &users) const;
 			vec_cit_user const				find_username(std::string const &username, vec_user const &users) const;
 			vec_cit_chan const				find_chan_name(std::string const &chan, vec_chan const &channels) const;
-			User *							get_user_from_socket(Socket<Address_ipv6> *sock);
+			User *							get_user_from_socket(Socket<Address_ipv6> const *sock);
 
-			void							parse_command(User const &user) const;
+			command							*parse_line(User const &user) const;
 			void							exec_cmd(User & user, command *command);
 			User *							check_user_existance(User & user);
 

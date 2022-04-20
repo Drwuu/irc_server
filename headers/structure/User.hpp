@@ -35,14 +35,14 @@ namespace irc {
 			bool _is_away;
 			bool _is_registered;
 			bool _is_irc_operator;
-			Socket<Address_ipv6>	 *_socket;
+			Socket<Address_ipv6> const	*_socket;
 			User(User const & copy);
 
 		protected:
 			/*Arg*/
 		public:
 			User();
-			User(Socket<Address_ipv6> * socket);
+			User(Socket<Address_ipv6> const *socket);
 			~User();
 
 			const std::string				get_nickname() const;
@@ -63,7 +63,7 @@ namespace irc {
 			const std::vector<ChanStatus>	get_chan_list() const;
 			ChanStatus						*get_chanstatus_from_list(Channel * channel);
 			const ChanStatus				*get_chanstatus_from_list(Channel * channel) const;
-			Socket<Address_ipv6>			*get_socket();
+			const Socket<Address_ipv6>		*get_socket() const;
 
 			void						set_password(std::string password);
 			void						set_ip(std::string ip);
@@ -71,7 +71,7 @@ namespace irc {
 			void						set_uuid();
 			void						set_username(std::string username);
 			void						set_nickname(std::string nickname); // Command NICK
-			void						set_socket(Socket<Address_ipv6> * socket);
+			void						set_socket(Socket<Address_ipv6> const *socket);
 			void						join_channel(Server & Server, Channel * channel); // Command JOIN
 			void						join_channel(Server & Server, std::string channel, std::string key); // Command JOIN with Key mode
 			void						leave_channel(Channel * channel);
@@ -96,4 +96,3 @@ namespace irc {
 			int							disconnect_user();
 };
 }
-

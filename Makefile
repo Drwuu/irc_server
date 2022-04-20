@@ -16,7 +16,7 @@ SRCS			= \
 				  $(addprefix error/, error.cpp) \
 				  $(addprefix parser/, parser.cpp) \
 				  $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
-				  $(addprefix proxy/, Address.cpp Event.cpp Proxy.cpp)
+				  $(addprefix proxy/, Address.cpp Socket_event.cpp Server_queue.cpp Proxy_queue.cpp Proxy.cpp)
 
 HEADERS			= \
 				  irc.hpp \
@@ -24,7 +24,7 @@ HEADERS			= \
 				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
 				  $(addprefix error/, error.hpp) \
 				  $(addprefix parser/, parser.hpp) \
-				  $(addprefix proxy/, Address.hpp Event.hpp Proxy.hpp)
+				  $(addprefix proxy/, Address.hpp Socket_event.hpp Server_queue.hpp Proxy_queue.hpp Proxy.hpp)
 
 PATH_HEADERS	= $(addprefix $(INCLUDES)/, $(HEADERS))
 
