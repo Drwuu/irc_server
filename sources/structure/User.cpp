@@ -149,17 +149,8 @@ namespace irc {
 		channel.transmit_message(msg, this);
 	}
 
-	void User::send_message(Server & Server,User & user, std::string msg){
-		if (this->get_registered_status() == false)
-			return; // if the user is not registered, he can't send message : return error
-		std::vector<User*>	user_list = Server.get_user_list();
-		for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
-			if ((*it)->get_username() == user.get_username()){
-				(*it)->receive_message(Server,*this,msg);
-				return; // user found in Server list : send message
-			}
-		}
-		// user not found in Server list : send error
+	void User::send_message(std::string msg, User & user){
+		user.receive_message(this,msg);
 	}
 
 	void User::receive_message(User * user,std::string msg){
