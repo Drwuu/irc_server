@@ -31,7 +31,7 @@ namespace irc {
 			std::vector<std::string> _past_username; // Not in use
 			std::vector<ChanStatus> _chan_list;
 			irc::map_cmd * _cmd_list;
-			std::list<Socket_event *> _event_list;
+			std::vector<Socket_event *> _event_list;
 			bool _is_away;
 			bool _is_registered;
 			bool _is_irc_operator;
