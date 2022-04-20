@@ -5,8 +5,10 @@ namespace irc {
 /* Constructors & Destructors */
 	Server::Server(): _line(), _map(), _parser(parser()) {
 		_map.insert(std::make_pair("INVITE", new invite()));
-		// _map.insert(std::make_pair("KICK", new irc::kick()));
-		// _map.insert(std::make_pair("MODE", new irc::mode()));
+		_map.insert(std::make_pair("KICK", new irc::kick()));
+		_map.insert(std::make_pair("MODE", new irc::mode()));
+		_map.insert(std::make_pair("USER", new irc::User_cmd()));
+		_map.insert(std::make_pair("NICK", new irc::Nick()));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");

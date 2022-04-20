@@ -29,7 +29,8 @@ namespace irc {
 				user.set_uuid();
 				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
 				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname();
-				Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+				//// FIXME : add to api list
+				// Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 			}
 	};
 

@@ -12,6 +12,8 @@ namespace irc {
 		return (this->_username);}
 	std::string const User::get_nickname() const{
 		return (this->_nickname);}
+	std::string const User::get_realname() const{
+		return (this->_realname);}
 	const std::string User::get_password() const{
 		return (this->_password);}
 	const std::string User::get_uuid() const{
