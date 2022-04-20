@@ -70,6 +70,8 @@ namespace irc {
 			this->_past_username.push_back(this->_username);
 		}
 		this->_username = username;}
+	void User::set_hostname(std::string hostname){
+		this->_hostname = hostname;}
 	void User::set_nickname(std::string nickname){ //nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
 		this->_nickname = nickname;}
 	void User::set_realname(std::string realname){
