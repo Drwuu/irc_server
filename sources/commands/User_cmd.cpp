@@ -21,13 +21,13 @@ namespace irc {
 		// Possible Error : ERR_NEEDMOREPARAMS ERR_ALREADYREGISTRED
 		if (this->_args.size() < 5)
 			throw error(this->_args[0] + ": Not enough parameters", ERR_NEEDMOREPARAMS);
-		if (user->get_registered_status() == true)
+		if (user.get_registered_status() == true)
 			throw error(" You're already registered", ERR_ALREADYREGISTRED);
-		for (std::string::const_iterator it = _args[1].begin(); it != _args[1].end(); ++it;) {
-			if ((*it) == '%x01-09' or (*it) == %x0B-0C  or (*it) == %x0E-1F or (*it) == %x21-3F or (*it) == %x41-FF)
-				throw error("Invalid username", 0);
-		for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it;) {
-			if ((*it) == %x01-09 or (*it) == %x0B-0C  or (*it) == %x0E-1F or (*it) == %x41-FF)
-				throw error("Invalid realname", 0);
+		for (std::string::const_iterator it = _args[1].begin(); it != _args[1].end(); ++it)
+			if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64 or (*it) == 32)
+				throw error("Invalid username", ERR_ERRONEUSNICKNAME);
+		for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it)
+			if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64)
+				throw error("Invalid realname", ERR_ERRONEUSNICKNAME); // Maybe add some custom error
 	};
 }
