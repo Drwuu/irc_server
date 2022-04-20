@@ -6,13 +6,11 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:10:02 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 18:05:58 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../headers/proxy/Server_queue.hpp"
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -21,19 +19,23 @@ irc::Server_queue::Message::~Message() { }
 
 irc::Server_queue::Message::Message(irc::Server_queue::Message::data_type data,
 		const irc::Server_queue::Message::socket_type *client) :
-	_data(data), _socket(client) {
+	_data(), _socket(client) {
+	bzero(_data, 513);
+	strlcpy(_data, data, 512);
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
 
 void			irc::Server_queue::Message::handle(Proxy &) { }
 
-void			irc::Server_queue::Message::handle(Server &) {
+void			irc::Server_queue::Message::handle(Server &server) {
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 
-	// Call parser
-	// Call client
+	server._line = _data;
+	server.parse_line(*server.get_user_from_socket(_socket));
+	// Command execution
+	// cmd->exec_cmd();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,7 +56,7 @@ void			irc::Server_queue::Request_connexion::handle(Proxy &) { }
 void			irc::Server_queue::Request_connexion::handle(Server &) {
 	std::clog << " ------------------- HANDLING CONNEXION REQUEST "
 		<< " socket = " << _socket->get_fd() << std::endl;
-	// server.get_user_from_socket(_socket);
+	// irc::User	*unknown_user = server.get_user_from_socket(_socket);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,11 +81,19 @@ void			irc::Server_queue::Client_disconnected::handle(Server &) {
 ///////////////////////////////////////////////////////////////////////////////
 //
 
-irc::Server_queue::Error::Error() {
+irc::Server_queue::Error::Error() : _data(), _socket() {
+
 	std::clog << " ------------------- ERROR RECEIVED "
 		<< " socket = " << _socket->get_fd() << std::endl;
 	std::clog << " data = " << _data << std::endl;
 }
+
+irc::Server_queue::Error::Error(data_type data, const socket_type *socket)
+	: _data(), _socket(socket) {
+	bzero(_data, 513);
+	strlcpy(_data, data, 512);
+}
+
 irc::Server_queue::Error::~Error() { }
 
 void			irc::Server_queue::Error::handle(Proxy &){ }

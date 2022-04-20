@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:18:40 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 15:21:15 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ void				irc::Proxy::receive_api(api_type &data) {
 
 	std::clog << " ---> API Handling ... " << std::endl;
 	while (!data.empty()) {
+		std::cerr << " PROX ===========> SOMETHING TO HANDLE " << std::endl;
 		try {
 			data.front()->handle(*this);
 			delete data.front();

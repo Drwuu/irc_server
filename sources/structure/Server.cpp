@@ -3,19 +3,19 @@
 
 namespace irc {
 /* Constructors & Destructors */
-	Server::Server(): _line("INVITE toto prout"), _map(), _parser(parser()) {
+	Server::Server(): _line(), _map(), _parser(parser()) {
 		_map.insert(std::make_pair("INVITE", new invite()));
 		// _map.insert(std::make_pair("KICK", new irc::kick()));
 		// _map.insert(std::make_pair("MODE", new irc::mode()));
-		User user;
-		user.set_nickname("toto");
-		user.set_username("toto");
-		add_user(&user);
-		Channel chan("prout");
-		chan.add_user(&user);
-		add_channel(chan);
-		command *cmd = parse_line(user);
-		(void)cmd;
+		// User user;
+		// user.set_nickname("toto");
+		// user.set_username("toto");
+		// add_user(&user);
+		// Channel chan("prout");
+		// chan.add_user(&user);
+		// add_channel(chan);
+		// command *cmd = parse_line(user);
+		// (void)cmd;
 		// admin.join_channel(*this, "PROUT"); //FIXME : doubled user in chan
 		// vec_user vec =  get_user_list();
 		// for (vec_cit_user it = vec.begin(); it != vec.end(); it++)
@@ -25,6 +25,7 @@ namespace irc {
 		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
 	};
 	Server::Server(std::string password,std::string port): _password(password), _port(port) {
+		_map.insert(std::make_pair("INVITE", new invite()));
 	}
 	Server::Server(Server const &src) {
 		*this = src;
@@ -82,6 +83,9 @@ namespace irc {
 	}
 	std::string const Server::get_ip() const {
 		return (this->_ip);
+	}
+	std::list<irc::Socket_event *>		Server::get_event_list() const {
+		return _event_list;
 	}
 
 /* Setters */
