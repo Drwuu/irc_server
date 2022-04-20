@@ -26,7 +26,7 @@ namespace irc {
 		return _is_registered;}
 	std::vector<std::string> User::get_past_username(){
 		return (this->_past_username);}
-	std::vector<ChanStatus> User::get_chan_list() {
+	std::vector<ChanStatus> User::get_chan_list()const {
 		return (this->_chan_list);}
 	const std::vector<ChanStatus> User::get_chan_list() const {
 		return (this->_chan_list);}
@@ -72,7 +72,10 @@ namespace irc {
 		this->_username = username;}
 	void User::set_nickname(std::string nickname){ //nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
 		this->_nickname = nickname;}
-
+	void User::set_realname(std::string realname){
+		this->_realname = realname;}
+	void User::set_registered_status(bool status){
+		this->_is_registered = status;}
 	// FIXME : why do you use server ?
 	void	User::join_channel(Server & Server, Channel * channel) {
 		(void)Server; // FIXME
