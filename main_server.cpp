@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 15:16:58 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 21:35:27 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ int		main(int ac, char **av) {
 /////////////////////////// LUDO TESTS ///////////////////////////
 
 
-	// FIXME : check overflow or invalid port number
 	int		port_nb = std::atoi(av[1]); // FIXME : check overflow
 	if (port_nb > 65535 || port_nb < 1024) {
 		std::cerr << "invalid port number: " << port_nb << std::endl;
@@ -80,7 +79,7 @@ int		main(int ac, char **av) {
 
 	proxy.switch_on();
 
-	proxy.set_timeout(10000);
+	proxy.set_timeout(100000);
 
 	for (int i = 0 ; i < 4 ; ++i) {
 		proxy.queuing();

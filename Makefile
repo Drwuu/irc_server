@@ -2,7 +2,7 @@ NAME			=  irc_42
 
 MAIN			:= main_server.cpp
 
-ARGS			:= 1234 lol
+ARGS			:= 6667 lol
 
 FLAGS			= -Wall -Wextra -Werror -std=c++98
 # FLAGS			+= -g3 -fsanitize=address
