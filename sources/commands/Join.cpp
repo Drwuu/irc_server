@@ -4,9 +4,7 @@
 namespace irc {
 /* Constructors & Destructors */
 	Join::~Join() {};
-	Join::Join(){
-		_args.push_back("Join");
-	};
+	Join::Join() {};
 /* Operators */
 /* Functions */
 	void Join::exec_cmd(command const &cmd, User const &user) const {

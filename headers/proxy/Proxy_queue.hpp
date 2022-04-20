@@ -6,7 +6,7 @@
 /*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 22:43:30 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 19:58:58 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:09:11 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,12 @@ namespace irc {
 				// Message to sent to Client
 				data_type		_data;
 				fd_type			_socketfd;
-				void			handle();
+				void			handle(irc::Server &);
 				Write();
 			public:
 				Write(fd_type socketfd, data_type data);
 				~Write();
-				void			handle(Proxy &);
+				void			handle(irc::Proxy &);
 		};
 
 		class	Write_priority : public Socket_event {
@@ -47,23 +47,23 @@ namespace irc {
 				// Message data to send to Client
 				data_type		_data;
 				fd_type			_socketfd;
-				void			handle();
+				void			handle(irc::Server &);
 				Write_priority();
 			public:
 				Write_priority(fd_type socketfd, data_type data);
 				~Write_priority();
-				void			handle(Proxy &);
+				void			handle(irc::Proxy &);
 		};
 
 		class	Disconnect_all : public Socket_event {
 			private:
 				// Disconnection message for all Clients
 				// data_type		data;
-				void			handle();
+				void			handle(irc::Server &);
 			public:
 				Disconnect_all();
 				~Disconnect_all();
-				void			handle(Proxy &);
+				void			handle(irc::Proxy &);
 		};
 
 		class	Disconnect : public Socket_event {
@@ -71,11 +71,11 @@ namespace irc {
 			private:
 				fd_type			_socket_id;
 				Disconnect();
-				void			handle();
+				void			handle(irc::Server &);
 			public:
 				Disconnect(const fd_type &socket_id);
 				~Disconnect();
-				void			handle(Proxy &);
+				void			handle(irc::Proxy &);
 		};
 	};
 }

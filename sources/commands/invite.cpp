@@ -3,9 +3,7 @@
 namespace irc {
 /* Constructors & Destructors */
 	invite::~invite() {};
-	invite::invite(){
-		_args.push_back("INVITE");
-	};
+	invite::invite() {};
 /* Operators */
 /* Functions */
 	void invite::exec_cmd(command const &cmd, User const &user) const {

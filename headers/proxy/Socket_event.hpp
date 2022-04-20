@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 18:43:59 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 19:39:06 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:11:29 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define SOCKET_EVENT_HPP
 
 # include "Socket.hpp"
+
+namespace irc {
+
+	class	Proxy;
+	class	Server;
 
 	class	Socket_event {
 		public:
@@ -27,8 +32,10 @@
 		public:
 			Socket_event();
 			virtual ~Socket_event();
-			virtual void	handle() = 0;
+			virtual void	handle(irc::Proxy &proxy) = 0;
+			virtual void	handle(irc::Server &server) = 0;
 	};
 
+}
 
 #endif
