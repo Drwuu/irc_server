@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:21:51 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 15:16:58 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,9 @@ int		main(int ac, char **av) {
 			from_proxy.pop_front();
 		}
 
+		to_proxy = server.get_event_list();
 
-		proxy.receive_api(from_proxy);
+		proxy.receive_api(to_proxy);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////

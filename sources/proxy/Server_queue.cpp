@@ -6,13 +6,11 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:10:02 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/20 16:31:17 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../headers/proxy/Server_queue.hpp"
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -28,12 +26,13 @@ irc::Server_queue::Message::Message(irc::Server_queue::Message::data_type data,
 
 void			irc::Server_queue::Message::handle(Proxy &) { }
 
-void			irc::Server_queue::Message::handle(Server &) {
+void			irc::Server_queue::Message::handle(Server &server) {
 	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 
-	// Call parser
-	// Call client
+	server._line = _data;
+	server.parse_line(*server.get_user_from_socket(_socket));
+	// Command execution
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,7 +53,7 @@ void			irc::Server_queue::Request_connexion::handle(Proxy &) { }
 void			irc::Server_queue::Request_connexion::handle(Server &) {
 	std::clog << " ------------------- HANDLING CONNEXION REQUEST "
 		<< " socket = " << _socket->get_fd() << std::endl;
-	// server.get_user_from_socket(_socket);
+	// irc::User	*unknown_user = server.get_user_from_socket(_socket);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

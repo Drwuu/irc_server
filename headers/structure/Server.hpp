@@ -11,6 +11,9 @@ namespace irc {
 	class Server {
 	/* Typedefs */
 		private:
+			// Events should be allowed to use Server private elements
+			// to modify it deeply
+			friend struct irc::Server_queue;
 		public:
 	/* Variables */
 		private:
@@ -58,6 +61,8 @@ namespace irc {
 			std::vector<User *>				get_user_list() const;
 			std::vector<Channel *> const	get_channel_list() const;
 			map_cmd const					get_map() const;
+			std::list<Socket_event *>		get_event_list() const;
+
 	/* Setters */
 		private:
 		public:
