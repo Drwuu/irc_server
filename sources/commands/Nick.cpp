@@ -34,7 +34,8 @@ namespace irc {
 				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
 				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname() + "\n";
 				//// FIXME : add to api list
-				// Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+				Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+				_server->get_event_list().push_back(msg);
 			}
 	};
 

@@ -14,12 +14,23 @@ namespace irc {
 		vec_chan const serv_chans = _server->get_channel_list();
 		for (size_t i = 0; i < _chans.size(); i++) {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
-			if (mchan != serv_chans.end())													// if it founds a channel, add user on it
+			if (mchan != serv_chans.end()) {													// if it founds a channel, add user on it
 				(*mchan)->add_user(&user);
+				std::stringstream s;
+				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
+				<< "No topic is set " << std::endl;
+				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(),s.str().c_str());
+				_server->get_event_list().push_back(msg);
+			}
 			else {
 				Channel *chan = new Channel(_chans[i]);
 				chan->add_user(&user);
-				_server->add_channel(chan);													// create channel and add user on it
+				_server->add_channel(chan);														// create channel and add user on it
+				std::stringstream s;
+				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
+				<< "No topic is set " << std::endl;
+				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(),s.str().c_str());
+				_server->get_event_list().push_back(msg);
 			}
 		}
 	};

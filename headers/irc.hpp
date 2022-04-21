@@ -27,14 +27,14 @@ namespace irc {
 	typedef vec_chan::iterator 				vec_it_chan;
 	typedef vec_chan::const_iterator		vec_cit_chan;
 
-	enum error_type {
+	enum rpl_type {
 
 	/* Basics */
-		RPL_WELCOME = 1,
-		RPL_YOURHOST = 2,
-		RPL_CREATED = 3,
-		RPL_MYINFO = 4,
-		RPL_BOUNCE = 5,
+		RPL_WELCOME = 001,
+		RPL_YOURHOST = 002,
+		RPL_CREATED = 003,
+		RPL_MYINFO = 004,
+		RPL_BOUNCE = 005,
 
 	/* Replies generated in the response to commands are found in the range from 200 to 399. */
 		RPL_TRACELINK = 200,
@@ -116,6 +116,9 @@ namespace irc {
 		RPL_USERS = 393,
 		RPL_ENDOFUSERS = 394,
 		RPL_NOUSERS = 395,
+	};
+
+	enum error_type {
 
 	/* Error replies are found in the range from 400 to 599. */
 		ERR_NOSUCHNICK = 401,
