@@ -18,9 +18,9 @@ namespace irc {
 				user.set_uuid();
 				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
 				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname();
-
 				//// FIXME : add to api list
-				// Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+				//Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+				user.receive_message(&user,ret);
 			}
 	};
 
@@ -35,8 +35,8 @@ namespace irc {
 			if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64 or (*it) == 32)
 				throw error("Invalid username", ERR_ERRONEUSNICKNAME);
 				// WIP verfication du hostname a faire
-		for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it)
-			if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64)
-				throw error("Invalid realname", ERR_ERRONEUSNICKNAME); // Maybe add some custom error
+		//for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it)
+		//	if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64)
+		//		throw error("Invalid realname", ERR_ERRONEUSNICKNAME); // Maybe add some custom error
 	};
 }

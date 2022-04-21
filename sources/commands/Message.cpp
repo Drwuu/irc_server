@@ -28,7 +28,7 @@ namespace irc {
 		return true;
 	}
 
-	// Big problem : std::string 'nickname' is not used :P 
+	// Big problem : std::string 'nickname' is not used :P
 	// I think this is a malfunction or an error
 	bool Privmsg::is_valid_nickname(const std::string &) const{
 			string::const_iterator it = _args[1].begin();
@@ -61,11 +61,18 @@ namespace irc {
 		return true;
 	}
 
-	void	Privmsg::exec_cmd(User &) {
-		// if (is_valid_channel(this->get_args()[1]))
-			// user.send_message(server->find_chan_name(this->get_args()[1], server->get_channel_list()),this->get_args()[2]);
-		// if (is_valid_nickname(this->get_args()[1]))
-			// user.send_message(this->get_args()[2], server->find_nickname(this->get_args()[1], server->get_user_list()));
+	void	Privmsg::exec_cmd(User &user ) {
+		//if (is_valid_channel(this->get_args()[1]))
+		//	 user.send_message(server->find_chan_name(this->get_args()[1], server->get_channel_list()),this->get_args()[2]);
+		//if (is_valid_nickname(this->get_args()[1]))
+		std::vector<User *>::const_iterator receiver = user.get_server()->find_nickname(this->get_args()[1], user.get_server()->get_user_list());
+		if (receiver != user.get_server()->get_user_list().end())
+		{
+		std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
+		std::clog << "Message From : " << user.get_nickname() << "to : " << (*receiver)->get_nickname() << std::endl;
+			user.send_message(this->get_args()[2], *(*receiver));
+		}
+		std::cout << _args[2] << std::endl;
 	}
 
 	void	Privmsg::is_valid_args(Server const *Server, User const &user) const {

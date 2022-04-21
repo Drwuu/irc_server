@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 15:21:15 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 13:58:14 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -613,7 +613,7 @@ const char	*irc::Proxy::Disconnection_exception::what() const throw() { return _
 irc::Proxy::socket_type		*irc::Proxy::Disconnection_exception::get_socket() const { return _client; }
 
 //////////////////////////////////////////////////////////////////////////
-// 
+//
 irc::Proxy::Unknown_client_exception::Unknown_client_exception(const char *content) throw() : _content(content) { }
 irc::Proxy::Unknown_client_exception::Unknown_client_exception(const Unknown_client_exception& other) throw() : _content(other._content) { }
 irc::Proxy::Unknown_client_exception::~Unknown_client_exception() throw() { }
@@ -622,7 +622,7 @@ const char	*irc::Proxy::Unknown_client_exception::what() const throw() { return 
 
 
 //////////////////////////////////////////////////////////////////////////
-// 
+//
 irc::Proxy::Error_exception::Error_exception(const char *content) throw() : _content(content) { }
 irc::Proxy::Error_exception::Error_exception(const Error_exception& other) throw() : _content(other._content) { }
 irc::Proxy::Error_exception::~Error_exception() throw() { }

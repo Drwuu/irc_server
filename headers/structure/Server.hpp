@@ -61,7 +61,7 @@ namespace irc {
 			std::vector<User *>				get_user_list() const;
 			std::vector<Channel *> const	get_channel_list() const;
 			map_cmd const					get_map() const;
-			std::list<Socket_event *>		get_event_list() const;
+			std::list<Socket_event *>		&get_event_list();
 
 	/* Setters */
 		private:
@@ -73,6 +73,7 @@ namespace irc {
 			void							set_port(std::string port);
 			void							set_ip(std::string ip);
 			void  							set_motd(std::string motd); // Use For IMPORTMOTD
+			void							set_line(std::string line);
 
 
 	/* Functions */

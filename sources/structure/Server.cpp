@@ -1,5 +1,6 @@
 #include "../../headers/structure/Server.hpp"
 #include <cstddef>
+#include <utility>
 
 namespace irc {
 /* Constructors & Destructors */
@@ -9,6 +10,7 @@ namespace irc {
 		_map.insert(std::make_pair("MODE", new irc::mode()));
 		_map.insert(std::make_pair("USER", new irc::User_cmd()));
 		_map.insert(std::make_pair("NICK", new irc::Nick()));
+		_map.insert(std::make_pair("PRIVMSG", new irc::Privmsg()));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");
@@ -86,7 +88,7 @@ namespace irc {
 	std::string const Server::get_ip() const {
 		return (this->_ip);
 	}
-	std::list<irc::Socket_event *>		Server::get_event_list() const {
+	std::list<irc::Socket_event *>		&Server::get_event_list() {
 		return _event_list;
 	}
 

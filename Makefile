@@ -2,10 +2,10 @@ NAME			=  irc_42
 
 MAIN			:= main_server.cpp
 
-ARGS			:= 6667 lol
+ARGS			:= 4242 lol
 
 FLAGS			= -Wall -Wextra -Werror -std=c++98
-# FLAGS			+= -g3 -fsanitize=address
+FLAGS			+= -g3 -fsanitize=address
 
 OBJS_DIR		= objects
 INCLUDES		= headers

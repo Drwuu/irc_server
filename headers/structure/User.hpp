@@ -37,6 +37,7 @@ namespace irc {
 			bool _is_irc_operator;
 			Socket<Address_ipv6> const	*_socket;
 			User(User const & copy);
+			Server * _server; //TEMP
 
 		protected:
 			/*Arg*/
@@ -64,6 +65,11 @@ namespace irc {
 			ChanStatus						*get_chanstatus_from_list(Channel * channel);
 			const ChanStatus				*get_chanstatus_from_list(const Channel * channel) const;
 			const Socket<Address_ipv6>		*get_socket() const;
+
+			Server * get_server();
+			void set_server(Server * server);
+			std::list<Socket_event *>		get_event_list();
+			void set_event_list(std::list<Socket_event *> &event_list);
 
 			void						set_password(std::string password);
 			void						set_ip(std::string ip);

@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Server_queue.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 00:32:44 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 14:55:11 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/proxy/Server_queue.hpp"
+#include <sys/_types/_size_t.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -22,17 +23,18 @@ irc::Server_queue::Message::Message(irc::Server_queue::Message::data_type data,
 	_data(), _socket(client) {
 	bzero(_data, 513);
 	strlcpy(_data, data, 512);
-	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
+	std::clog << " ------------------- MESSAGE RECEIVED creation" << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 }
 
 void			irc::Server_queue::Message::handle(Proxy &) { }
 
 void			irc::Server_queue::Message::handle(Server &server) {
-	std::clog << " ------------------- MESSAGE RECEIVED " << std::endl;
+	std::clog << " ------------------- MESSAGE RECEIVED handle " << std::endl;
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 
 	User	&user = *server.get_user_from_socket(_socket);
+	user.set_server(&server);
 	std::list<std::string>	cmd_list = server._parser.split_command(_data);
 
 	while (!cmd_list.empty()) {
@@ -42,6 +44,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
 			cmd->is_valid_args(&server, user);
+			cmd->exec_cmd(user);
 			//
 			// Execution
 			//
