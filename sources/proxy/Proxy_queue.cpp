@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:31:37 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:10:17 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 19:18:26 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 irc::Proxy_queue::Write::Write() { }
 
 irc::Proxy_queue::Write::Write(fd_type socketfd, data_type data)
-	: _data(data), _socketfd(socketfd) {
+	: _data(strdup(data)), _socketfd(socketfd) {
 	// std::clog << " ------------------- MESSAGE to SEND :" << _data << std::endl;
 	// std::clog << " ---------- fd = " << _socketfd << std::endl;
 	}
@@ -64,9 +64,6 @@ irc::Proxy_queue::Disconnect::~Disconnect() { }
 
 void			irc::Proxy_queue::Disconnect::handle(Server &) { }
 void			irc::Proxy_queue::Disconnect::handle(Proxy &proxy) {
-	// std::clog << " ------------------- DISCONNECT RECEIVED " << std::endl;
-	// std::clog << " ---------- fd = " << _socket_id << std::endl;
-
 	irc::Proxy::client_tree_type::iterator	it = proxy._clients.find(_socket_id);
 
 	if (it == proxy._clients.end())

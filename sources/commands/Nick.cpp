@@ -15,19 +15,27 @@ namespace irc {
 			it++;
 			for (;it != _args[1].end();++it)
 			{
-				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125))
+				// FIXME : '\n' not accepted maybe
+				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
+					std::cerr << " CRASH LOLLLLLLLL " << std::endl;
 					return false;
+				}
 			}
 			return true;
 	}
 	void	Nick::exec_cmd(User &user) {
-		user.set_nickname(this->get_args()[1]);
+		_args[1].resize(_args[1].size() - 1);
+		user.set_nickname(_args[1]);
+		std::cout <<user.get_nickname().c_str() << "|" <<std::endl;
 		if (user.get_username() != "" && user.get_realname() != "")
 			if (user.get_registered_status() == false)
 			{
 				user.set_registered_status(true);
 				user.set_uuid();
-				throw error("You are now registered", RPL_WELCOME);
+				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
+				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname() + "\n";
+				//// FIXME : add to api list
+				// Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 			}
 	};
 

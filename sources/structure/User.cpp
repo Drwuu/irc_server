@@ -3,6 +3,20 @@
 #include <vector>
 
 namespace irc {
+
+
+	Server * User::get_server() {
+		return _server;
+	}
+	void User::set_server(Server *server) {
+		_server = server;
+	}
+	void User::set_event_list(std::list<Socket_event *> &event_list) {
+		_event_list = event_list;
+	}
+	std::list<Socket_event *> User::get_event_list() {
+		return _event_list;
+	}
 	User::User(){}
 	User::~User(){}
 	User::User(Socket<Address_ipv6> const *socket): _socket(socket){}
@@ -12,6 +26,10 @@ namespace irc {
 		return (this->_username);}
 	std::string const User::get_nickname() const{
 		return (this->_nickname);}
+	std::string const User::get_hostname() const{
+		return (this->_hostname);}
+	std::string const User::get_realname() const{
+		return (this->_realname);}
 	const std::string User::get_password() const{
 		return (this->_password);}
 	const std::string User::get_uuid() const{
@@ -70,6 +88,8 @@ namespace irc {
 			this->_past_username.push_back(this->_username);
 		}
 		this->_username = username;}
+	void User::set_hostname(std::string hostname){
+		this->_hostname = hostname;}
 	void User::set_nickname(std::string nickname){ //nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
 		this->_nickname = nickname;}
 	void User::set_realname(std::string realname){
@@ -153,10 +173,10 @@ namespace irc {
 		user.receive_message(this,msg);
 	}
 
-	void User::receive_message(User * user,std::string msg){
-		std::string ret = user->get_nickname() + " :" + msg + "\r\n";
-		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
-		user->_event_list.push_back(new_msg);
+	void User::receive_message(User *,std::string msg){
+		std::string ret(msg + "\r\n");
+		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(),ret.c_str());
+		_server->get_event_list().push_back(new_msg);
 	}
 
 	void User::send_invite(User & user, Channel & channel){
