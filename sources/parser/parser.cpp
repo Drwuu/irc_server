@@ -34,6 +34,7 @@ namespace irc {
 		}
 		return user;
 	};
+
 	/*
 	*	*RESUME*
 	*	get_command: return the command in the map if found or map end() if not
@@ -58,6 +59,7 @@ namespace irc {
 			throw error(cmd + " :Unknown command", ERR_UNKNOWNCOMMAND);
 		return cmd_it;
 	};
+
 	/*
 	*	*RESUME*
 	*	get_args: return vector of args -including cmd name- after skiped user

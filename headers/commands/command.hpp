@@ -46,3 +46,4 @@ namespace irc {
 #include "../commands/Nick.hpp"
 #include "../commands/Message.hpp"
 #include "../commands/User_cmd.hpp"
+#include "../commands/Cap.hpp"
