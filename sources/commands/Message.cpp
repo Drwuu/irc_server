@@ -64,11 +64,13 @@ namespace irc {
 		//if (is_valid_channel(this->get_args()[1]))
 		//	 user.send_message(server->find_chan_name(this->get_args()[1], server->get_channel_list()),this->get_args()[2]);
 		//if (is_valid_nickname(this->get_args()[1]))
-		std::vector<User *>::const_iterator receiver = _server->find_nickname(this->get_args()[1], _server->get_user_list());
-		if (receiver != _server->get_user_list().end())
+		std::vector<User *>		user_list = _server->get_user_list();
+		std::vector<User *>::const_iterator receiver = _server->find_nickname(this->get_args()[1], user_list);
+		if (receiver != user_list.end())
 		{
 			std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
-			std::clog << "Message From : " << user.get_nickname() << "to : " << (*receiver)->get_nickname() << std::endl;
+			std::clog << "Message From : " << user.get_nickname();
+			std::clog << "to : " << (*receiver)->get_nickname() << std::endl;
 			user.send_message(this->get_args()[2], *(*receiver));
 		}
 		std::cout << _args[2] << std::endl;
