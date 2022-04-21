@@ -192,13 +192,16 @@ namespace irc {
 			}
 		}
 	}
-	void Server::del_user(User & user) { // WIP need to delete user from channel before delete user
+	// Return the fd of delete user
+	int	Server::del_user(User & user) { // WIP need to delete user from channel before delete user
+		int		sockfd = user.get_socket()->get_fd();
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if (*it == &user) {
 				this->_user_list.erase(it);
-				break;
+				return sockfd;
 			}
 		}
+		return -1;
 	}
 	void Server::exec_cmd(User & user, irc::command *command) {
 		(void)user;

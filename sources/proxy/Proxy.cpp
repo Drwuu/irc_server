@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 16:53:29 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 18:19:28 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -596,6 +596,7 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 		throw Error_exception(ss.str().c_str());
 	}
 	// FIXME : error on send ?
+	std::clog << " LOL DATA " << it_cache->second.front() << std::endl;
 	_proxy->send_to_client(client, it_cache->second.front());
 	const char *tmp = it_cache->second.front();
 	if (tmp != NULL)

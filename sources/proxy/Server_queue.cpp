@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 15:38:54 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 19:17:52 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,9 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			//
 		}
 		catch (irc::error &e) {
-			std::cout << e.what() << std::endl;
+			std::cout << " ------------ CHECK ERROR : " << e.what() << std::endl;
+			// Return the event to the client
+			server.get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), e.what()));
 		}
 		cmd_list.pop_front();
 	}
@@ -92,9 +94,15 @@ irc::Server_queue::Client_disconnected::~Client_disconnected(){ }
 
 void			irc::Server_queue::Client_disconnected::handle(Proxy &) { }
 
-void			irc::Server_queue::Client_disconnected::handle(Server &) {
+void			irc::Server_queue::Client_disconnected::handle(Server &server) {
 	std::clog << " ------------------- HANDLING DISCONNECTION "
 		<< " socket = " << _socket->get_fd() << std::endl;
+	irc::User	*user = server.get_user_from_socket(_socket);
+	fd_type		user_sockfd = server.del_user(*user);
+	if (user_sockfd != -1)
+		server._event_list.push_back(new Proxy_queue::Disconnect(user_sockfd));
+	else
+		std::clog << "[ERROR] : Client disconnected not found." << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

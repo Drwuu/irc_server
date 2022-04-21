@@ -26,6 +26,8 @@ namespace irc {
 		return (this->_username);}
 	std::string const User::get_nickname() const{
 		return (this->_nickname);}
+	std::string const User::get_hostname() const{
+		return (this->_hostname);}
 	std::string const User::get_realname() const{
 		return (this->_realname);}
 	const std::string User::get_password() const{
@@ -171,8 +173,8 @@ namespace irc {
 		user.receive_message(this,msg);
 	}
 
-	void User::receive_message(User * user,std::string msg){
-		std::string ret = user->get_nickname() + " :" + msg + "\r\n";
+	void User::receive_message(User *,std::string msg){
+		std::string ret(msg + "\r\n");
 		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(),ret.c_str());
 		_server->get_event_list().push_back(new_msg);
 	}

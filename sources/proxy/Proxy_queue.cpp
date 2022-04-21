@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:31:37 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 15:26:20 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 19:18:26 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,6 @@ irc::Proxy_queue::Disconnect::~Disconnect() { }
 
 void			irc::Proxy_queue::Disconnect::handle(Server &) { }
 void			irc::Proxy_queue::Disconnect::handle(Proxy &proxy) {
-	// std::clog << " ------------------- DISCONNECT RECEIVED " << std::endl;
-	// std::clog << " ---------- fd = " << _socket_id << std::endl;
-
 	irc::Proxy::client_tree_type::iterator	it = proxy._clients.find(_socket_id);
 
 	if (it == proxy._clients.end())

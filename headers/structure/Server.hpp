@@ -93,7 +93,7 @@ namespace irc {
 
 			void							add_user(User * user);
 			void							add_channel(Channel & channel);
-			void							del_user(User & user);
+			int								del_user(User & user);
 			void							del_channel(Channel & channel);
 			void							ban_user(std::string nick);//Use For UNKLINE unban USer from Server
 			void							unban_user(std::string nick);
