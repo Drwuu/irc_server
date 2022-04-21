@@ -15,6 +15,7 @@ namespace irc {
 			Join(Join const &src);
 		public:
 			Join();
+			Join(Server *server);
 			virtual ~Join();
 	/* Operators */
 		private:

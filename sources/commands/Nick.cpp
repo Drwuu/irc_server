@@ -3,9 +3,8 @@
 namespace irc {
 /* Constructors & Destructors */
 	Nick::~Nick() {};
-	Nick::Nick(){
-		_args.push_back("NICK");
-	};
+	Nick::Nick(){};
+	Nick::Nick(Server *server): command(server) {};
 /* Operators */
 /* Functions */
 	bool Nick::is_nickname_valid() const{

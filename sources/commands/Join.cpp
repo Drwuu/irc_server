@@ -7,6 +7,7 @@ namespace irc {
 /* Constructors & Destructors */
 	Join::~Join() {};
 	Join::Join() {};
+	Join::Join(Server *server): command(server) {};
 /* Operators */
 /* Functions */
 	void Join::exec_cmd(User &user) {

@@ -4,6 +4,7 @@ namespace irc {
 /* Constructors & Destructors */
 	invite::~invite() {};
 	invite::invite() {};
+	invite::invite(Server *server): command(server) {};
 /* Operators */
 /* Functions */
 	void invite::exec_cmd(User &user) {

@@ -5,13 +5,13 @@
 namespace irc {
 /* Constructors & Destructors */
 	Server::Server(): _line(), _map(), _parser(parser()) {
-		_map.insert(std::make_pair("INVITE", new invite()));
-		_map.insert(std::make_pair("KICK", new irc::kick()));
-		_map.insert(std::make_pair("MODE", new irc::mode()));
-		_map.insert(std::make_pair("USER", new irc::User_cmd()));
-		_map.insert(std::make_pair("NICK", new irc::Nick()));
-		_map.insert(std::make_pair("PRIVMSG", new irc::Privmsg()));
-		_map.insert(std::make_pair("JOIN", new irc::Join()));
+		_map.insert(std::make_pair("INVITE", new invite(this)));
+		_map.insert(std::make_pair("KICK", new kick(this)));
+		_map.insert(std::make_pair("MODE", new mode(this)));
+		_map.insert(std::make_pair("USER", new User_cmd(this)));
+		_map.insert(std::make_pair("NICK", new Nick(this)));
+		_map.insert(std::make_pair("PRIVMSG", new Privmsg(this)));
+		_map.insert(std::make_pair("JOIN", new Join(this)));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");

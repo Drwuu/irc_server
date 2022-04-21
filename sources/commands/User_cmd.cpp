@@ -3,9 +3,8 @@
 namespace irc {
 /* Constructors & Destructors */
 	User_cmd::~User_cmd() {};
-	User_cmd::User_cmd(){
-		_args.push_back("USER");
-	};
+	User_cmd::User_cmd(){};
+	User_cmd::User_cmd(Server *server): command(server) {};
 /* Operators */
 /* Functions */
 	void User_cmd::exec_cmd(User &user) {

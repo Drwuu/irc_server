@@ -4,7 +4,7 @@ namespace irc {
 /* Constructors & Destructors */
 	command::~command() {};
 	command::command(): _args() {};
-	command::command(vector_string const &args): _args(args) {};
+	command::command(Server *server): _args(), _server(server) {};
 /* Operators */
 	// string command::operator()(command const &cmd) const {
 

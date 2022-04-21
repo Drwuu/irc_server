@@ -15,6 +15,7 @@ namespace irc {
 			invite(invite const &src);
 		public:
 			invite();
+			invite(Server *server);
 			virtual ~invite();
 	/* Operators */
 		private:

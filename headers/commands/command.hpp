@@ -11,22 +11,26 @@ namespace irc {
 		private:
 		protected:
 			vector_string	_args;
+			Server			*_server;
 		public:
 	/* Constructors & Destructors */
 		private:
 			command(command const &src);
 		public:
 			command();
-			command(vector_string const &args);
+			command(Server *server);
 			virtual ~command();
 	/* Operators */
 		private:
 			command& operator=(command const &src);
 		public:
-	/* Getters & Setters */
+	/* Getters */
 		private:
 		public:
 			vector_string const	&get_args() const;
+	/* Setters */
+		private:
+		public:
 			void				set_args(vector_string const &args);
 	/* Functions */
 		private:
