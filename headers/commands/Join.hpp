@@ -15,6 +15,7 @@ namespace irc {
 			Join(Join const &src);
 		public:
 			Join();
+			Join(Server *server);
 			virtual ~Join();
 	/* Operators */
 		private:
@@ -22,8 +23,10 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
+			vector_string	_get_instructions(string const &arg, char const separator) const;
+			void			_erase_chars(string const chars, vector_string &vector) const;
 		public:
-			void	exec_cmd(User &user);
-			void	is_valid_args(Server const *Server, User const &user) const;
+			void			exec_cmd(User &user);
+			void			is_valid_args(Server const *Server, User const &user) const;
 	};
 }

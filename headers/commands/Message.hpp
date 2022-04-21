@@ -15,6 +15,7 @@ namespace irc {
 			Privmsg(Privmsg const &src);
 		public:
 			Privmsg();
+			Privmsg(Server *server);
 			virtual ~Privmsg();
 	/* Operators */
 		private:

@@ -15,6 +15,7 @@ namespace irc {
 			User_cmd(User_cmd const &src);
 		public:
 			User_cmd();
+			User_cmd(Server *server);
 			virtual ~User_cmd();
 	/* Operators */
 		private:

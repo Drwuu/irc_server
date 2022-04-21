@@ -4,6 +4,7 @@ namespace irc {
 /* Constructors & Destructors */
 	mode::~mode() {};
 	mode::mode() {};
+	mode::mode(Server *server): command(server) {};
 /* Operators */
 /* Functions */
 	void mode::exec_cmd(User &user) {

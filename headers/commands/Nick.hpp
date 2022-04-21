@@ -15,6 +15,7 @@ namespace irc {
 			Nick(Nick const &src);
 		public:
 			Nick();
+			Nick(Server *server);
 			virtual ~Nick();
 	/* Operators */
 		private:

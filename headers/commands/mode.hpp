@@ -14,6 +14,7 @@ namespace irc {
 			mode(mode const &src);
 		public:
 			mode();
+			mode(Server *server);
 			virtual ~mode();
 	/* Operators */
 		private:

@@ -3,9 +3,8 @@
 namespace irc {
 /* Constructors & Destructors */
 	Privmsg::~Privmsg() {};
-	Privmsg::Privmsg(){
-		_args.push_back("PRIVMSG");
-	};
+	Privmsg::Privmsg(){};
+	Privmsg::Privmsg(Server *server): command(server) {};
 
 	bool Privmsg::find_receiver(Server const *server,const std::string receiver) const {
 		if (server->find_chan_name(receiver, server->get_channel_list()) != server->get_channel_list().end())

@@ -14,6 +14,7 @@ namespace irc {
 			kick(kick const &src);
 		public:
 			kick();
+			kick(Server *server);
 			virtual ~kick();
 	/* Operators */
 		private:

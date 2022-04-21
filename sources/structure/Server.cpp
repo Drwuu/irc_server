@@ -5,12 +5,13 @@
 namespace irc {
 /* Constructors & Destructors */
 	Server::Server(): _line(), _map(), _parser(parser()) {
-		_map.insert(std::make_pair("INVITE", new invite()));
-		_map.insert(std::make_pair("KICK", new irc::kick()));
-		_map.insert(std::make_pair("MODE", new irc::mode()));
-		_map.insert(std::make_pair("USER", new irc::User_cmd()));
-		_map.insert(std::make_pair("NICK", new irc::Nick()));
-		_map.insert(std::make_pair("PRIVMSG", new irc::Privmsg()));
+		_map.insert(std::make_pair("INVITE", new invite(this)));
+		_map.insert(std::make_pair("KICK", new kick(this)));
+		_map.insert(std::make_pair("MODE", new mode(this)));
+		_map.insert(std::make_pair("USER", new User_cmd(this)));
+		_map.insert(std::make_pair("NICK", new Nick(this)));
+		_map.insert(std::make_pair("PRIVMSG", new Privmsg(this)));
+		_map.insert(std::make_pair("JOIN", new Join(this)));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");
@@ -116,6 +117,11 @@ namespace irc {
 	}
 
 /* Functions */
+	/*
+	*	*RESUME*
+	*	find_nickname: get nickname from users searching nick
+	*	Return users.end() if not found
+	*/
 	vec_cit_user const Server::find_nickname(string const &nick, vec_user const &users) const {
 		vec_cit_user it = users.begin();
 		for (; it != users.end(); it++) {
@@ -125,6 +131,11 @@ namespace irc {
 		}
 		return users.end();
 	};
+	/*
+	*	*RESUME*
+	*	find_username: get username from users searching name
+	*	Return users.end() if not found
+	*/
 	vec_cit_user const Server::find_username(string const &name, vec_user const &users) const {
 		vec_cit_user it = users.begin();
 		for (; it != users.end(); it++) {
@@ -134,15 +145,28 @@ namespace irc {
 		}
 		return users.end();
 	};
-	vec_cit_chan const Server::find_chan_name(string const &chan, vec_chan const &channel) const {
-		vec_cit_chan it = channel.begin();
-		for (; it != channel.end(); it++) {
+	/*
+	*	*RESUME*
+	*	find_chan_name: get channame from channels searching chan
+	*	Return channels.end() if not found
+	*/
+	vec_cit_chan const Server::find_chan_name(string const &chan, vec_chan const &channels) const {
+		vec_cit_chan it = channels.begin();
+		for (; it != channels.end(); it++) {
 			string chanName = (*it)->get_name();
 			if (chanName == chan)
 				return it;
 		}
-		return channel.end();
+		return channels.end();
 	};
+	/*
+	*	*RESUME*
+	*	parse_line: parse _line of the server
+	*	get cmd from map or throw error
+	*	set _args of the server
+	*	launch is_valid_args from the command in the map found by the parser and throw errors if any
+	*	return a pointer of the cmd in the map
+	*/
 	command *Server::parse_line(User const &user) const {
 		command *cmd = NULL;
 		try {

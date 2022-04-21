@@ -4,6 +4,7 @@ namespace irc {
 /* Constructors & Destructors */
 	kick::~kick() {};
 	kick::kick() {};
+	kick::kick(Server *server): command(server) {};
 /* Operators */
 /* Functions */
 	void kick::exec_cmd(User &user) {
