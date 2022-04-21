@@ -24,7 +24,9 @@ namespace irc {
 			return true;
 	}
 	void	Nick::exec_cmd(User &user) {
-		user.set_nickname(this->get_args()[1]);
+		_args[1].resize(_args[1].size() - 1);
+		user.set_nickname(_args[1]);
+		std::cout <<user.get_nickname().c_str() << "|" <<std::endl;
 		if (user.get_username() != "" && user.get_realname() != "")
 			if (user.get_registered_status() == false)
 			{
