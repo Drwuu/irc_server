@@ -3,6 +3,20 @@
 #include <vector>
 
 namespace irc {
+
+
+	Server * User::get_server() {
+		return _server;
+	}
+	void User::set_server(Server *server) {
+		_server = server;
+	}
+	void User::set_event_list(std::list<Socket_event *> &event_list) {
+		_event_list = event_list;
+	}
+	std::list<Socket_event *> User::get_event_list() {
+		return _event_list;
+	}
 	User::User(){}
 	User::~User(){}
 	User::User(Socket<Address_ipv6> const *socket): _socket(socket){}
@@ -12,6 +26,10 @@ namespace irc {
 		return (this->_username);}
 	std::string const User::get_nickname() const{
 		return (this->_nickname);}
+	std::string const User::get_hostname() const{
+		return (this->_hostname);}
+	std::string const User::get_realname() const{
+		return (this->_realname);}
 	const std::string User::get_password() const{
 		return (this->_password);}
 	const std::string User::get_uuid() const{
@@ -30,7 +48,7 @@ namespace irc {
 		return (this->_chan_list);}
 	const std::vector<ChanStatus> User::get_chan_list() const {
 		return (this->_chan_list);}
-	ChanStatus *User::get_chanstatus_from_list(Channel * channel) {
+	ChanStatus 				*User::get_chanstatus_from_list(Channel * channel) {
 		std::vector<ChanStatus> chans = get_chan_list();
 		for (std::vector<ChanStatus>::iterator it = chans.begin(); it != chans.end();++it)
 		{
@@ -40,7 +58,7 @@ namespace irc {
 		std::cout << "Channel not found\n";
 		return nullptr;
 	}
-	const ChanStatus *User::get_chanstatus_from_list(Channel const *channel) const {
+			const ChanStatus				*User::get_chanstatus_from_list(const Channel * channel) const {
 		std::vector<ChanStatus> chans = get_chan_list();
 		for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
 		{
@@ -64,29 +82,20 @@ namespace irc {
 	void User::set_port(std::string port){
 		this->_port = port;}
 	void User::set_uuid(){
-		this->_uuid = this->_nickname + this->_username + this->_hostname + this->_servername + this->_realname + this->_password;
-	}
+		this->_uuid = this->_nickname + this->_username + this->_realname + this->_password;}
 	void User::set_username(std::string username){
 		if (this->_username.c_str()){
 			this->_past_username.push_back(this->_username);
 		}
 		this->_username = username;}
+	void User::set_hostname(std::string hostname){
+		this->_hostname = hostname;}
 	void User::set_nickname(std::string nickname){ //nickname   =  ( letter / special ) *8( letter / digit / special / "-" )
-		if (nickname.size() > 9 || (!isalpha(nickname.at(0)) && !isspecial(nickname.at(0))))
-		{
-			std::cout << irc::ERR_ERRONEUSNICKNAME <<"\n"<< nickname << " :Erroneous nickname" << std::endl;
-			return;
-		}
-		for (std::string::iterator it = ++nickname.begin(); it != nickname.end(); ++it)
-		{
-			if (!isalpha(*it) && !isdigit(*it) && !isspecial(*it) && *it != '-')
-			{
-				std::cout << irc::ERR_ERRONEUSNICKNAME <<"\n"<< nickname << " :Erroneous nickname" << std::endl;
-				return;
-			}
-		}
 		this->_nickname = nickname;}
-
+	void User::set_realname(std::string realname){
+		this->_realname = realname;}
+	void User::set_registered_status(bool status){
+		this->_is_registered = status;}
 	// FIXME : why do you use server ?
 	void	User::join_channel(Server & Server, Channel * channel) {
 		(void)Server; // FIXME
@@ -160,23 +169,14 @@ namespace irc {
 		channel.transmit_message(msg, this);
 	}
 
-	void User::send_message(Server & Server,User & user, std::string msg){
-		if (this->get_registered_status() == false)
-			return; // if the user is not registered, he can't send message : return error
-		std::vector<User*>	user_list = Server.get_user_list();
-		for (std::vector<User *>::const_iterator it = user_list.begin(); it != user_list.end(); ++it){
-			if ((*it)->get_username() == user.get_username()){
-				(*it)->receive_message(Server,*this,msg);
-				return; // user found in Server list : send message
-			}
-		}
-		// user not found in Server list : send error
+	void User::send_message(std::string msg, User & user){
+		user.receive_message(this,msg);
 	}
 
-	void User::receive_message(User * user,std::string msg){
-		std::string ret = user->get_nickname() + " :" + msg + "\r\n";
-		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
-		user->_event_list.push_back(new_msg);
+	void User::receive_message(User *,std::string msg){
+		std::string ret(msg + "\r\n");
+		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(),ret.c_str());
+		_server->get_event_list().push_back(new_msg);
 	}
 
 	void User::send_invite(User & user, Channel & channel){

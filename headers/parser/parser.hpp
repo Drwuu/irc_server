@@ -1,6 +1,8 @@
 #pragma once
 #include "../error/error.hpp"
 
+#include <list>
+
 namespace irc {
 	class command;
 	class parser {
@@ -29,6 +31,7 @@ namespace irc {
 		public:
 			string const		get_user(string const &line) const;
 			map_citerator_cmd	get_command(string const &line, map_cmd const &_commands) const;
+			std::list<std::string> const	split_command(string const &line) const;
 			vector_string const	get_args(string const &line) const;
 	};
 }

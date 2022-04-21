@@ -2,7 +2,7 @@ NAME			=  irc_42
 
 MAIN			:= main_server.cpp
 
-ARGS			:= 1234 lol
+ARGS			:= 6667 lol
 
 FLAGS			= -Wall -Wextra -Werror -std=c++98
 FLAGS			+= -g3 -fsanitize=address
@@ -12,7 +12,7 @@ INCLUDES		= headers
 
 
 SRCS			= \
-				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp Join.cpp) \
+				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp User_cmd.cpp Nick.cpp Message.cpp Join.cpp) \
 				  $(addprefix error/, error.cpp) \
 				  $(addprefix parser/, parser.cpp) \
 				  $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
@@ -21,7 +21,7 @@ SRCS			= \
 HEADERS			= \
 				  irc.hpp \
 				  $(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
-				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp Join.hpp) \
+				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp User_cmd.hpp Nick.hpp Message.hpp Join.hpp) \
 				  $(addprefix error/, error.hpp) \
 				  $(addprefix parser/, parser.hpp) \
 				  $(addprefix proxy/, Address.hpp Socket_event.hpp Server_queue.hpp Proxy_queue.hpp Proxy.hpp)
@@ -50,7 +50,7 @@ $(NAME):			$(OBJS)
 
 $(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(PATH_HEADERS)
 						mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
-						c++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
+						clang++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(PURPLE)$<$(RESET)$(NO_COLOR)"
 
 clean:

@@ -32,7 +32,7 @@ namespace irc {
 		private:
 		public:
 			virtual void		is_valid_args(Server const *Server, User const &user) const = 0;
-			virtual void		exec_cmd(command const &cmd, User const &user) const = 0;
+			virtual void		exec_cmd(User &user) = 0;
 	};
 }
 #include "../commands/invite.hpp"
@@ -41,3 +41,4 @@ namespace irc {
 #include "../commands/Join.hpp"
 #include "../commands/Nick.hpp"
 #include "../commands/Message.hpp"
+#include "../commands/User_cmd.hpp"

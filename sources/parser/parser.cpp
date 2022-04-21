@@ -45,7 +45,7 @@ namespace irc {
 			_skip_param(line, it, ' '); // skip user
 		for (; it != line.end(); it++) {
 			// if (*(it-1) && *(it-1) == ' ' && *it == ':') //fixme: client send ':command' sometimes, but maybe not necessary ?
-			// 	it++;
+			// it++;
 			if (*it == ' ') {
 				while (*it && *it == ' ')
 					it++; // line parameters can be separated by multiple spaces
@@ -98,4 +98,17 @@ namespace irc {
 			}
 		}
 	};
+
+	std::list<std::string> const parser::	split_command(string const &line) const {
+		std::list<std::string>	cmd_list;
+
+		for (std::string::size_type i = 0, k = 0 ; i != line.npos && i != line.size() ; i = k + 1) {
+			k = line.find("\n", i);
+			if (k == line.npos)
+				k = line.size();
+			std::string	str(line.substr(i, k - i));
+			cmd_list.push_back(str);
+		}
+		return cmd_list;
+	}
 }

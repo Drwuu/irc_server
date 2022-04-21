@@ -8,9 +8,8 @@ namespace irc {
 	Join::~Join() {};
 	Join::Join() {};
 /* Operators */
-/* Functions public */
-	void Join::exec_cmd(command const &cmd, User const &user) const {
-		(void)cmd;
+/* Functions */
+	void Join::exec_cmd(User &user) {
 		(void)user;
 	};
 
@@ -40,7 +39,7 @@ namespace irc {
 				throw error(chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
 			vec_user bannedUsers = (*mchan)->get_banned_user();
 			for (size_t j = 0; j < bannedUsers.size(); j++) {
-				if (user.get_username() == bannedUsers[j]->get_username())
+				if (user .get_username() == bannedUsers[j]->get_username())
 					throw error(chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
 			}
 		}

@@ -6,8 +6,7 @@ namespace irc {
 	invite::invite() {};
 /* Operators */
 /* Functions */
-	void invite::exec_cmd(command const &cmd, User const &user) const {
-		(void)cmd;
+	void invite::exec_cmd(User &user) {
 		(void)user;
 	};
 

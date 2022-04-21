@@ -1,22 +1,26 @@
 #include "../../headers/structure/Server.hpp"
 #include <cstddef>
+#include <utility>
 
 namespace irc {
 /* Constructors & Destructors */
-	Server::Server(): _line("JOIN #prout,#coco,&toto,tutu prout,coco,cho"), _map(), _parser(parser()) {
+	Server::Server(): _line(), _map(), _parser(parser()) {
 		_map.insert(std::make_pair("INVITE", new invite()));
-		_map.insert(std::make_pair("JOIN", new Join()));
-		// _map.insert(std::make_pair("KICK", new irc::kick()));
-		// _map.insert(std::make_pair("MODE", new irc::mode()));
-		User user;
-		user.set_nickname("toto");
-		user.set_username("toto");
-		add_user(&user);
-		Channel chan("prout");
-		chan.add_user(&user);
-		add_channel(chan);
-		command *cmd = parse_line(user);
-		(void)cmd;
+		_map.insert(std::make_pair("KICK", new irc::kick()));
+		_map.insert(std::make_pair("MODE", new irc::mode()));
+		_map.insert(std::make_pair("USER", new irc::User_cmd()));
+		_map.insert(std::make_pair("NICK", new irc::Nick()));
+		_map.insert(std::make_pair("PRIVMSG", new irc::Privmsg()));
+		_map.insert(std::make_pair("JOIN", new irc::Join()));
+		// User user;
+		// user.set_nickname("toto");
+		// user.set_username("toto");
+		// add_user(&user);
+		// Channel chan("prout");
+		// chan.add_user(&user);
+		// add_channel(chan);
+		// command *cmd = parse_line(user);
+		// (void)cmd;
 		// admin.join_channel(*this, "PROUT"); //FIXME : doubled user in chan
 		// vec_user vec =  get_user_list();
 		// for (vec_cit_user it = vec.begin(); it != vec.end(); it++)
@@ -26,6 +30,7 @@ namespace irc {
 		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
 	};
 	Server::Server(std::string password,std::string port): _password(password), _port(port) {
+		_map.insert(std::make_pair("INVITE", new invite()));
 	}
 	Server::Server(Server const &src) {
 		*this = src;
@@ -83,6 +88,9 @@ namespace irc {
 	}
 	std::string const Server::get_ip() const {
 		return (this->_ip);
+	}
+	std::list<irc::Socket_event *>		&Server::get_event_list() {
+		return _event_list;
 	}
 
 /* Setters */
@@ -185,6 +193,15 @@ namespace irc {
 		return user;
 	};
 
+	void			Server::receive_api(std::list<Socket_event *> &api) {
+		_event_list.clear();
+		while (!api.empty()) {
+			api.front()->handle(*this);
+			delete api.front();
+			api.pop_front();
+		}
+	}
+
 	void Server::add_user(User * user) {
 		this->_user_list.push_back(user);
 	}
@@ -199,13 +216,16 @@ namespace irc {
 			}
 		}
 	}
-	void Server::del_user(User & user) { // WIP need to delete user from channel before delete user
+	// Return the fd of delete user
+	int	Server::del_user(User & user) { // WIP need to delete user from channel before delete user
+		int		sockfd = user.get_socket()->get_fd();
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if (*it == &user) {
 				this->_user_list.erase(it);
-				break;
+				return sockfd;
 			}
 		}
+		return -1;
 	}
 	void Server::exec_cmd(User & user, irc::command *command) {
 		(void)user;

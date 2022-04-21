@@ -11,6 +11,9 @@ namespace irc {
 	class Server {
 	/* Typedefs */
 		private:
+			// Events should be allowed to use Server private elements
+			// to modify it deeply
+			friend struct irc::Server_queue;
 		public:
 	/* Variables */
 		private:
@@ -58,6 +61,8 @@ namespace irc {
 			std::vector<User *>				get_user_list() const;
 			std::vector<Channel *> const	get_channel_list() const;
 			map_cmd const					get_map() const;
+			std::list<Socket_event *>		&get_event_list();
+
 	/* Setters */
 		private:
 		public:
@@ -68,6 +73,8 @@ namespace irc {
 			void							set_port(std::string port);
 			void							set_ip(std::string ip);
 			void  							set_motd(std::string motd); // Use For IMPORTMOTD
+			void							set_line(std::string line);
+
 
 
 	/* Functions */
@@ -82,9 +89,11 @@ namespace irc {
 			void							exec_cmd(User & user, command *command);
 			User *							check_user_existance(User & user);
 
+			void							receive_api(std::list<Socket_event *> &api);
+
 			void							add_user(User * user);
 			void							add_channel(Channel & channel);
-			void							del_user(User & user);
+			int								del_user(User & user);
 			void							del_channel(Channel & channel);
 			void							ban_user(std::string nick);//Use For UNKLINE unban USer from Server
 			void							unban_user(std::string nick);
