@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 18:19:28 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 22:42:58 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void			irc::Proxy::queuing() {
 				if (tmp == _clients.end()) {
 					std::stringstream	ss;
 					ss << " ---- [ERROR] Client not found. [" << _poll_data[i].fd  << "] " << std::endl;
-					throw Unknown_client_exception(ss.str().c_str());
+					throw Unknown_client_exception(ss.str());
 				}
 				// FIXME -> the tree should always find a value. But it doesn't.
 				else {
@@ -153,7 +153,7 @@ void			irc::Proxy::queuing() {
 						ss << " ---- [ERROR] Flag not found. [" << _poll_data[i].fd << "] ";
 						ss << " -- flag : " << _poll_data[i].revents << std::endl;
 						ss << " -- errno : " << " [" << errno << "] " << strerror(errno) << std::endl;
-						throw Error_exception(ss.str().c_str());
+						throw Error_exception(ss.str());
 					}
 					it_event->second->handle(tmp->second);
 				}
@@ -166,7 +166,6 @@ void			irc::Proxy::queuing() {
 			}
 			catch (const irc::Proxy::Error_exception &e) {
 				std::clog << e.what();
-				break;
 			}
 		}
 	}
@@ -187,10 +186,6 @@ void				irc::Proxy::receive_api(api_type &data) {
 	std::clog << " ---> API Reception. " << std::endl;
 	_to_server.clear();
 
-	std::clog << " ---- CONTENT API" << std::endl;
-	for (api_type::iterator it = data.begin() ; it != data.end() ; ++it)
-		std::cerr << *it << std::endl;
-
 	std::clog << " ---> API Handling ... " << std::endl;
 	for (; !data.empty() ; data.pop_front()) {
 		std::cerr << " PROX ===========> SOMETHING TO HANDLE " << std::endl;
@@ -205,7 +200,6 @@ void				irc::Proxy::receive_api(api_type &data) {
 		}
 		catch (const irc::Proxy::Error_exception &e) {
 			std::clog << e.what();
-			// break;
 		}
 		delete data.front();
 	}
@@ -353,14 +347,14 @@ void		irc::Proxy::receive(socket_type *client) {
 		ss << "[ERROR] recv() failed. [" << client->get_fd()
 			<< "] [" << client->get_address_readable() << "] :"
 			<< strerror(errno) << std::endl;
-		throw Error_exception(ss.str().c_str());
+		throw Error_exception(ss.str());
 	}
 	// Connexion closed : launch POLLHUP after
 	else if (rtn == 0) {
 		std::stringstream	ss;
 		ss << " ---> Connexion closed. [" << client->get_fd() << "]"
 			<< " [" << client->get_address_readable() << "]" << std::endl;
-		throw Disconnection_exception(ss.str().c_str(), client);
+		throw Disconnection_exception(ss.str(), client);
 	}
 	_to_server.push_back(new irc::Server_queue::Message(buffer, client));
 	std::clog << " ---> New message. [" << client->get_fd() << "]"
@@ -375,7 +369,7 @@ void		irc::Proxy::push_back_queue(fd_type client_fd, data_type data) {
 		std::stringstream	ss;
 		ss << " ---- [ERROR] Cache : client not found. ["
 			<< client_fd << "] data :[" << data << "] " << std::endl;
-		throw Error_exception(ss.str().c_str());
+		throw Error_exception(ss.str());
 	}
 	it->second.push_back(data);
 }
@@ -397,7 +391,7 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 		ss << " ---- [ERROR] send() failed. [" << client->get_fd()
 			<< "] [" << client->get_address_readable() << "] : "
 			<< strerror(errno) << std::endl;
-		throw Error_exception(ss.str().c_str());
+		throw Error_exception(ss.str());
 	}
 }
 
@@ -586,14 +580,14 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 		ss << " <--- [ERROR] : Wrong flag, no data to send to client "
 			<< "[" << client->get_fd() << "] [" << client->get_address_readable() << "]"
 			<< std::endl;
-		throw Error_exception(ss.str().c_str());
+		throw Error_exception(ss.str());
 	}
 	else if (it_cache->second.empty()) {
 		std::stringstream	ss;
 		ss << " <--- [ERROR] : Wrong flag, no pending messages to send "
 			<< "[" << client->get_fd() << "] [" << client->get_address_readable() << "]"
 			<< std::endl;
-		throw Error_exception(ss.str().c_str());
+		throw Error_exception(ss.str());
 	}
 	// FIXME : error on send ?
 	std::clog << " LOL DATA " << it_cache->second.front() << std::endl;
@@ -611,30 +605,30 @@ void	irc::Proxy::Poll_out::handle_server(socket_type *) { }
 //////////////////////////////////////////////////////////////////////////
 // Exceptions : Disconnection, Unkown client, Error
 
-irc::Proxy::Disconnection_exception::Disconnection_exception(const char *content, socket_type *client) throw() : _content(content), _client(client) { }
+irc::Proxy::Disconnection_exception::Disconnection_exception(std::string content, socket_type *client) throw() : _content(content), _client(client) { }
 irc::Proxy::Disconnection_exception::Disconnection_exception(const Disconnection_exception& other) throw() : _content(other._content) { }
 irc::Proxy::Disconnection_exception::~Disconnection_exception() throw() { }
 irc::Proxy::Disconnection_exception		&irc::Proxy::Disconnection_exception::operator=(const Disconnection_exception& ) { return *this; }
-const char	*irc::Proxy::Disconnection_exception::what() const throw() { return _content; }
+const char	*irc::Proxy::Disconnection_exception::what() const throw() { return _content.c_str(); }
 
 irc::Proxy::socket_type		*irc::Proxy::Disconnection_exception::get_socket() const { return _client; }
 
 //////////////////////////////////////////////////////////////////////////
 //
-irc::Proxy::Unknown_client_exception::Unknown_client_exception(const char *content) throw() : _content(content) { }
+irc::Proxy::Unknown_client_exception::Unknown_client_exception(std::string content) throw() : _content(content) { }
 irc::Proxy::Unknown_client_exception::Unknown_client_exception(const Unknown_client_exception& other) throw() : _content(other._content) { }
 irc::Proxy::Unknown_client_exception::~Unknown_client_exception() throw() { }
 irc::Proxy::Unknown_client_exception		&irc::Proxy::Unknown_client_exception::operator=(const Unknown_client_exception& ) { return *this; }
-const char	*irc::Proxy::Unknown_client_exception::what() const throw() { return _content; }
+const char	*irc::Proxy::Unknown_client_exception::what() const throw() { return _content.c_str(); }
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-irc::Proxy::Error_exception::Error_exception(const char *content) throw() : _content(content) { }
+irc::Proxy::Error_exception::Error_exception(std::string content) throw() : _content(content) { }
 irc::Proxy::Error_exception::Error_exception(const Error_exception& other) throw() : _content(other._content) { }
 irc::Proxy::Error_exception::~Error_exception() throw() { }
 irc::Proxy::Error_exception		&irc::Proxy::Error_exception::operator=(const Error_exception& ) { return *this; }
-const char	*irc::Proxy::Error_exception::what() const throw() { return _content; }
+const char	*irc::Proxy::Error_exception::what() const throw() { return _content.c_str(); }
 
 
 //////////////////////////////////////////////////////////////////////////
