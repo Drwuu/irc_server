@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:14:09 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 22:27:55 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,10 +272,10 @@ namespace irc {
 
 			class	Disconnection_exception : public std::exception {
 				Disconnection_exception() throw();
-				const char	*_content;
+				std::string	_content;
 				socket_type	*_client;
 				public:
-					Disconnection_exception(const char *content, socket_type *client) throw();
+					Disconnection_exception(std::string content, socket_type *client) throw();
 					Disconnection_exception(const Disconnection_exception& other) throw();
 					~Disconnection_exception() throw();
 					Disconnection_exception		&operator=(const Disconnection_exception& other);
@@ -285,9 +285,9 @@ namespace irc {
 
 			class	Unknown_client_exception : public std::exception {
 				Unknown_client_exception() throw();
-				const char *_content;
+				std::string	_content;
 				public:
-					Unknown_client_exception(const char *content) throw();
+					Unknown_client_exception(std::string content) throw();
 					Unknown_client_exception(const Unknown_client_exception& other) throw();
 					~Unknown_client_exception() throw();
 					Unknown_client_exception		&operator=(const Unknown_client_exception& other);
@@ -296,9 +296,9 @@ namespace irc {
 			
 			class	Error_exception : public std::exception {
 				Error_exception() throw();
-				const char *_content;
+				std::string	_content;
 				public:
-					Error_exception(const char *content) throw();
+					Error_exception(std::string content) throw();
 					Error_exception(const Error_exception& other) throw();
 					~Error_exception() throw();
 					Error_exception		&operator=(const Error_exception& other);
