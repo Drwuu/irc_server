@@ -123,9 +123,9 @@ namespace irc {
 	*	find_nickname: get nickname from users searching nick
 	*	Return users.end() if not found
 	*/
-	vec_cit_user const Server::find_nickname(string const &nick, vec_user const &users) const {
+	vec_cit_user Server::find_nickname(string const &nick, vec_user const &users) const {
 		vec_cit_user it = users.begin();
-		for (; it != users.end(); it++) {
+		for (; it != users.end(); ++it) {
 			string nickname = (*it)->get_nickname();
 			if (nickname == nick)
 				return it;
@@ -137,7 +137,7 @@ namespace irc {
 	*	find_username: get username from users searching name
 	*	Return users.end() if not found
 	*/
-	vec_cit_user const Server::find_username(string const &name, vec_user const &users) const {
+	vec_cit_user Server::find_username(string const &name, vec_user const &users) const {
 		vec_cit_user it = users.begin();
 		for (; it != users.end(); it++) {
 			string username = (*it)->get_username();
@@ -151,7 +151,7 @@ namespace irc {
 	*	find_chan_name: get channame from channels searching chan
 	*	Return channels.end() if not found
 	*/
-	vec_cit_chan const Server::find_chan_name(string const &chan, vec_chan const &channels) const {
+	vec_cit_chan Server::find_chan_name(string const &chan, vec_chan const &channels) const {
 		vec_cit_chan it = channels.begin();
 		for (; it != channels.end(); it++) {
 			string chanName = (*it)->get_name();

@@ -80,9 +80,9 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			vec_cit_user const				find_nickname(std::string const &nick, vec_user const &users) const;
-			vec_cit_user const				find_username(std::string const &username, vec_user const &users) const;
-			vec_cit_chan const				find_chan_name(std::string const &chan, vec_chan const &channels) const;
+			vec_cit_user 					find_nickname(std::string const &nick, vec_user const &users) const;
+			vec_cit_user 					find_username(std::string const &username, vec_user const &users) const;
+			vec_cit_chan 					find_chan_name(std::string const &chan, vec_chan const &channels) const;
 			User *							get_user_from_socket(Socket<Address_ipv6> const *sock);
 
 			command							*parse_line(User const &user) const;
