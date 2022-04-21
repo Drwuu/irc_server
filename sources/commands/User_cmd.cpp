@@ -17,7 +17,7 @@ namespace irc {
 				user.set_registered_status(true);
 				user.set_uuid();
 				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
-				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname();
+				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname() + "\n";
 				//// FIXME : add to api list
 				//Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 				user.receive_message(&user,ret);

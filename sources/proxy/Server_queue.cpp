@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 14:55:11 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/21 15:38:54 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			std::clog << " ---------- COMMAND : " << cmd_list.front() << std::endl;
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
-			cmd->is_valid_args(&server, user);
+			// FIXME : is_valid_args not working properly
+			// cmd->is_valid_args(&server, user);
 			cmd->exec_cmd(user);
 			//
 			// Execution

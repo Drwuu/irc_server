@@ -169,6 +169,15 @@ namespace irc {
 		return user;
 	};
 
+	void			Server::receive_api(std::list<Socket_event *> &api) {
+		_event_list.clear();
+		while (!api.empty()) {
+			api.front()->handle(*this);
+			delete api.front();
+			api.pop_front();
+		}
+	}
+
 	void Server::add_user(User * user) {
 		this->_user_list.push_back(user);
 	}

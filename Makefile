@@ -2,7 +2,7 @@ NAME			=  irc_42
 
 MAIN			:= main_server.cpp
 
-ARGS			:= 4242 lol
+ARGS			:= 6667 lol
 
 FLAGS			= -Wall -Wextra -Werror -std=c++98
 FLAGS			+= -g3 -fsanitize=address
@@ -50,7 +50,7 @@ $(NAME):			$(OBJS)
 
 $(OBJS_DIR)/%.o:	$(SOURCES)/%.cpp $(PATH_HEADERS)
 						mkdir -p $(addprefix $(OBJS_DIR)/, $(FOLDERS))
-						c++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
+						clang++ $(FLAGS) -I $(INCLUDES) -c $< -o $@
 						printf "\033[2K\r$(BLUE)$(NAME)$(RESET)$(BLUE): $(PURPLE)$<$(RESET)$(NO_COLOR)"
 
 clean:

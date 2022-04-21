@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/19 14:00:18 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/21 15:23:21 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 #ifndef SOCKET_HPP
 # define SOCKET_HPP
 
-# include "unistd.h"
+# include <unistd.h>
+# include <stdlib.h>
+
 # include <sys/socket.h>
 # include <netinet/in.h>
 # include "Address.hpp"
@@ -31,7 +33,7 @@ class Socket {
 		typedef		int											protocol_type;
 		typedef		int											socket_sort;
 		typedef		const int									const_fd_type;
-		typedef		const char	*									data_type;
+		typedef		const char	*								data_type;
 		typedef		unsigned int								len_type;
 
 		typedef		AddSock										address_type;

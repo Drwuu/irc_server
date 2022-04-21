@@ -15,8 +15,11 @@ namespace irc {
 			it++;
 			for (;it != _args[1].end();++it)
 			{
-				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125))
+				// FIXME : '\n' not accepted maybe
+				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
+					std::cerr << " CRASH LOLLLLLLLL " << std::endl;
 					return false;
+				}
 			}
 			return true;
 	}
@@ -28,7 +31,7 @@ namespace irc {
 				user.set_registered_status(true);
 				user.set_uuid();
 				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
-				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname();
+				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname() + "\n";
 				//// FIXME : add to api list
 				// Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 			}

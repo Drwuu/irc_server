@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 13:58:14 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/21 16:53:29 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,13 +187,15 @@ void				irc::Proxy::receive_api(api_type &data) {
 	std::clog << " ---> API Reception. " << std::endl;
 	_to_server.clear();
 
+	std::clog << " ---- CONTENT API" << std::endl;
+	for (api_type::iterator it = data.begin() ; it != data.end() ; ++it)
+		std::cerr << *it << std::endl;
+
 	std::clog << " ---> API Handling ... " << std::endl;
-	while (!data.empty()) {
+	for (; !data.empty() ; data.pop_front()) {
 		std::cerr << " PROX ===========> SOMETHING TO HANDLE " << std::endl;
 		try {
 			data.front()->handle(*this);
-			delete data.front();
-			data.pop_front();
 		}
 		catch (const irc::Proxy::Disconnection_exception &e) {
 			this->_flags[POLLHUP]->handle(e.get_socket());
@@ -203,8 +205,9 @@ void				irc::Proxy::receive_api(api_type &data) {
 		}
 		catch (const irc::Proxy::Error_exception &e) {
 			std::clog << e.what();
-			break;
+			// break;
 		}
+		delete data.front();
 	}
 	std::clog << " ---> API Handled. " << std::endl;
 }
@@ -382,13 +385,12 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 	size_t	buffer_len = 513;
 	char	buffer[buffer_len];
 
-	if (buffer_len >= strlcpy(buffer, data, buffer_len - 1)) {
-		std::clog << " ---- [DETAIL] Data sent had been truncated. "
-			<< "[" << client->get_fd() << "] "
-			<< "[" << client->get_address_readable() << "]" << std::endl;
-	}
+	bzero(buffer, buffer_len);
+	if (strlen(data) > strlcpy(buffer, data, buffer_len) )
+		std::clog << "[DETAIL] : Data sent had been truncated" << std::endl;
 
-	bzero(&buffer, buffer_len);
+	std::clog << " \n ========================================================DATA SENT : " << buffer << std::endl;
+
 	rtn = send(client->get_fd(), buffer, buffer_len, 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;
@@ -595,6 +597,10 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 	}
 	// FIXME : error on send ?
 	_proxy->send_to_client(client, it_cache->second.front());
+	const char *tmp = it_cache->second.front();
+	if (tmp != NULL)
+		free((void *)tmp);
+	it_cache->second.front() = NULL;
 	it_cache->second.pop_front();
 }
 
