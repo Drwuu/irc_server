@@ -35,7 +35,7 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			virtual void		is_valid_args(Server const *Server, User const &user) const = 0;
+			virtual void		is_valid_args(Server const *Server, User const &user) = 0;
 			virtual void		exec_cmd(User &user) = 0;
 	};
 }

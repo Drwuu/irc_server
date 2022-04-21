@@ -10,7 +10,7 @@ namespace irc {
 	void mode::exec_cmd(User &user) {
 		(void)user;
 	};
-	void mode::is_valid_args(Server const *Server, User const &user) const {
+	void mode::is_valid_args(Server const *Server, User const &user) {
 		(void)Server;
 		(void)user;
 	};

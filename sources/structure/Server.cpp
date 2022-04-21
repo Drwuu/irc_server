@@ -205,8 +205,8 @@ namespace irc {
 	void Server::add_user(User * user) {
 		this->_user_list.push_back(user);
 	}
-	void Server::add_channel(Channel & channel) {
-		this->_channel_list.push_back(&channel);
+	void Server::add_channel(Channel *channel) {
+		this->_channel_list.push_back(channel);
 	}
 	void Server::del_channel(Channel & channel) { // WIP need to delete user chan list and chanstatus
 		for (std::vector<Channel *>::iterator it = this->_channel_list.begin(); it != this->_channel_list.end(); ++it) {

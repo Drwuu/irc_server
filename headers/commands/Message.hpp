@@ -30,6 +30,6 @@ namespace irc {
 			bool	is_authorized(const Channel & channel, const User & user) const;
 		public:
 			void	exec_cmd(User &user);
-			void	is_valid_args(Server const *Server, User const &user) const;
+			void	is_valid_args(Server const *Server, User const &user);
 	};
 }

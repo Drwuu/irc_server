@@ -38,7 +38,7 @@ namespace irc {
 			}
 	};
 
-	void Nick::is_valid_args(Server const *Server, User const &) const {
+	void Nick::is_valid_args(Server const *Server, User const &) {
 		// Possible Error : ERR_NONICKNAMEGIVEN  ERR_ERRONEUSNICKNAME ERR_NICKNAMEINUSE ERR_NICKCOLLISION
 		if (this->_args.size() < 1)
 			throw error("No nickname given", ERR_NONICKNAMEGIVEN);

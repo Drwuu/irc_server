@@ -7,49 +7,60 @@ namespace irc {
 /* Constructors & Destructors */
 	Join::~Join() {};
 	Join::Join() {};
-	Join::Join(Server *server): command(server) {};
+	Join::Join(Server *server): command(server), _chans(), _keys() {};
 /* Operators */
 /* Functions */
 	void Join::exec_cmd(User &user) {
-		(void)user;
+		vec_chan const serv_chans = _server->get_channel_list();
+		for (size_t i = 0; i < _chans.size(); i++) {
+			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
+			if (mchan != serv_chans.end())													// if it founds a channel, add user on it
+				(*mchan)->add_user(&user);
+			else {
+				Channel *chan = new Channel(_chans[i]);
+				chan->add_user(&user);
+				_server->add_channel(chan);													// create channel and add user on it
+			}
+		}
 	};
 
-	void Join::is_valid_args(Server const *Server, User const &user) const {
+	void Join::is_valid_args(Server const *server, User const &user) {
 		if (_args.size() < 2)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 
-		vector_string chans = _get_instructions(_args[1], ',');
-		_erase_chars("#&", chans);
-		for (size_t i = 0; i < chans.size(); i++)
-			dprintf(2, "_erase_chars | chans[%lu] %s\n", i, chans[i].c_str());
+		_chans = _get_instructions(_args[1], ',');
+		_erase_chars("#&", _chans);
 
-		vector_string keys;
-		if (_args.size() >= 3)
-			keys = _get_instructions(_args[2], ',');
+		if (_args.size() >= 3)																// get keys
+			_keys = _get_instructions(_args[2], ',');
 
-		vec_chan const serv_chans = Server->get_channel_list();
+		vec_chan const serv_chans = server->get_channel_list();
+		if (serv_chans.size() == 0)															// if no chans, all chans will be created
+			return ;
  		// fixme: is it_args invalid if multiple channels with ',' but only one bad
-		for (size_t i = 0; i < chans.size(); i++) {
-			vec_cit_chan mchan = Server->find_chan_name(chans[i], serv_chans);
-			if (serv_chans.size() == 0 || mchan == serv_chans.end())
-				throw error(chans[i] + " :No such channel", ERR_NOSUCHCHANNEL);
-			vec_user users = (*mchan)->get_user_list();
-			if (users.size() >= (*mchan)->get_userlimit())
-				throw error(chans[i] + " :Cannot join channel (+l)", ERR_CHANNELISFULL);
-			if ((*mchan)->is_invite())
-				throw error(chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
-			vec_user bannedUsers = (*mchan)->get_banned_user();
-			for (size_t j = 0; j < bannedUsers.size(); j++) {
-				if (user .get_username() == bannedUsers[j]->get_username())
-					throw error(chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
+		for (size_t i = 0; i < _chans.size(); i++) {
+			vec_cit_chan mchan = server->find_chan_name(_chans[i], serv_chans);
+			if (mchan != serv_chans.end()) {												// if it founds a channel
+				vec_user users = (*mchan)->get_user_list();
+				if (users.size() >= (*mchan)->get_userlimit())
+					throw error(_chans[i] + " :Cannot join channel (+l)", ERR_CHANNELISFULL);
+				if ((*mchan)->is_invite())
+					throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
+				vec_user bannedUsers = (*mchan)->get_banned_user();
+				for (size_t j = 0; j < bannedUsers.size(); j++) {
+					if (user .get_username() == bannedUsers[j]->get_username())
+						throw error(_chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
+				}
 			}
 		}
-		for (size_t i = 0; i < keys.size(); i++) {
-			if (i >= chans.size())															// ignore too much keys
+		for (size_t i = 0; i < _keys.size(); i++) {
+			if (i >= _chans.size())															// ignore too much _keys
 				break ;
-			vec_cit_chan mchan = Server->find_chan_name(chans[i], serv_chans);				// pos of key must be the same as chan
-			if (keys[i] != (*mchan)->get_key())
-				throw error(chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
+			vec_cit_chan mchan = server->find_chan_name(_chans[i], serv_chans);				// pos of key must be the same as chan
+			if (mchan != serv_chans.end()) {												// if it founds a channel
+				if (_keys[i] != (*mchan)->get_key())										// check key
+					throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
+			}
 		}
 	};
 

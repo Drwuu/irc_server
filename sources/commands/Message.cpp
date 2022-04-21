@@ -74,7 +74,7 @@ namespace irc {
 		std::cout << _args[2] << std::endl;
 	}
 
-	void	Privmsg::is_valid_args(Server const *Server, User const &user) const {
+	void	Privmsg::is_valid_args(Server const *Server, User const &user) {
 		// Possible numeric reply ERR_NORECIPIENT ERR_NOTEXTTOSEND ERR_CANNOTSENDTOCHAN
 		//ERR_NOTOPLEVEL ERR_WILDTOPLEVEL ERR_TOOMANYTARGETS ERR_NOSUCHNICK RPL_AWAY
 		// WIP mask a gere Oui ? Non
