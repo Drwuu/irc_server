@@ -40,7 +40,7 @@ namespace irc {
 		std::cout << "Channel not found\n";
 		return nullptr;
 	}
-	const ChanStatus *User::get_chanstatus_from_list(Channel * channel) const {
+	const ChanStatus *User::get_chanstatus_from_list(Channel const *channel) const {
 		std::vector<ChanStatus> chans = get_chan_list();
 		for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
 		{

@@ -62,7 +62,7 @@ namespace irc {
 			std::vector<ChanStatus>			get_chan_list();
 			const std::vector<ChanStatus>	get_chan_list() const;
 			ChanStatus						*get_chanstatus_from_list(Channel * channel);
-			const ChanStatus				*get_chanstatus_from_list(Channel * channel) const;
+			const ChanStatus				*get_chanstatus_from_list(Channel const *channel) const;
 			const Socket<Address_ipv6>		*get_socket() const;
 
 			void						set_password(std::string password);

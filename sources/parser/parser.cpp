@@ -44,9 +44,9 @@ namespace irc {
 		if (it[0] == ':')
 			_skip_param(line, it, ' '); // skip user
 		for (; it != line.end(); it++) {
-			if (*(it-1) && *(it-1) == ' ' && *it == ':') //fixme: client send ':command' sometimes, but maybe not necessary ?
-				it++;
-			else if (*it == ' ') {
+			// if (*(it-1) && *(it-1) == ' ' && *it == ':') //fixme: client send ':command' sometimes, but maybe not necessary ?
+			// 	it++;
+			if (*it == ' ') {
 				while (*it && *it == ' ')
 					it++; // line parameters can be separated by multiple spaces
 				break ;

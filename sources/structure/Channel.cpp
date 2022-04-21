@@ -1,4 +1,5 @@
 #include "../../headers/structure/Channel.hpp"
+#include <sys/_types/_size_t.h>
 
 namespace irc {
 	const std::string& Channel::get_name() const{
@@ -6,7 +7,11 @@ namespace irc {
 	const std::string& Channel::get_prefix() const{
 		return (this->_prefix);}
 
-	const int & Channel::get_userlimit() const{
+	const std::string& Channel::get_key() const {
+		return _key;
+	};
+
+	const size_t & Channel::get_userlimit() const{
 		return (this->_userlimit);}
 
 	const std::vector<User *> Channel::get_user_list() const{
@@ -75,7 +80,7 @@ namespace irc {
 	void Channel::invite_user(User * user) {
 		// You need to dereference 'this' to transform it in reference.
 		// Use your fucking brain.
-		user->receive_invite(*this); 
+		user->receive_invite(*this);
 	}
 
 	void Channel::transmit_message(std::string msg, User * user)

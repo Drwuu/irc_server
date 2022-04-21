@@ -5,14 +5,14 @@ MAIN			:= main_server.cpp
 ARGS			:= 1234 lol
 
 FLAGS			= -Wall -Wextra -Werror -std=c++98
-# FLAGS			+= -g3 -fsanitize=address
+FLAGS			+= -g3 -fsanitize=address
 
 OBJS_DIR		= objects
 INCLUDES		= headers
 
 
 SRCS			= \
-				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp) \
+				  $(addprefix commands/, command.cpp invite.cpp kick.cpp mode.cpp Join.cpp) \
 				  $(addprefix error/, error.cpp) \
 				  $(addprefix parser/, parser.cpp) \
 				  $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
@@ -21,7 +21,7 @@ SRCS			= \
 HEADERS			= \
 				  irc.hpp \
 				  $(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
-				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp) \
+				  $(addprefix commands/, command.hpp invite.hpp kick.hpp mode.hpp Join.hpp) \
 				  $(addprefix error/, error.hpp) \
 				  $(addprefix parser/, parser.hpp) \
 				  $(addprefix proxy/, Address.hpp Socket_event.hpp Server_queue.hpp Proxy_queue.hpp Proxy.hpp)

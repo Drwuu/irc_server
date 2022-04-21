@@ -1,5 +1,6 @@
 #pragma once
 #include "Server.hpp"
+#include <sys/_types/_size_t.h>
 
 namespace irc {
 	class User;
@@ -11,7 +12,7 @@ namespace irc {
 			std::string	_key;
 			int			_lifetime;
 			int			_opdelay;
-			int			_userlimit;
+			size_t		_userlimit;
 			bool		_is_private;
 			bool		_is_secret;
 			bool		_is_invite;
@@ -35,7 +36,8 @@ namespace irc {
 			const std::string&			get_name() const;
 			const std::string&			get_prefix() const;
 			const std::string&			get_topic() const;
-			const int&					get_userlimit() const;
+			const std::string&			get_key() const;
+			const size_t&				get_userlimit() const;
 			const std::vector<User *>	get_user_list() const;
 			const std::vector<User *>	get_banned_user() const; // Needed for ISBANNED function
 			const std::vector<User *>	get_invite_list() const;
