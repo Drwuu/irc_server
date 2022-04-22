@@ -17,11 +17,13 @@ namespace irc {
 	std::list<Socket_event *> User::get_event_list() {
 		return _event_list;
 	}
-	User::User(){}
+	User::User() : _is_pass_checked(false) {}
 	User::~User(){}
-	User::User(Socket<Address_ipv6> const *socket): _socket(socket){}
+	User::User(Socket<Address_ipv6> const *socket): _is_pass_checked(false), _socket(socket){}
 	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
 
+	int User::get_port() const{
+		return (this->_port);}
 	const std::string User::get_username() const{
 		return (this->_username);}
 	std::string const User::get_nickname() const{
@@ -30,18 +32,16 @@ namespace irc {
 		return (this->_hostname);}
 	std::string const User::get_realname() const{
 		return (this->_realname);}
-	const std::string User::get_password() const{
-		return (this->_password);}
 	const std::string User::get_uuid() const{
 		return (this->_uuid);}
-	const std::string User::get_port() const{
-		return (this->_port);}
 	const std::string User::get_ip() const{
 		return (this->_ip);}
 	const std::string User::get_mode() const{
 		return (this->_mode);}
 	bool User::get_registered_status() const{
 		return _is_registered;}
+	bool User::get_password_status() const{
+		return _is_pass_checked;}
 	std::vector<std::string> User::get_past_username(){
 		return (this->_past_username);}
 	std::vector<ChanStatus> User::get_chan_list() {
@@ -75,14 +75,12 @@ namespace irc {
 	bool User::get_operator_status() const{
 		return _is_irc_operator;}
 
-	void User::set_password(std::string password){
-		this->_password = password;}
-	void User::set_ip(std::string ip){
+	void User::set_ip(std::string ip) {
 		this->_ip = ip;}
-	void User::set_port(std::string port){
+	void User::set_port(int port) {
 		this->_port = port;}
 	void User::set_uuid(){
-		this->_uuid = this->_nickname + this->_username + this->_realname + this->_password;}
+		this->_uuid = this->_nickname + this->_username + this->_realname; }
 	void User::set_username(std::string username){
 		if (this->_username.c_str()){
 			this->_past_username.push_back(this->_username);
@@ -96,6 +94,9 @@ namespace irc {
 		this->_realname = realname;}
 	void User::set_registered_status(bool status){
 		this->_is_registered = status;}
+
+	void User::set_password_status(bool status){
+		this->_is_pass_checked = status;}
 	// FIXME : why do you use server ?
 	void	User::join_channel(Server & Server, Channel * channel) {
 		(void)Server; // FIXME

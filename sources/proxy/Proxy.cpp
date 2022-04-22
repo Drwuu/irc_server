@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/22 14:06:42 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/22 15:18:37 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,7 @@ irc::Proxy	&irc::Proxy::operator=(const irc::Proxy &source) {
 // Clear all registered clients' sockets, but not the Server socket.
 // Clears : Clients, cache, pollfd (without Server socket)
 void		irc::Proxy::end_all_connexions() {
-	for (client_tree_type::iterator it = _clients.begin() ;
-			it != _clients.end(); ) {
+	for (client_tree_type::iterator it = _clients.begin() ; it != _clients.end(); ) {
 		client_tree_type::iterator tmp = it;
 		erase_cache(*tmp->second);
 		erase_pollfd(*tmp->second);
@@ -403,8 +402,7 @@ void		irc::Proxy::erase_cache(const socket_type &target) {
 	cache_queue_type	queue = _cache.find(target.get_fd())->second;
 
 	while (!queue.empty()) {
-		if (queue.front())
-			delete queue.front();
+		delete queue.front();
 		queue.pop_front();
 	}
 }

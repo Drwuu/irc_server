@@ -2,6 +2,10 @@
 #include <cstddef>
 #include <utility>
 
+#define LEN_PASS_VERSION 14
+#define LEN_PASS_FLAG 100
+#define LEN_RECV_BUFF 512
+
 namespace irc {
 /* Constructors & Destructors */
 	Server::Server(): _line(), _map(), _parser(parser()) {
@@ -30,7 +34,7 @@ namespace irc {
 		// for (vec_cit_user it = chans.begin(); it != chans.end(); it++)
 		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
 	};
-	Server::Server(std::string password,std::string port): _password(password), _port(port) {
+	Server::Server(std::string password,int port): _password(password), _port(port) {
 		_map.insert(std::make_pair("INVITE", new invite()));
 	}
 	Server::Server(Server const &src) {
@@ -84,7 +88,7 @@ namespace irc {
 	std::string const Server::get_password() const {
 		return (this->_password);
 	}
-	std::string const Server::get_port() const {
+	int  Server::get_port() const {
 		return (this->_port);
 	}
 	std::string const Server::get_ip() const {
@@ -105,9 +109,11 @@ namespace irc {
 		this->_hostname = hostname;
 	}
 	void Server::set_password(std::string password){
+		if (password.size() > LEN_RECV_BUFF - (strlen("PASS ") + LEN_PASS_VERSION + LEN_PASS_FLAG))
+			std::cerr << " [ERROR] -- Password too long." << std::endl;
 		this->_password = password;
 	}
-	void Server::set_port(std::string port){
+	void Server::set_port(int port){
 		this->_port = port;
 	}
 	void Server::set_ip(std::string ip){
