@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 22:42:58 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:06:42 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,7 @@ void	irc::Proxy::init_flags() {
 	_flags.insert(std::make_pair(_cl_error, new Poll_error(this)));
 
 	_flags.insert(std::make_pair(POLLOUT, new Poll_out(this)));
+	_flags.insert(std::make_pair(_cl_message_pevents, new Poll_out(this)));
 	_flags.insert(std::make_pair(POLLWRNORM, new Poll_out(this)));
 	std::clog << " |--| FLAG inialised. " << std::endl;
 }
@@ -645,3 +646,18 @@ void	irc::Proxy::Poll_hup_in::handle(socket_type *socket) {
 }
 
 void	irc::Proxy::Poll_hup_in::handle_server(socket_type *) { }
+
+//////////////////////////////////////////////////////////////////////////
+// Poll_out_in : POLLOUT | POLLIN
+
+irc::Proxy::Poll_out_in::Poll_out_in() { }
+irc::Proxy::Poll_out_in::~Poll_out_in() { }
+
+irc::Proxy::Poll_out_in::Poll_out_in(Proxy *proxy) : IPoll_handling(proxy) { }
+
+void	irc::Proxy::Poll_out_in::handle(socket_type *socket) {
+	_proxy->_flags[POLLIN]->handle(socket);
+	_proxy->_flags[POLLOUT]->handle(socket);
+}
+
+void	irc::Proxy::Poll_out_in::handle_server(socket_type *) { }
