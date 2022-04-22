@@ -8,6 +8,6 @@ irc::Cap::Cap() { }
 irc::Cap::Cap(Server *) { }
 irc::Cap::~Cap() { }
 
-void	irc::Cap::is_valid_args(Server const *, User const &) {}
+bool	irc::Cap::is_valid_args(User const &) { return true; }
 
 void	irc::Cap::exec_cmd(User &) {}

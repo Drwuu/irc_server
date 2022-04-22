@@ -27,7 +27,7 @@ namespace irc {
 	};
 
 	// Server is unused here.
-	void User_cmd::is_valid_args(Server const *, User const &user) {
+	bool User_cmd::is_valid_args(User const &user) {
 		// Possible Error : ERR_NEEDMOREPARAMS ERR_ALREADYREGISTRED
 		if (this->_args.size() < 5)
 			throw error(this->_args[0] + ": Not enough parameters", ERR_NEEDMOREPARAMS);
@@ -40,5 +40,6 @@ namespace irc {
 		//for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it)
 		//	if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64)
 		//		throw error("Invalid realname", ERR_ERRONEUSNICKNAME); // Maybe add some custom error
+		return true;
 	};
 }

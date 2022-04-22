@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server_queue.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 20:14:34 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/22 15:43:53 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 //
 irc::Server_queue::Message::Message() : _data(), _socket() { }
-irc::Server_queue::Message::~Message() { }
+irc::Server_queue::Message::~Message() {}
 
 irc::Server_queue::Message::Message(irc::Server_queue::Message::data_type data,
 		const irc::Server_queue::Message::socket_type *client) :
@@ -44,7 +44,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
 			// FIXME : is_valid_args not working properly
-			// cmd->is_valid_args(&server, user);
+			// cmd->is_valid_args(user);
 			cmd->exec_cmd(user);
 			//
 			// Execution
@@ -132,4 +132,3 @@ void			irc::Server_queue::Error::handle(Server &){
 		<< " socket = " << _socket->get_fd() << std::endl;
 	std::clog << " data = " << _data << std::endl;
 }
-

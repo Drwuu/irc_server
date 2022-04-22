@@ -35,22 +35,22 @@ namespace irc {
 		}
 	};
 
-	void Join::is_valid_args(Server const *server, User const &user) {
+	bool Join::is_valid_args(User const &user) {
 		if (_args.size() < 2)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 
 		_chans = _get_instructions(_args[1], ',');
-		_erase_chars("#&", _chans);
+		// _erase_chars("#&", _chans);
 
 		if (_args.size() >= 3)																// get keys
 			_keys = _get_instructions(_args[2], ',');
 
-		vec_chan const serv_chans = server->get_channel_list();
+		vec_chan const serv_chans = _server->get_channel_list();
 		if (serv_chans.size() == 0)															// if no chans, all chans will be created
-			return ;
+			return true;
  		// fixme: is it_args invalid if multiple channels with ',' but only one bad
 		for (size_t i = 0; i < _chans.size(); i++) {
-			vec_cit_chan mchan = server->find_chan_name(_chans[i], serv_chans);
+			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				vec_user users = (*mchan)->get_user_list();
 				if (users.size() >= (*mchan)->get_userlimit())
@@ -67,12 +67,13 @@ namespace irc {
 		for (size_t i = 0; i < _keys.size(); i++) {
 			if (i >= _chans.size())															// ignore too much _keys
 				break ;
-			vec_cit_chan mchan = server->find_chan_name(_chans[i], serv_chans);				// pos of key must be the same as chan
+			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);				// pos of key must be the same as chan
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				if (_keys[i] != (*mchan)->get_key())										// check key
 					throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
 			}
 		}
+		return true;
 	};
 
 /* Functions private */

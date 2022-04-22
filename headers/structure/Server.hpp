@@ -42,7 +42,6 @@ namespace irc {
 			Server(Server const &copy);
 		public:
 			Server();
-			Server(std::string password, std::string port);
 			~Server();
 	/* Operators */
 		private:

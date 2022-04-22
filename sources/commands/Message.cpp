@@ -76,7 +76,7 @@ namespace irc {
 		std::cout << _args[2] << std::endl;
 	}
 
-	void	Privmsg::is_valid_args(Server const *Server, User const &user) {
+	bool	Privmsg::is_valid_args(User const &user) {
 		// Possible numeric reply ERR_NORECIPIENT ERR_NOTEXTTOSEND ERR_CANNOTSENDTOCHAN
 		//ERR_NOTOPLEVEL ERR_WILDTOPLEVEL ERR_TOOMANYTARGETS ERR_NOSUCHNICK RPL_AWAY
 		// WIP mask a gere Oui ? Non
@@ -88,15 +88,16 @@ namespace irc {
 			throw error(_args[0] + ": No text to send", ERR_NOTEXTTOSEND);
 		if (!is_valid_receiver(_args[1]))
 			throw error("No recipient given", ERR_NORECIPIENT);
-		if (!find_receiver(Server,this->_args[1]))
+		if (!find_receiver(_server,this->_args[1]))
 			throw error(_args[1],ERR_NOSUCHNICK);
 
 		// FIXME : This is a bit shady. Maybe `is_authorized()` should be authorized to take
 		// a `const Channel *` instead of a reference.
 		if (is_valid_channel(_args[1])) {
-			irc::vec_cit_chan	it = Server->find_chan_name(_args[1], Server->get_channel_list());
+			irc::vec_cit_chan	it = _server->find_chan_name(_args[1], _server->get_channel_list());
 			if (!is_authorized(*(*it), user)) // <- HERE
 				throw error("You are not authorized to send messages to this channel", ERR_CANNOTSENDTOCHAN);
 		}
+		return true;
 	}
 }

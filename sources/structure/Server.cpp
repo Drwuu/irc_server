@@ -7,7 +7,7 @@ namespace irc {
 	Server::Server(): _line(), _map(), _parser(parser()) {
 		_map.insert(std::make_pair("INVITE", new invite(this)));
 		_map.insert(std::make_pair("KICK", new kick(this)));
-		_map.insert(std::make_pair("MODE", new mode(this)));
+		_map.insert(std::make_pair("MODE", new Mode(this)));
 		_map.insert(std::make_pair("USER", new User_cmd(this)));
 		_map.insert(std::make_pair("NICK", new Nick(this)));
 		_map.insert(std::make_pair("PRIVMSG", new Privmsg(this)));
@@ -30,9 +30,6 @@ namespace irc {
 		// for (vec_cit_user it = chans.begin(); it != chans.end(); it++)
 		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
 	};
-	Server::Server(std::string password,std::string port): _password(password), _port(port) {
-		_map.insert(std::make_pair("INVITE", new invite()));
-	}
 	Server::Server(Server const &src) {
 		*this = src;
 	};
@@ -173,7 +170,7 @@ namespace irc {
 		try {
 			cmd = _parser.get_command(_line, _map)->second;
 			cmd->set_args(_parser.get_args(_line));
-			cmd->is_valid_args(this, user);
+			cmd->is_valid_args(user);
 			return cmd;
 		}
 		catch (irc::error &e) {

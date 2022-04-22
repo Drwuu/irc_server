@@ -39,7 +39,7 @@ namespace irc {
 			}
 	};
 
-	void Nick::is_valid_args(Server const *Server, User const &) {
+	bool Nick::is_valid_args(User const &) {
 		// Possible Error : ERR_NONICKNAMEGIVEN  ERR_ERRONEUSNICKNAME ERR_NICKNAMEINUSE ERR_NICKCOLLISION
 		if (this->_args.size() < 1)
 			throw error("No nickname given", ERR_NONICKNAMEGIVEN);
@@ -47,7 +47,8 @@ namespace irc {
 			throw error("Invalid nickname", ERR_ERRONEUSNICKNAME);
 
 		// if (Server->find_nickname(this->_args[1]) != NULL && Server->find_nickname(this->_args[1]).get_socket() != NULL) Possible integration
-		if (Server->find_nickname(_args[1],Server->get_user_list()) != Server->get_user_list().end())
+		if (_server->find_nickname(_args[1], _server->get_user_list()) != _server->get_user_list().end())
 			throw error("Nickname already in use", ERR_NICKNAMEINUSE);
+		return true;
 	}
 }
