@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 22:27:55 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:06:27 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,15 @@ namespace irc {
 					Poll_hup_in();
 					~Poll_hup_in();
 					Poll_hup_in(Proxy *proxy);
+					void	handle(socket_type *socket);
+					void	handle_server(socket_type *server_socket);
+			};
+
+			class Poll_out_in : public IPoll_handling {
+				public:
+					Poll_out_in();
+					~Poll_out_in();
+					Poll_out_in(Proxy *proxy);
 					void	handle(socket_type *socket);
 					void	handle_server(socket_type *server_socket);
 			};
