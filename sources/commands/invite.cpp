@@ -11,7 +11,7 @@ namespace irc {
 		(void)user;
 	};
 
-	void invite::is_valid_args(Server const *server, User const &user) const {
+	void invite::is_valid_args(Server const *server, User const &user) {
 
 		/* Throw error not enough parameters */
 		if (_args.size() < 3)

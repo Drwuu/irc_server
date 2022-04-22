@@ -92,7 +92,7 @@ namespace irc {
 			void							receive_api(std::list<Socket_event *> &api);
 
 			void							add_user(User * user);
-			void							add_channel(Channel & channel);
+			void							add_channel(Channel *channel);
 			int								del_user(User & user);
 			void							del_channel(Channel & channel);
 			void							ban_user(std::string nick);//Use For UNKLINE unban USer from Server
