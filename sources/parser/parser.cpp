@@ -45,11 +45,8 @@ namespace irc {
 		if (it[0] == ':')
 			_skip_param(line, it, ' ');											// skip user
 		for (; it != line.end(); it++) {
-			if (*it == ' ') {
-				while (*it && *it == ' ')
-					it++;														// line parameters can be separated by multiple spaces
+			if (*it == ' ')
 				break ;
-			}
 			cmd.push_back(*it);
 		}
 		map_citerator_cmd cmd_it = _commands.find(cmd);
