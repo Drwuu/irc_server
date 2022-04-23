@@ -30,7 +30,7 @@ namespace irc {
 			bool	is_valid_receiver(const std::string &receiver) const;
 			bool	is_authorized(const Channel & channel, const User & user) const;
 		public:
-			void	exec_cmd(User &user);
-			bool	is_valid_args(User const &user);
+			void			exec_cmd(User &user);
+			virtual bool	is_valid_args(User const &user);
 	};
 }

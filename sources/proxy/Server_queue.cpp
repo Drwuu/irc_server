@@ -35,6 +35,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 		try {
 			std::clog << " ---------- COMMAND : " << cmd_list.front() << std::endl;
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
+			cmd->check_auth(user);
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
 			// FIXME : is_valid_args not working properly
 			cmd->is_valid_args(user);
