@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 15:23:21 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/23 20:48:06 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 
 # include <sys/socket.h>
+# include <fcntl.h>
 # include <netinet/in.h>
 # include "Address.hpp"
 
@@ -83,6 +84,7 @@ class Socket {
 		void			create_endpoint() {
 			std::clog << " ---- Create endpoint on port " << this->get_port() << " ... " <<  std::endl;
 			_sockfd = socket(_address.get_family(), _type, _protocol);
+			fcntl(_sockfd, F_SETFL, O_NONBLOCK);
 			if (_sockfd == -1) {
 				std::cerr << " [ERROR] : socket function failed -- " << strerror(errno) << std::endl;
 				return ;
