@@ -9,57 +9,52 @@ namespace irc {
 /* Operators */
 /* Functions */
 	void Mode::exec_cmd(User &) {
-		vec_chan const serv_chans = _server->get_channel_list();
-		vec_cit_chan mchan = _server->find_chan_name(_args[1], serv_chans);
-		if (mchan != serv_chans.end())											// arg mode was a chan
+		if (_args[1][0] == '#' || _args[1][0] == '&')
 			_exec_chanMode();
 		else
 			_exec_userMode();
 	};
 	bool Mode::is_valid_args(User const &user) {
-		(void)user;
+		if (_args.size() < 3)
+			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
+		if (!_is_valid_flag_mode(_args[2]))
+			throw error(":Unknown MODE flag", ERR_UMODEUNKNOWNFLAG);
 
-
-		// if (mchan != serv_chans.end())											// arg mode was a chan
-		if (_args[2][0] == '#')
-			_valid_chanMode();
+		if (_args[1][0] == '#' || _args[1][0] == '&')
+			_valid_chanMode(user);
 		else
-			;
-
-		// if (muser != serv_users.end())											// arg mode was a user
-		// 	_valid_userMode();
-
+			_valid_userMode();
 
 		return true;
 	};
 
 
-	void Mode::_valid_chanMode() {
-		if (_args.size() < 4)
-			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
-
+	void Mode::_valid_chanMode(User const &user) {
 		vec_chan const serv_chans = _server->get_channel_list();
 		vec_cit_chan mchan = _server->find_chan_name(_args[1], serv_chans);
 		if (serv_chans.size() == 0 || mchan == serv_chans.end())
-			throw error(_args[2] + " :No such channel", ERR_NOSUCHCHANNEL);
-		if (!_is_valid_flag_mode(_args[2]))
-			throw error(":Unknown MODE flag", ERR_UMODEUNKNOWNFLAG);
+			throw error(_args[1] + " :No such channel", ERR_NOSUCHCHANNEL);
 		string pos;
 		if (!_is_valid_mode(_args[2], "opsitnmlbvkw", pos))
 			throw error(pos + " :is unknown mode char to me", ERR_UNKNOWNMODE);
+
+		vec_user opUsers = (*mchan)->get_operator_list();
+		vec_cit_user it = _server->find_nickname(user.get_nickname(), opUsers);
+		if (it == opUsers.end())
+			throw error(_args[1] + " :You're not channel operator", ERR_CHANOPRIVSNEEDED);
+
+		vec_user chanUsers = (*mchan)->get_user_list();
+		vec_cit_user it2 = _server->find_nickname(user.get_nickname(), chanUsers);
+		if (it2 == chanUsers.end())
+			throw error(_args[1] + " :You're not on that channel", ERR_NOTONCHANNEL);
 	}
 	void Mode::_exec_chanMode() {
 	}
 	void Mode::_valid_userMode() {
-		if (_args.size() < 3)
-			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
-
 		vec_user const serv_users = _server->get_user_list();
 		vec_cit_user muser = _server->find_nickname(_args[1], serv_users);
 		if (serv_users.size() == 0 || muser == serv_users.end())
 			throw error(_args[1] + " :No such nick", ERR_NOSUCHNICK);
-		if (!_is_valid_flag_mode(_args[2]))
-			throw error(":Unknown MODE flag", ERR_UMODEUNKNOWNFLAG);
 		string pos;
 		if (!_is_valid_mode(_args[2], "iwso", pos))
 			throw error(pos + " :is unknown mode char to me", ERR_UNKNOWNMODE);

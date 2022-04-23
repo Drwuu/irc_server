@@ -16,16 +16,14 @@ namespace irc {
 			{
 				// FIXME : '\n' not accepted maybe
 				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
-					std::cerr << " CRASH LOLLLLLLLL " << std::endl;
+					std::clog << "Nickname invalid : " << (int)*it << std::endl;
 					return false;
 				}
 			}
 			return true;
 	}
 	void	Nick::exec_cmd(User &user) {
-		_args[1].resize(_args[1].size() - 1);
 		user.set_nickname(_args[1]);
-		std::cout <<user.get_nickname().c_str() << "|" <<std::endl;
 		if (user.get_username() != "" && user.get_realname() != "")
 			if (user.get_registered_status() == false)
 			{
@@ -46,9 +44,11 @@ namespace irc {
 		if (is_nickname_valid() == false)
 			throw error("Invalid nickname", ERR_ERRONEUSNICKNAME);
 
+		irc::vec_user userlist = _server->get_user_list();
 		// if (Server->find_nickname(this->_args[1]) != NULL && Server->find_nickname(this->_args[1]).get_socket() != NULL) Possible integration
-		if (_server->find_nickname(_args[1], _server->get_user_list()) != _server->get_user_list().end())
+		if (_server->find_nickname(_args[1],userlist) != userlist.end())
+		{
 			throw error("Nickname already in use", ERR_NICKNAMEINUSE);
-		return true;
+		}
 	}
 }

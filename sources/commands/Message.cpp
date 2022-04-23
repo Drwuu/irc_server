@@ -6,11 +6,18 @@ namespace irc {
 	Privmsg::Privmsg(){};
 	Privmsg::Privmsg(Server *server): command(server) {};
 
-	bool Privmsg::find_receiver(Server const *server,const std::string receiver) const {
-		if (server->find_chan_name(receiver, server->get_channel_list()) != server->get_channel_list().end())
+	bool Privmsg::find_receiver(Server const *server,const std::string receiver) {
+		std::vector<Channel *> chanlist = server->get_channel_list();
+		std::vector<User *> userlist = server->get_user_list();
+		if (server->find_chan_name(receiver, chanlist) != chanlist.end())
+		{
+			_is_channel = true;
 			return true;
-		else if (server->find_nickname(receiver, server->get_user_list()) != server->get_user_list().end())
+		}
+		else if (server->find_nickname(receiver, userlist) != userlist.end())
+		{
 			return true;
+		}
 		return false;
 
 	}
@@ -47,39 +54,46 @@ namespace irc {
 		return false;
 	}
 	bool Privmsg::is_authorized(const Channel & channel, const User & user) const {
-		const ChanStatus *user_status = user.get_chanstatus_from_list(&channel);
-		if (user_status == NULL and channel.is_no_external_msg() == true)
+		std::vector<ChanStatus> chanlist = user.get_chan_list();
+		std::vector<ChanStatus>::const_iterator chanstatus = user.get_chanstatus_from_list(channel, chanlist);
+		if (chanstatus == chanlist.end() and channel.is_no_external_msg() == true)
 			return false;
-		else if (user_status != NULL)
+		else if (chanstatus != chanlist.end())
 		{
-			if (channel.is_moderated() == true && (user_status->is_operator == false or user_status->is_mute == true))
+			if (channel.is_moderated() == true && (chanstatus->is_operator == false or chanstatus->is_mute == true))
 				return false;
-			if (user_status->is_banned == true)
+			if (chanstatus->is_banned == true)
 				return false;
 		}
 		return true;
 	}
 
-	void	Privmsg::exec_cmd(User &user ) {
-		//if (is_valid_channel(this->get_args()[1]))
-		//	 user.send_message(server->find_chan_name(this->get_args()[1], server->get_channel_list()),this->get_args()[2]);
-		//if (is_valid_nickname(this->get_args()[1]))
-		std::vector<User *>		user_list = _server->get_user_list();
-		std::vector<User *>::const_iterator receiver = _server->find_nickname(this->get_args()[1], user_list);
-		if (receiver != user_list.end())
+	void	Privmsg::exec_cmd(User &user ) { // TODO Add server for command to use
+		std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
+		std::clog << "Message From : " << user.get_nickname();
+		Server *server = user.get_server();
+		if (_is_channel == true)
 		{
-			std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
-			std::clog << "Message From : " << user.get_nickname();
-			std::clog << "to : " << (*receiver)->get_nickname() << std::endl;
-			user.send_message(this->get_args()[2], *(*receiver));
+			std::vector<Channel *>		list = server->get_channel_list();
+			std::vector<Channel *>::const_iterator receiver = server->find_chan_name(this->get_args()[1], list);
+			std::clog << " to : " << (*receiver)->get_name() << std::endl;
+			user.send_message(_args[0] + " " + _args[1] + " :" + _args[2], *(*receiver));
+
+
 		}
-		std::cout << _args[2] << std::endl;
+		else {
+			std::vector<User *>		user_list = server->get_user_list();
+			std::vector<User *>::const_iterator receiver = server->find_nickname(this->get_args()[1], user_list);
+			std::clog << "to : " << (*receiver)->get_nickname() << std::endl;
+			user.send_message(_args[0] + " " + _args[1] + " :" + _args[2], *(*receiver));
+		}
 	}
 
 	bool	Privmsg::is_valid_args(User const &user) {
 		// Possible numeric reply ERR_NORECIPIENT ERR_NOTEXTTOSEND ERR_CANNOTSENDTOCHAN
 		//ERR_NOTOPLEVEL ERR_WILDTOPLEVEL ERR_TOOMANYTARGETS ERR_NOSUCHNICK RPL_AWAY
 		// WIP mask a gere Oui ? Non
+		_is_channel = false;
 		if (user.get_registered_status() == false)
 			throw error("You must be registered to use this command",ERR_NOTREGISTERED );
 		if (_args.size() < 3)
@@ -94,9 +108,13 @@ namespace irc {
 		// FIXME : This is a bit shady. Maybe `is_authorized()` should be authorized to take
 		// a `const Channel *` instead of a reference.
 		if (is_valid_channel(_args[1])) {
-			irc::vec_cit_chan	it = _server->find_chan_name(_args[1], _server->get_channel_list());
+			irc::vec_chan chanlist = _server->get_channel_list();
+			irc::vec_cit_chan	it = _server->find_chan_name(_args[1], chanlist);
+			if (it == chanlist.end())
+				throw error("No such channel", ERR_NOSUCHCHANNEL);
 			if (!is_authorized(*(*it), user)) // <- HERE
 				throw error("You are not authorized to send messages to this channel", ERR_CANNOTSENDTOCHAN);
+			_is_channel = true;
 		}
 		return true;
 	}

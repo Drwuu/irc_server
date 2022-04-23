@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server_queue.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/22 15:43:53 by lwourms          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../../headers/proxy/Server_queue.hpp"
 #include <sys/_types/_size_t.h>
 
@@ -34,8 +22,13 @@ void			irc::Server_queue::Message::handle(Server &server) {
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 
 	User	&user = *server.get_user_from_socket(_socket);
+	std::cout << "user = " << user.get_username() << std::endl;
 	user.set_server(&server);
-	std::list<std::string>	cmd_list = server._parser.split_command(_data);
+	std::string data = _data;
+	for(std::string::iterator it = data.begin(); it != data.end(); ++it)
+		if (*it == '\r')
+			data.erase(it);
+	std::list<std::string>	cmd_list = server._parser.split_command(data);
 
 	while (!cmd_list.empty()) {
 		command *cmd = NULL;
@@ -44,7 +37,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
 			// FIXME : is_valid_args not working properly
-			// cmd->is_valid_args(user);
+			cmd->is_valid_args(user);
 			cmd->exec_cmd(user);
 			//
 			// Execution

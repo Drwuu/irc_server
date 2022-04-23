@@ -34,7 +34,7 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			void	_valid_chanMode();
+			void	_valid_chanMode(User const &user);
 			void	_exec_chanMode();
 			void	_valid_userMode();
 			void	_exec_userMode();
