@@ -1,11 +1,10 @@
+#pragma once
 
 #include "command.hpp"
 
-#ifndef PASS_HPP
-# define PASS_HPP
-
 namespace irc {
 
+	class Server;
 	class Pass : public command {
 		private:
 			Pass	&operator=(const Pass &source);
@@ -16,9 +15,9 @@ namespace irc {
 			Pass(Server *server);
 			virtual~Pass();
 
-			void	exec_cmd(User &user);
-			void	is_valid_args(Server const *Server, User const &user);
+			void			exec_cmd(User &user);
+			void			is_valid_args(Server const *Server, User const &user);
+			virtual void	check_auth(const User &user);
 	};
 
 }
-#endif

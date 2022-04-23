@@ -13,9 +13,14 @@ namespace irc {
 	vector_string const &command::get_args() const {
 		return _args;
 	}
-	void command::set_args(vector_string const &args) {
+	void	command::set_args(vector_string const &args) {
 		_args = args;
 	};
+
+	void	command::check_auth(const User &user) {
+		if (!user.get_password_status())
+			throw error(":You have not registered", ERR_NOTREGISTERED);
+	}
 
 /* Functions */
 	// string command::send_instructions(command const &cmd) {

@@ -1,6 +1,4 @@
-
 #include "../../headers/commands/Pass.hpp"
-
 
 ///////////////////////////////////////////////////////////////////////
 // Private 
@@ -11,7 +9,6 @@ irc::Pass	&irc::Pass::operator=(const Pass &) { return *this; }
 void		irc::Pass::exec_cmd(User &user) {
 	user.set_password_status(true);
 }
-
 
 void		irc::Pass::is_valid_args(Server const *, User const &user) {
 	if (_args.size() != 2) {
@@ -27,6 +24,8 @@ void		irc::Pass::is_valid_args(Server const *, User const &user) {
 	else if (user.get_registered_status() || user.get_password_status())
 		throw error(":You may not reregister", ERR_ALREADYREGISTRED);
 }
+
+void	irc::Pass::check_auth(const User &) { }
 
 ///////////////////////////////////////////////////////////////////////
 // Constructor - Destructors 
