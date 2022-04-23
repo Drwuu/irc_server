@@ -11,12 +11,13 @@ namespace irc {
 	Server::Server(): _line(), _map(), _parser(parser()) {
 		_map.insert(std::make_pair("INVITE", new invite(this)));
 		_map.insert(std::make_pair("KICK", new kick(this)));
-		_map.insert(std::make_pair("MODE", new mode(this)));
+		_map.insert(std::make_pair("MODE", new Mode(this)));
 		_map.insert(std::make_pair("USER", new User_cmd(this)));
 		_map.insert(std::make_pair("NICK", new Nick(this)));
 		_map.insert(std::make_pair("PRIVMSG", new Privmsg(this)));
 		_map.insert(std::make_pair("JOIN", new Join(this)));
 		_map.insert(std::make_pair("CAP", new Cap(this)));
+		_map.insert(std::make_pair("PASS", new Pass(this)));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");
@@ -179,7 +180,7 @@ namespace irc {
 		try {
 			cmd = _parser.get_command(_line, _map)->second;
 			cmd->set_args(_parser.get_args(_line));
-			cmd->is_valid_args(this, user);
+			cmd->is_valid_args(user);
 			return cmd;
 		}
 		catch (irc::error &e) {
@@ -196,6 +197,8 @@ namespace irc {
 				return (*it);
 		}
 		User * user = new User(sock);
+		std::cout << "ADRRESS READABLE: " << user->get_socket()->get_address_readable() << std::endl;
+		user->set_ip(user->get_socket()->get_address_readable());
 		this->add_user(user);
 		return user;
 	};

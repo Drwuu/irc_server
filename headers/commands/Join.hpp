@@ -35,6 +35,6 @@ namespace irc {
 			void			_erase_chars(string const chars, vector_string &vector) const;
 		public:
 			void			exec_cmd(User &user);
-			void			is_valid_args(Server const *Server, User const &user);
+			bool			is_valid_args(User const &user);
 	};
 }

@@ -62,8 +62,7 @@ namespace irc {
 			std::vector<std::string>		get_past_username();
 			std::vector<ChanStatus>			get_chan_list() ;
 			const std::vector<ChanStatus>	get_chan_list() const;
-			ChanStatus						*get_chanstatus_from_list(Channel * channel);
-			const ChanStatus				*get_chanstatus_from_list(const Channel * channel) const;
+			std::vector<ChanStatus>::const_iterator		get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> &chans) const;
 			const Socket<Address_ipv6>		*get_socket() const;
 
 			Server * get_server();
@@ -81,8 +80,7 @@ namespace irc {
 			void						set_socket(Socket<Address_ipv6> const *socket);
 			void						set_registered_status(bool status);
 			void						set_password_status(bool status);
-			void						join_channel(Server & Server, Channel * channel); // Command JOIN
-			void						join_channel(Server & Server, std::string channel, std::string key); // Command JOIN with Key mode
+			void						join_channel(Channel * channel); // Command JOIN
 			void						leave_channel(Channel * channel);
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
 

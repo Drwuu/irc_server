@@ -19,15 +19,14 @@ namespace irc {
 			std::string ret = ":" + user.get_server()->get_name() + " 001 " +user.get_nickname() + " :" + "Welcome to our 42Lyon IRC network " + user.get_nickname() + "!" + user.get_username() + "@" + user.get_hostname() + "\n"
 				+ ":" + user.get_server()->get_name() + " 002 " + user.get_nickname() + " :" + "Your host is " + user.get_server()->get_name() + ", running version 1.0 " + "\n"
 				+ ":" + user.get_server()->get_name() + " 003 " + user.get_nickname() + " :" + "This server was created 00:20:08 Apr 21 2022\n"
-				+ ":" + user.get_server()->get_name() + " 004 " + user.get_nickname() + " " + user.get_server()->get_name() + " 1.0 BDHILRSTWcdghikorswxz ABCDEFIJKLMNOPQRSTUWXYZbcdefhijklmnoprstuvwz BEFIJLWXYZbdefhjklovw\n";
-			//// FIXME : add to api list
-			//Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
-			user.receive_message(&user,ret);
+				+ ":" + user.get_server()->get_name() + " 004 " + user.get_nickname() + " " + user.get_server()->get_name() + " 1.0 BDHILRSTWcdghikorswxz ABCDEFIJKLMNOPQRSTUWXYZbcdefhijklmnoprstuvwz BEFIJLWXYZbdefhjklovw\r\n";
+			Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+			_server->get_event_list().push_back(msg);
 		}
 	};
 
 	// Server is unused here.
-	void User_cmd::is_valid_args(Server const *, User const &user) {
+	bool User_cmd::is_valid_args(User const &user) {
 		// Possible Error : ERR_NEEDMOREPARAMS ERR_ALREADYREGISTRED
 		if (this->_args.size() < 5)
 			throw error(this->_args[0] + ": Not enough parameters", ERR_NEEDMOREPARAMS);
@@ -40,5 +39,6 @@ namespace irc {
 		//for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it)
 		//	if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64)
 		//		throw error("Invalid realname", ERR_ERRONEUSNICKNAME); // Maybe add some custom error
+		return true;
 	};
 }

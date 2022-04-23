@@ -1,7 +1,5 @@
 
-#ifndef CAP_HPP
-# define CAP_HPP
-
+#pragma once
 # include "command.hpp"
 
 namespace irc {
@@ -15,10 +13,8 @@ namespace irc {
 			Cap(Server *server);
 			virtual ~Cap();
 
-			void	is_valid_args(Server const *Server, User const &user);
+			bool	is_valid_args(User const &user);
 			void	exec_cmd(User &user);
 	};
 
 }
-
-#endif

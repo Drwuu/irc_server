@@ -16,41 +16,42 @@ namespace irc {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
 			if (mchan != serv_chans.end()) {													// if it founds a channel, add user on it
 				(*mchan)->add_user(&user);
+				user.join_channel(*mchan);
 				std::stringstream s;
-				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
-				<< "No topic is set " << std::endl;
-				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(),s.str().c_str());
+				s << ":" << _server->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " " << _chans[i] << " :No topic is set " << "\r\n" << std::endl;
+				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(), s.str().c_str());
 				_server->get_event_list().push_back(msg);
 			}
 			else {
 				Channel *chan = new Channel(_chans[i]);
 				chan->add_user(&user);
-				_server->add_channel(chan);														// create channel and add user on it
+				_server->add_channel(chan);
+				user.join_channel(chan);												// create channel and add user on it
 				std::stringstream s;
-				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
-				<< "No topic is set " << std::endl;
-				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(),s.str().c_str());
+				s << ":" << _server->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " " << _chans[i] << " :No topic is set " << "\r\n" << std::endl;
+				// s << "JOIN " << _chans[i];
+				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(), s.str().c_str());
 				_server->get_event_list().push_back(msg);
 			}
 		}
 	};
 
-	void Join::is_valid_args(Server const *server, User const &user) {
+	bool Join::is_valid_args(User const &user) {
 		if (_args.size() < 2)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 
 		_chans = _get_instructions(_args[1], ',');
-		_erase_chars("#&", _chans);
+		// _erase_chars("#&", _chans);
 
 		if (_args.size() >= 3)																// get keys
 			_keys = _get_instructions(_args[2], ',');
 
-		vec_chan const serv_chans = server->get_channel_list();
+		vec_chan const serv_chans = _server->get_channel_list();
 		if (serv_chans.size() == 0)															// if no chans, all chans will be created
-			return ;
+			return true;
  		// fixme: is it_args invalid if multiple channels with ',' but only one bad
 		for (size_t i = 0; i < _chans.size(); i++) {
-			vec_cit_chan mchan = server->find_chan_name(_chans[i], serv_chans);
+			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				vec_user users = (*mchan)->get_user_list();
 				if (users.size() >= (*mchan)->get_userlimit())
@@ -59,7 +60,7 @@ namespace irc {
 					throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
 				vec_user bannedUsers = (*mchan)->get_banned_user();
 				for (size_t j = 0; j < bannedUsers.size(); j++) {
-					if (user .get_username() == bannedUsers[j]->get_username())
+					if (user .get_nickname() == bannedUsers[j]->get_nickname())
 						throw error(_chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
 				}
 			}
@@ -67,12 +68,13 @@ namespace irc {
 		for (size_t i = 0; i < _keys.size(); i++) {
 			if (i >= _chans.size())															// ignore too much _keys
 				break ;
-			vec_cit_chan mchan = server->find_chan_name(_chans[i], serv_chans);				// pos of key must be the same as chan
+			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);				// pos of key must be the same as chan
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				if (_keys[i] != (*mchan)->get_key())										// check key
 					throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
 			}
 		}
+		return true;
 	};
 
 /* Functions private */

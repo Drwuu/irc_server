@@ -16,7 +16,7 @@ namespace irc {
 			virtual~Pass();
 
 			void			exec_cmd(User &user);
-			void			is_valid_args(Server const *Server, User const &user);
+			bool			is_valid_args(User const &user);
 			virtual void	check_auth(const User &user);
 	};
 

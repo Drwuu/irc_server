@@ -35,15 +35,14 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-
 			virtual void		check_auth(const User &user);
-			virtual void		is_valid_args(Server const *Server, User const &user) = 0;
+			virtual bool		is_valid_args(User const &user) = 0;
 			virtual void		exec_cmd(User &user) = 0;
 	};
 }
 #include "../commands/invite.hpp"
 #include "../commands/kick.hpp"
-#include "../commands/mode.hpp"
+#include "../commands/Mode.hpp"
 #include "../commands/Join.hpp"
 #include "../commands/Nick.hpp"
 #include "../commands/Message.hpp"

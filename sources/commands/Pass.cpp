@@ -10,7 +10,7 @@ void		irc::Pass::exec_cmd(User &user) {
 	user.set_password_status(true);
 }
 
-void		irc::Pass::is_valid_args(Server const *, User const &user) {
+bool		irc::Pass::is_valid_args(User const &user) {
 	if (_args.size() != 2) {
 		if (!user.get_password_status())
 			_server->get_event_list().push_back(new Proxy_queue::Disconnect(user.get_socket()->get_fd()));
@@ -23,6 +23,7 @@ void		irc::Pass::is_valid_args(Server const *, User const &user) {
 	}
 	else if (user.get_registered_status() || user.get_password_status())
 		throw error(":You may not reregister", ERR_ALREADYREGISTRED);
+	return true;
 }
 
 void	irc::Pass::check_auth(const User &) { }
@@ -34,6 +35,6 @@ irc::Pass::Pass(const Pass &source) {
 	_server = source._server;
 }
 
-irc::Pass::Pass(Server *server) : command(server) { }
 irc::Pass::Pass() { }
+irc::Pass::Pass(Server *server) : command(server) { }
 irc::Pass::~Pass() { }
