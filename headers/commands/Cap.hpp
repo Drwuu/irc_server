@@ -1,7 +1,5 @@
 
-#ifndef CAP_HPP
-# define CAP_HPP
-
+#pragma once
 # include "command.hpp"
 
 namespace irc {
@@ -20,5 +18,3 @@ namespace irc {
 	};
 
 }
-
-#endif

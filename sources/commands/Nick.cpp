@@ -47,8 +47,7 @@ namespace irc {
 		irc::vec_user userlist = _server->get_user_list();
 		// if (Server->find_nickname(this->_args[1]) != NULL && Server->find_nickname(this->_args[1]).get_socket() != NULL) Possible integration
 		if (_server->find_nickname(_args[1],userlist) != userlist.end())
-		{
 			throw error("Nickname already in use", ERR_NICKNAMEINUSE);
-		}
+		return true;
 	}
 }
