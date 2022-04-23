@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/23 14:56:56 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/23 17:05:00 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,7 +386,7 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 
 	std::clog << " \n ========================================================DATA SENT : " << buffer << "==" << std::endl;
 
-	rtn = send(client->get_fd(), buffer, buffer_len, 0);
+	rtn = send(client->get_fd(), buffer, strlen(buffer), 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;
 		ss << " ---- [ERROR] send() failed. [" << client->get_fd()

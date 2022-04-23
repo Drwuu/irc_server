@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:32:34 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/22 20:55:40 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/23 17:17:43 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			std::cout << " ------------ CHECK ERROR : " << e.what() << std::endl;
 			// Return the event to the client
 			std::stringstream	ss;
-			ss << ":" << server.get_name() << " " << e.what();
+			ss << ":" << server.get_name() << " " << e.what() << "\r\n";
 			server.get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), ss.str().c_str()));
 		}
 		cmd_list.pop_front();

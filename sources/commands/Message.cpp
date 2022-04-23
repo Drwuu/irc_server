@@ -79,13 +79,14 @@ namespace irc {
 			std::clog << " to : " << (*receiver)->get_name() << std::endl;
 			user.send_message(_args[0] + " " + _args[1] + " :" + _args[2], *(*receiver));
 
+// std::string msg = ":" + cursor->getNick() + " PRIVMSG " + cmd[1] + " :" + cmd[2] + "\r\n";
 
 		}
 		else {
 			std::vector<User *>		user_list = server->get_user_list();
 			std::vector<User *>::const_iterator receiver = server->find_nickname(this->get_args()[1], user_list);
 			std::clog << "to : " << (*receiver)->get_nickname() << std::endl;
-			user.send_message(_args[0] + " " + _args[1] + " :" + _args[2], *(*receiver));
+			user.send_message(" PRIVMSG " + (*receiver)->get_nickname() + " :" + _args[2], *(*receiver));
 		}
 	}
 
