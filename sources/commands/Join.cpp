@@ -29,7 +29,6 @@ namespace irc {
 				user.join_channel(chan);												// create channel and add user on it
 				std::stringstream s;
 				s << ":" << _server->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " " << _chans[i] << " :No topic is set " << "\r\n" << std::endl;
-				// s << "JOIN " << _chans[i];
 				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(), s.str().c_str());
 				_server->get_event_list().push_back(msg);
 			}

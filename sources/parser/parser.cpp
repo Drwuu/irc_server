@@ -27,7 +27,7 @@ namespace irc {
 		for (; it != line.end(); it++) {
 			if (*it == ' ') {
 				while (*it && *it == ' ')
-					it++; // line parameters can be separated by multiple spaces
+					it++;														// line parameters can be separated by multiple spaces
 				break ;
 			}
 			user.push_back(*it);
@@ -43,13 +43,11 @@ namespace irc {
 		string cmd;
 		string::const_iterator it = line.begin();
 		if (it[0] == ':')
-			_skip_param(line, it, ' '); // skip user
+			_skip_param(line, it, ' ');											// skip user
 		for (; it != line.end(); it++) {
-			// if (*(it-1) && *(it-1) == ' ' && *it == ':') //fixme: client send ':command' sometimes, but maybe not necessary ?
-			// it++;
 			if (*it == ' ') {
 				while (*it && *it == ' ')
-					it++; // line parameters can be separated by multiple spaces
+					it++;														// line parameters can be separated by multiple spaces
 				break ;
 			}
 			cmd.push_back(*it);
@@ -69,10 +67,17 @@ namespace irc {
 		string arg;
 		string::const_iterator it = line.begin();
 		if (it[0] == ':')
-			_skip_param(line, it, ' '); // skip user
+			_skip_param(line, it, ' ');											// skip user
 		for (; it != line.end(); it++) {
+			if (*it == ':') {													// special case ':' arg
+				while (*it)
+					arg.push_back(*it++);
+				vargs.push_back(arg);
+				arg.clear();
+				break ;
+			}
 			if (*it == ' ' || it == (line.end()-1)) {
-				if (it == (line.end()-1)) { // special case end of args
+				if (it == (line.end()-1)) {										// special case end of args
 					arg.push_back(*it);
 					vargs.push_back(arg);
 					arg.clear();
@@ -80,7 +85,7 @@ namespace irc {
 				}
 				vargs.push_back(arg);
 				arg.clear();
-				it++; // skip space
+				continue ;
 			}
 			arg.push_back(*it);
 		}
