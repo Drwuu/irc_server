@@ -62,8 +62,10 @@ namespace irc {
 	void Channel::add_user(User * user){
 		for (std::vector<User *>::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
 		{
-			if (user->get_username() == (*it)->get_username())
-				return; // User already banned from this channel
+			if (user->get_username() == (*it)->get_username()) {
+				dprintf(2, "User '%s' already banned from this channel\n", user->get_username().c_str());
+				return ; // User already banned from this channel
+			}
 		}
 		this->_user_list.push_back(user);
 	}
