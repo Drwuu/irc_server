@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 16:36:23 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/22 15:00:16 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/event.h>
+#include <stdint.h>
 
 #include "headers/proxy/Proxy.hpp"
 #include "headers/structure/Server.hpp"
+
 
 // Function list :
 // socket() - connect() - read() - write()
@@ -33,56 +35,35 @@ int		main(int ac, char **av) {
 		return -1;
 	}
 
-/////////////////////////// LUDO TESTS ///////////////////////////
-	(void)av;
 	irc::Server server;
-	server.set_port(av[1]);
-	server.set_password(av[2]);
-	server.set_name("irc.42lyon.fr");
-	server.set_motd("Welcome to 42lyon irc server");
-	// int		port_nb = std::atoi(av[1]);
-	// Proxy	server_proxy(port_nb);
 
-	// server_proxy.switch_on();
-
-	// server_proxy.set_timeout(10000);
-
-	// for (int i = 0 ; i < 4 ; ++i) {
-	// 	server_proxy.queuing();
-
-	// // Reception of the list of Events
-	// 	Proxy::api_type		from_proxy = server_proxy.send_api();
-	// 	Proxy::api_type		to_proxy;
-
-	// 	// Loop on the list
-	// 	while (!from_proxy.empty()) {
-	// 		from_proxy.front()->handle(server);
-	// 		delete from_proxy.front();
-	// 		from_proxy.pop_front();
-	// 	}
-
-	// // The Server send instruction to the proxy
-	// // with the same type of list
-	// 	to_proxy = server.send_api();
-	// 	server_proxy.receive_api(to_proxy);
-	// }
-/////////////////////////// LUDO TESTS ///////////////////////////
-
-
-	int		port_nb = std::atoi(av[1]); // FIXME : check overflow
-	if (port_nb > 65535 || port_nb < 1024) {
-		std::cerr << "invalid port number: " << port_nb << std::endl;
+	int		port_nb = std::atoi(av[1]);
+	if (port_nb > UINT16_MAX || port_nb < 1024) {
+		std::cerr << "Invalid port number: " << port_nb << std::endl;
 		return -1;
 	}
 
+	std::string		password = av[2];
+	// If the password is longer than the IRC Message max_size
+	if (password.size() > 512) {
+		std::cerr << "Invalid password :too long" << std::endl;
+		return -1;
+	}
+
+	server.set_port(port_nb);
+	server.set_password(password);
+	server.set_name("irc.42lyon.fr");
+	server.set_motd("Welcome to 42lyon irc server");
+
 	irc::Proxy	proxy(port_nb);
+	irc::Proxy::api_type		to_proxy;
+	irc::Proxy::api_type		from_proxy;
 
 	proxy.switch_on();
 
 	proxy.set_timeout(100000);
 
-		irc::Proxy::api_type		to_proxy;
-		irc::Proxy::api_type		from_proxy;
+
 	while (1){
 
 		proxy.queuing();

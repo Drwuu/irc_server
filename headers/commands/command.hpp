@@ -35,6 +35,7 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
+			virtual void		check_auth(const User &user);
 			virtual bool		is_valid_args(User const &user) = 0;
 			virtual void		exec_cmd(User &user) = 0;
 	};
@@ -47,3 +48,4 @@ namespace irc {
 #include "../commands/Message.hpp"
 #include "../commands/User_cmd.hpp"
 #include "../commands/Cap.hpp"
+#include "../commands/Pass.hpp"

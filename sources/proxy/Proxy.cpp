@@ -60,8 +60,7 @@ irc::Proxy	&irc::Proxy::operator=(const irc::Proxy &source) {
 // Clear all registered clients' sockets, but not the Server socket.
 // Clears : Clients, cache, pollfd (without Server socket)
 void		irc::Proxy::end_all_connexions() {
-	for (client_tree_type::iterator it = _clients.begin() ;
-			it != _clients.end(); ) {
+	for (client_tree_type::iterator it = _clients.begin() ; it != _clients.end(); ) {
 		client_tree_type::iterator tmp = it;
 		erase_cache(*tmp->second);
 		erase_pollfd(*tmp->second);
@@ -392,8 +391,7 @@ void		irc::Proxy::erase_cache(const socket_type &target) {
 	cache_queue_type	queue = _cache.find(target.get_fd())->second;
 
 	while (!queue.empty()) {
-		if (queue.front())
-			delete queue.front();
+		delete queue.front();
 		queue.pop_front();
 	}
 	_cache.erase(target.get_fd());
@@ -581,8 +579,6 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 		throw Error_exception(ss.str());
 	}
 	// FIXME : error on send ?
-	std::clog << " LOL DATA " << it_cache->second.front() << " ADDRESS CLIENT " << client->get_fd() << std::endl;
-
 	_proxy->send_to_client(client, it_cache->second.front());
 	const char *tmp = it_cache->second.front();
 	if (tmp != NULL)

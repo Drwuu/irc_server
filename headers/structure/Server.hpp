@@ -21,7 +21,7 @@ namespace irc {
 			std::string					_label;
 			std::string					_hostname;
 			std::string					_password;
-			std::string					_port;
+			int							_port;
 			std::string					_ip; // Not used
 			std::string					_version; // Not used
 			std::string					_motd;
@@ -42,6 +42,7 @@ namespace irc {
 			Server(Server const &copy);
 		public:
 			Server();
+			Server(std::string password, int port);
 			~Server();
 	/* Operators */
 		private:
@@ -50,11 +51,11 @@ namespace irc {
 	/* Getters */
 		private:
 		public:
+			int 							get_port() const;
 			std::string const				get_name() const;
 			std::string const				get_label() const;
 			std::string const				get_hostname() const;
 			std::string const				get_password() const;
-			std::string const				get_port() const;
 			std::string const				get_ip() const;
 			std::string const				get_motd() const;
 			std::vector<User *>				get_user_list() const;
@@ -69,7 +70,7 @@ namespace irc {
 			void							set_label(std::string label);
 			void							set_hostname(std::string hostname);
 			void							set_password(std::string password);
-			void							set_port(std::string port);
+			void							set_port(int port);
 			void							set_ip(std::string ip);
 			void  							set_motd(std::string motd); // Use For IMPORTMOTD
 			void							set_line(std::string line);
