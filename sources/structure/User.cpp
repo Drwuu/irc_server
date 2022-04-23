@@ -181,7 +181,7 @@ namespace irc {
 	}
 
 	void User::receive_message(User * user,std::string msg){
-		std::string ret = ":" + user->get_nickname() + "!~" + user->get_username() + "@" + user->get_hostname() + " " + msg + "\r\n";
+		std::string ret = ":" + user->get_nickname() + msg + "\r\n\0";
 		Proxy_queue::Write * new_msg = new Proxy_queue::Write(this->get_socket()->get_fd(),ret.c_str());
 		_server->get_event_list().push_back(new_msg);
 	}

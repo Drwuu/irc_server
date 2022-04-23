@@ -187,6 +187,8 @@ namespace irc {
 				return (*it);
 		}
 		User * user = new User(sock);
+		std::cout << "ADRRESS READABLE: " << user->get_socket()->get_address_readable() << std::endl;
+		user->set_ip(user->get_socket()->get_address_readable());
 		this->add_user(user);
 		return user;
 	};
