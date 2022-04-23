@@ -69,14 +69,11 @@ namespace irc {
 	}
 
 	void	Privmsg::exec_cmd(User &user ) { // TODO Add server for command to use
-		std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
-		std::clog << "Message From : " << user.get_nickname();
 		Server *server = user.get_server();
 		if (_is_channel == true)
 		{
 			std::vector<Channel *>		list = server->get_channel_list();
 			std::vector<Channel *>::const_iterator receiver = server->find_chan_name(this->get_args()[1], list);
-			std::clog << " to : " << (*receiver)->get_name() << std::endl;
 			user.send_message(_args[0] + " " + _args[1] + " :" + _args[2], *(*receiver));
 
 // std::string msg = ":" + cursor->getNick() + " PRIVMSG " + cmd[1] + " :" + cmd[2] + "\r\n";
@@ -85,7 +82,6 @@ namespace irc {
 		else {
 			std::vector<User *>		user_list = server->get_user_list();
 			std::vector<User *>::const_iterator receiver = server->find_nickname(this->get_args()[1], user_list);
-			std::clog << "to : " << (*receiver)->get_nickname() << std::endl;
 			user.send_message(" PRIVMSG " + (*receiver)->get_nickname() + " :" + _args[2], *(*receiver));
 		}
 	}

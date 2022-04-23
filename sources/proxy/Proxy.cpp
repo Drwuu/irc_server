@@ -176,7 +176,6 @@ void				irc::Proxy::receive_api(api_type &data) {
 
 	std::clog << " ---> API Handling ... " << std::endl;
 	for (; !data.empty() ; data.pop_front()) {
-		std::cerr << " PROX ===========> SOMETHING TO HANDLE " << std::endl;
 		try {
 			data.front()->handle(*this);
 		}
