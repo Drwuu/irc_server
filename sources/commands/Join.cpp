@@ -18,9 +18,8 @@ namespace irc {
 				(*mchan)->add_user(&user);
 				user.join_channel(*mchan);
 				std::stringstream s;
-				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
-				<< "No topic is set " << std::endl;
-				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(),s.str().c_str());
+				s << ":" << _server->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " " << _chans[i] << " :No topic is set " << "\r\n" << std::endl;
+				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(), s.str().c_str());
 				_server->get_event_list().push_back(msg);
 			}
 			else {
@@ -29,9 +28,9 @@ namespace irc {
 				_server->add_channel(chan);
 				user.join_channel(chan);												// create channel and add user on it
 				std::stringstream s;
-				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
-				<< "No topic is set " << std::endl;
-				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(),s.str().c_str());
+				s << ":" << _server->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " " << _chans[i] << " :No topic is set " << "\r\n" << std::endl;
+				// s << "JOIN " << _chans[i];
+				Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(), s.str().c_str());
 				_server->get_event_list().push_back(msg);
 			}
 		}

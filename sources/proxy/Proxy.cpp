@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Proxy.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: lwourms <lwourms@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/23 14:56:56 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/23 17:14:49 by lwourms          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/proxy/Proxy.hpp"
+#include <cstring>
 #include <sys/wait.h>
 
 // Should stay unaccessible
@@ -381,12 +382,12 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 	char	buffer[buffer_len];
 
 	bzero(buffer, buffer_len);
-	if (strlen(data) > strlcpy(buffer, data, buffer_len) )
+	if (strlen(data) > strlcpy(buffer, data, buffer_len - 1) )
 		std::clog << "[DETAIL] : Data sent had been truncated" << std::endl;
 
-	std::clog << " \n ========================================================DATA SENT : " << buffer << "==" << std::endl;
+	std::clog << " \n ======================================================== DATA SENT : " << buffer << " ==" << std::endl;
 
-	rtn = send(client->get_fd(), buffer, buffer_len, 0);
+	rtn = send(client->get_fd(), buffer, strlen(buffer), 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;
 		ss << " ---- [ERROR] send() failed. [" << client->get_fd()
