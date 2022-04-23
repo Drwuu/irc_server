@@ -24,6 +24,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 		if (*it == '\r')
 			data.erase(it);
 	std::list<std::string>	cmd_list = server._parser.split_command(data);
+	std::clog << " ---- Split command. " << std::endl;
 
 	while (!cmd_list.empty()) {
 		command *cmd = NULL;
@@ -45,6 +46,7 @@ void			irc::Server_queue::Message::handle(Server &server) {
 		}
 		cmd_list.pop_front();
 	}
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////

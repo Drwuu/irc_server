@@ -109,6 +109,10 @@ void			irc::Proxy::queuing() {
 	rtn = poll(_poll_data.data(), _poll_data.size(), _timeout);
 	if (rtn == -1)
 		std::clog << "POLL ERROR : " << strerror(errno) << std::endl;
+	else if (rtn == 0) {
+		for (client_tree_type::iterator it = _clients.begin() ; it != _clients.end() ; ++it)
+			_to_server.push_back(new Server_queue::Message("PING", it->second));
+	}
 	std::cerr << " FINISH POLL --------------" << std::endl;
 
 	// Need to save the old pollfd size to secure the loop.
@@ -169,7 +173,6 @@ void			irc::Proxy::queuing() {
 irc::Proxy::api_type		irc::Proxy::send_api() {
 	std::clog << " <--- API Sending ... " << std::endl;
 	return _to_server;
-	std::clog << " <--- API Sent. " << std::endl;
 }
 
 // Take the list to handle() instiated classes then delete them.
@@ -378,7 +381,6 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 
 	std::clog << " \n ======================================================== DATA SENT : " << buffer << " ==" << std::endl;
 
-	std::cerr << "BENNNNNNNNNNNNNNNNNNNNNNNNNNCH " << std::endl;
 	rtn = send(client->get_fd(), buffer, strlen(buffer), 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;
@@ -387,7 +389,6 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 			<< strerror(errno) << std::endl;
 		throw Error_exception(ss.str());
 	}
-	std::cerr << "BENNNNNNNNNNNNNNNNNNNNNNNNNNCH " << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////

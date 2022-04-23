@@ -18,6 +18,8 @@ namespace irc {
 		_map.insert(std::make_pair("JOIN", new Join(this)));
 		_map.insert(std::make_pair("CAP", new Cap(this)));
 		_map.insert(std::make_pair("PASS", new Pass(this)));
+		_map.insert(std::make_pair("PING", new Ping(this)));
+		_map.insert(std::make_pair("PONG", new Pong(this)));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");
@@ -204,12 +206,14 @@ namespace irc {
 	};
 
 	void			Server::receive_api(std::list<Socket_event *> &api) {
+	std::clog << " ---> API Received. " << std::endl;
 		_event_list.clear();
 		while (!api.empty()) {
 			api.front()->handle(*this);
 			delete api.front();
 			api.pop_front();
 		}
+		std::clog << " ---- API Handled. " << std::endl;
 	}
 
 	void Server::add_user(User * user) {
