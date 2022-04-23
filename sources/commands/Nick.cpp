@@ -14,11 +14,8 @@ namespace irc {
 			it++;
 			for (;it != _args[1].end();++it)
 			{
-				// FIXME : '\n' not accepted maybe
-				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
-					std::clog << "Nickname invalid : " << (int)*it << std::endl;
+				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125))
 					return false;
-				}
 			}
 			return true;
 	}
