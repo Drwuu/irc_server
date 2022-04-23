@@ -22,7 +22,6 @@ void			irc::Server_queue::Message::handle(Server &server) {
 	std::clog << " data = " << _data << " socket = " << _socket->get_fd() << std::endl;
 
 	User	&user = *server.get_user_from_socket(_socket);
-	std::cout << "user = " << user.get_username() << std::endl;
 	user.set_server(&server);
 	std::string data = _data;
 	for(std::string::iterator it = data.begin(); it != data.end(); ++it)
@@ -37,12 +36,8 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->check_auth(user);
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
-			// FIXME : is_valid_args not working properly
 			cmd->is_valid_args(user);
 			cmd->exec_cmd(user);
-			//
-			// Execution
-			//
 		}
 		catch (irc::error &e) {
 			std::cout << " ------------ CHECK ERROR : " << e.what() << std::endl;
@@ -50,6 +45,8 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			std::stringstream	ss;
 			ss << ":" << server.get_name() << " " << e.what() << "\r\n";
 			server.get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), ss.str().c_str()));
+			if (!user.get_password_status())
+				server.del_user(user);
 		}
 		cmd_list.pop_front();
 	}

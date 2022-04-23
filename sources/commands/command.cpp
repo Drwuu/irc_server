@@ -17,9 +17,13 @@ namespace irc {
 		_args = args;
 	};
 
+	// If auth failed, it means the user have to be disconnected and deleted.
+	// Add : new Proxy_queue::Disconnect()  +  del_user() in catch {}
 	void	command::check_auth(const User &user) {
-		if (!user.get_password_status())
+		if (!user.get_password_status()) {
+			_server->get_event_list().push_back(new Proxy_queue::Disconnect(user.get_socket()->get_fd()));
 			throw error(":You have not registered", ERR_NOTREGISTERED);
+		}
 	}
 
 /* Functions */
