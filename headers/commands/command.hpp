@@ -49,3 +49,5 @@ namespace irc {
 #include "../commands/User_cmd.hpp"
 #include "../commands/Cap.hpp"
 #include "../commands/Pass.hpp"
+#include "../commands/Ping.hpp"
+#include "../commands/Pong.hpp"
