@@ -2,10 +2,51 @@
 #include <sys/_types/_size_t.h>
 
 namespace irc {
+
+//////////////////////////////////////////////////////////////////////////////////
+////// MODE content
+//
+//// Channel mode
+// <channel> {[+|-]|o|p|s|i|t|n|b|v} [<limit>] [<user>] [<ban mask>]
+//
+// 		o - give/take channel operator privileges;
+// 		p - private channel flag;
+// 		s - secret channel flag;
+// 		i - invite-only channel flag;
+// 		t - topic settable by channel operator only flag;
+// 		n - no messages to channel from clients on the outside;
+// 		m - moderated channel;
+// 		l - set the user limit to channel;
+// 		b - set a ban mask to keep users out;
+// 		v - give/take the ability to speak on a moderated channel;
+// 		k - set a channel key (password).
+//
+//
+//// User mode
+//
+// <nickname> {[+|-]|i|w|s|o}
+//
+// 		i - marks a users as invisible;
+// 		s - marks a user for receipt of server notices;
+// 		w - user receives wallops;
+// 		o - operator flag.
+//
+//
+//// Implemented errors :
+//
+// ERR_NEEDMOREPARAMS	-	ERR_CHANOPRIVSNEEDED	-	ERR_NOTONCHANNEL
+// ERR_UNKNOWNMODE		-	ERR_USERSDONTMATCH		-	
+// ERR_UMODEUNKNOWNFLAG	-	ERR_KEYSET
+//
+// Need implementation :
+//	ERR_KEYSET
+//	ERR_USERSDONTMATCH
+
 /* Constructors & Destructors */
 	Mode::~Mode() {};
 	Mode::Mode() {};
 	Mode::Mode(Server *server): command(server), _give_privilege(false) {};
+
 /* Operators */
 /* Functions */
 	void Mode::exec_cmd(User &) {
@@ -14,6 +55,15 @@ namespace irc {
 		else
 			_exec_userMode();
 	};
+
+	// How to valid arguments :
+	// 1 - check if channel exists
+	// 2 - check if option exists
+	// 3 - check privileges
+	// 4 - check if is in channel
+	// Pending
+	// 5 - check if double letters
+	// 6 - check if enough arguments
 	bool Mode::is_valid_args(User const &user) {
 		if (_args.size() < 3)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
@@ -48,8 +98,7 @@ namespace irc {
 		if (it2 == chanUsers.end())
 			throw error(_args[1] + " :You're not on that channel", ERR_NOTONCHANNEL);
 	}
-	void Mode::_exec_chanMode() {
-	}
+
 	void Mode::_valid_userMode() {
 		vec_user const serv_users = _server->get_user_list();
 		vec_cit_user muser = _server->find_nickname(_args[1], serv_users);
@@ -59,6 +108,10 @@ namespace irc {
 		if (!_is_valid_mode(_args[2], "iwso", pos))
 			throw error(pos + " :is unknown mode char to me", ERR_UNKNOWNMODE);
 	}
+
+	void Mode::_exec_chanMode() {
+	}
+
 	void Mode::_exec_userMode() {
 	}
 	/*
