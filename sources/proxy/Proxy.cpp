@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/11 23:03:17 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/22 14:06:42 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/23 14:56:56 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,7 +384,7 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 	if (strlen(data) > strlcpy(buffer, data, buffer_len) )
 		std::clog << "[DETAIL] : Data sent had been truncated" << std::endl;
 
-	std::clog << " \n ========================================================DATA SENT : " << buffer << std::endl;
+	std::clog << " \n ========================================================DATA SENT : " << buffer << "==" << std::endl;
 
 	rtn = send(client->get_fd(), buffer, buffer_len, 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
@@ -407,6 +407,7 @@ void		irc::Proxy::erase_cache(const socket_type &target) {
 			delete queue.front();
 		queue.pop_front();
 	}
+	_cache.erase(target.get_fd());
 }
 
 void		irc::Proxy::erase_pollfd(const socket_type &target) {
@@ -591,7 +592,8 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 		throw Error_exception(ss.str());
 	}
 	// FIXME : error on send ?
-	std::clog << " LOL DATA " << it_cache->second.front() << std::endl;
+	std::clog << " LOL DATA " << it_cache->second.front() << " ADDRESS CLIENT " << client->get_fd() << std::endl;
+
 	_proxy->send_to_client(client, it_cache->second.front());
 	const char *tmp = it_cache->second.front();
 	if (tmp != NULL)

@@ -9,6 +9,7 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
+		bool	_is_channel;
 		public:
 	/* Constructors & Destructors */
 		private:
@@ -23,7 +24,7 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			bool	find_receiver(Server const *server,const std::string receiver) const;
+			bool	find_receiver(Server const *server,const std::string receiver);
 			bool	is_valid_channel(const std::string &channel) const;
 			bool	is_valid_nickname(const std::string &nickname) const;
 			bool	is_valid_receiver(const std::string &receiver) const;

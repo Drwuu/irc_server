@@ -16,6 +16,7 @@ namespace irc {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
 			if (mchan != serv_chans.end()) {													// if it founds a channel, add user on it
 				(*mchan)->add_user(&user);
+				user.join_channel(*mchan);
 				std::stringstream s;
 				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
 				<< "No topic is set " << std::endl;
@@ -25,7 +26,8 @@ namespace irc {
 			else {
 				Channel *chan = new Channel(_chans[i]);
 				chan->add_user(&user);
-				_server->add_channel(chan);														// create channel and add user on it
+				_server->add_channel(chan);
+				user.join_channel(chan);												// create channel and add user on it
 				std::stringstream s;
 				s << _chans[i] << ":" << user.get_server()->get_name() << " " << RPL_NOTOPIC << " " << user.get_nickname() << " :"
 				<< "No topic is set " << std::endl;
@@ -40,7 +42,7 @@ namespace irc {
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 
 		_chans = _get_instructions(_args[1], ',');
-		_erase_chars("#&", _chans);
+		//_erase_chars("#&", _chans);
 
 		if (_args.size() >= 3)																// get keys
 			_keys = _get_instructions(_args[2], ',');
@@ -59,7 +61,7 @@ namespace irc {
 					throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
 				vec_user bannedUsers = (*mchan)->get_banned_user();
 				for (size_t j = 0; j < bannedUsers.size(); j++) {
-					if (user .get_username() == bannedUsers[j]->get_username())
+					if (user .get_nickname() == bannedUsers[j]->get_nickname())
 						throw error(_chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
 				}
 			}
