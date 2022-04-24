@@ -41,6 +41,14 @@ namespace irc {
 	bool Channel::is_limited() const{
 		return (this->_is_limited);}
 
+	User *	Channel::find_user(std::string nickname) {
+		for (vec_user::iterator it = _user_list.begin() ; it < _user_list.end() ; ++it) {
+			if ((*it)->get_nickname() == nickname)
+				return *it;
+		}
+		return NULL;
+	}
+
 	void Channel::set_name(const std::string & name){
 		this->_name = name;}
 

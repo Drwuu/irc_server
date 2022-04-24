@@ -34,7 +34,7 @@ namespace irc {
 			bool _is_away;
 			bool _is_pass_checked;
 			bool _is_registered;
-			bool _is_irc_operator;
+			bool _is_irc_operator; // FIXME : REMOVE
 			Socket<Address_ipv6> const	*_socket;
 			User(User const & copy);
 			Server * _server; //TEMP

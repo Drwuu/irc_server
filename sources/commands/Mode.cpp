@@ -31,21 +31,12 @@ namespace irc {
 // 		w - user receives wallops;
 // 		o - operator flag.
 //
-//
-//// Implemented errors :
-//
-// ERR_NEEDMOREPARAMS	-	ERR_CHANOPRIVSNEEDED	-	ERR_NOTONCHANNEL
-// ERR_UNKNOWNMODE		-	ERR_USERSDONTMATCH		-	
-// ERR_UMODEUNKNOWNFLAG	-	ERR_KEYSET
-//
-// Need implementation :
-//	ERR_KEYSET
-//	ERR_USERSDONTMATCH
 
 /* Constructors & Destructors */
 	Mode::~Mode() {};
 	Mode::Mode() {};
-	Mode::Mode(Server *server): command(server), _give_privilege(false) {};
+	Mode::Mode(Server *server)
+		: command(server), _stage(), _modes(), _modes_args(), _sign(0) {};
 
 /* Operators */
 /* Functions */
@@ -56,37 +47,53 @@ namespace irc {
 			_exec_userMode();
 	};
 
-	// How to valid arguments :
+	//// How to valid arguments :
 	// 1 - check if channel exists
 	// 2 - check if option exists
 	// 3 - check privileges
 	// 4 - check if is in channel
-	// Pending
+	//// Pending
 	// 5 - check if double letters
 	// 6 - check if enough arguments
 	bool Mode::is_valid_args(User const &user) {
 		if (_args.size() < 3)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
-		if (!_is_valid_flag_mode(_args[2]))
-			throw error(":Unknown MODE flag", ERR_UMODEUNKNOWNFLAG);
-
-		if (_args[1][0] == '#' || _args[1][0] == '&')
+		else if (_args[1][0] == '#' || _args[1][0] == '&')
 			_valid_chanMode(user);
 		else
-			_valid_userMode();
-
+			_valid_userMode(user);
 		return true;
 	};
 
 
+	/* Calculate the number of arguments required to make MODE works */
+	bool 	Mode::_is_valid_arg_nb(string const &modes) {
+		size_t	mode_nb = 0;
+
+		for (string::const_iterator it = modes.begin() ; it != modes.end() ; ++it) {
+			// If the flag require an argument
+			if (*it == 'o' || *it == 'l' || *it == 'b' || *it == 'k')
+				++mode_nb;
+		}
+		return !(mode_nb > _args.size() - 3);
+	}
+
+	//// Channel mode errors
+	// ERR_NEEDMOREPARAMS	-	ERR_CHANOPRIVSNEEDED	-	ERR_NOTONCHANNEL
+	// ERR_UNKNOWNMODE		-	ERR_KEYSET				-	(ERR_NOSUCHNICK)->implemented elsewhere
+	//
 	void Mode::_valid_chanMode(User const &user) {
 		vec_chan const serv_chans = _server->get_channel_list();
 		vec_cit_chan mchan = _server->find_chan_name(_args[1], serv_chans);
 		if (serv_chans.size() == 0 || mchan == serv_chans.end())
 			throw error(_args[1] + " :No such channel", ERR_NOSUCHCHANNEL);
+
 		string pos;
-		if (!_is_valid_mode(_args[2], "opsitnmlbvkw", pos))
+		if (!_is_valid_mode(_args[2], "opsitnmlbvkw-+", pos))
 			throw error(pos + " :is unknown mode char to me", ERR_UNKNOWNMODE);
+
+		if (!_is_valid_arg_nb(_args[2]))
+			throw error(" :Not enough parameters", ERR_NEEDMOREPARAMS);
 
 		vec_user opUsers = (*mchan)->get_operator_list();
 		vec_cit_user it = _server->find_nickname(user.get_nickname(), opUsers);
@@ -99,21 +106,30 @@ namespace irc {
 			throw error(_args[1] + " :You're not on that channel", ERR_NOTONCHANNEL);
 	}
 
-	void Mode::_valid_userMode() {
-		vec_user const serv_users = _server->get_user_list();
-		vec_cit_user muser = _server->find_nickname(_args[1], serv_users);
-		if (serv_users.size() == 0 || muser == serv_users.end())
-			throw error(_args[1] + " :No such nick", ERR_NOSUCHNICK);
+	//// User mode errors :
+	//	ERR_UMODEUNKNOWNFLAG
+	//	ERR_USERSDONTMATCH
+	//
+	void Mode::_valid_userMode(User const &user) {
+		/* We don't need this part : if the nickname doesn't match with user's one,
+		 a ERR_USERSDONTMATCH is thrown.
+		 Reason : 'A user MODE command may only be accepted if both the sender of the
+		 message and the nickname given as a parameter are both the same.' */
+		//
+		// vec_user const serv_users = _server->get_user_list();
+		// vec_cit_user muser = _server->find_nickname(_args[1], serv_users);
+		// if (serv_users.size() == 0 || muser == serv_users.end())
+			// throw error(_args[1] + " :No such nick", ERR_NOSUCHNICK);
+		
+		if (user.get_nickname() != _args[1])
+			throw error(" :Cant change mode for other users", ERR_USERSDONTMATCH);
+
 		string pos;
 		if (!_is_valid_mode(_args[2], "iwso", pos))
-			throw error(pos + " :is unknown mode char to me", ERR_UNKNOWNMODE);
+			throw error(pos + " :Unknown MODE flag", ERR_UMODEUNKNOWNFLAG);
 	}
 
-	void Mode::_exec_chanMode() {
-	}
 
-	void Mode::_exec_userMode() {
-	}
 	/*
 	*	*RESUME*
 	*	_is_valid_flag_mode: check validity of flag '+|-' modes
@@ -145,4 +161,117 @@ namespace irc {
 		}
 		return true;
 	};
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//
+
+	bool	Mode::_sign_handler(const char new_sign) {
+		if (new_sign != _sign)
+			_stage.push_back(new_sign);
+		return '+' == new_sign;
+	}
+
+	// erase repetitive flags
+	//+obbobi guhernan2 guhernan3 guhernan3 guhernan2 guhernan2 = +oo guhernan2 guhernan2
+
+	//  With args
+	void	Mode::_mode_o(vector_string::const_iterator arg, const User &user) { // user
+		if (user.get_nickname() == *arg) {
+			_stage.clear();
+			return ;
+		}
+
+		vec_chan		channel_list(_server->get_channel_list());
+		vec_cit_chan 	it_chan = _server->find_chan_name(_args[0], channel_list);
+		User			*target = (*it_chan)->find_user(*arg);
+		if (target == NULL)
+			throw error(": " + *arg + " No such channel/nick", ERR_NOSUCHNICK);
+		if (_stage.front() == '+') {
+			// put in channel->chanop_list
+			// set user as chanop
+		}
+		else {
+			// remove from channel->chanop_list
+			// unset user as chanop
+		}
+
+	}
+	void	Mode::_mode_l(vector_string::const_iterator arg, const User &user) { // limit -> ONLY  if (is_positive == true)
+	}
+	void	Mode::_mode_b(vector_string::const_iterator arg, const User &user) { // ban mask
+	}
+	void	Mode::_mode_k(vector_string::const_iterator arg, const User &user) { // channel key : password
+	}
+
+	// No args
+	void	Mode::_mode_t(vector_string::const_iterator arg, const User &user) {
+	}
+	void	Mode::_mode_n(vector_string::const_iterator arg, const User &user) {
+	}
+	void	Mode::_mode_m(vector_string::const_iterator arg, const User &user) {
+	}
+	void	Mode::_mode_v(vector_string::const_iterator arg, const User &user) {
+	}
+
+	// flag
+	void	Mode::_mode_p(vector_string::const_iterator arg, const User &user) {
+	}
+	void	Mode::_mode_s(vector_string::const_iterator arg, const User &user) {
+	}
+	void	Mode::_mode_i(vector_string::const_iterator arg, const User &user) {
+	}
+
+	void Mode::_exec_chanMode(const User &user) {
+		// bool is_positive = false;
+		vector_string::const_iterator	it_args = _args.begin() + 3;
+		for (std::string::const_iterator it = _args[2].begin() ; it != _args.end() ; ++it) {
+			switch (*it) {
+				// Sign
+				case '+':
+					_sign_handler(*it);
+					break;
+				case '-':
+					_sign_handler(*it);
+					break;
+				// No args needed
+				case 't':
+					_mode_t(*it_args);
+					break;
+				case 'n':
+					_mode_n();
+					break;
+				case 'm':
+					_mode_m();
+					break;
+				case 'v':
+					_mode_v();
+					break;
+				case 'p':
+					_mode_p();
+					break;
+				case 's':
+					_mode_s();
+					break;
+				case 'i':
+					_mode_i();
+					break;
+				// Args needed
+				case 'o':
+					_mode_o(user);
+				case 'l':
+					_mode_l();
+				case 'b':
+					_mode_b();
+				case 'k':
+					_mode_k();
+				default :
+					++it_args;
+			}
+		}
+	}
+
+	void Mode::_exec_userMode() {
+		// bool is_positive = false;
+		std::string			mode_args;
+	}
 }

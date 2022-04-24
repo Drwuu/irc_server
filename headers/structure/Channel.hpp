@@ -50,7 +50,7 @@ namespace irc {
 			bool						is_moderated() const;
 			bool						is_limited() const;
 
-			User *						find_user(std::string nickname, std::vector<User *> list);
+			User *						find_user(std::string nickname);
 
 			void						set_name(const std::string& name);
 			void						set_prefix(const std::string& prefix);
