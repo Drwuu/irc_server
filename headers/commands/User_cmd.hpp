@@ -23,6 +23,7 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
+			void	send_connection_rpl(User &user);
 		public:
 			void	exec_cmd(User &user);
 			void	is_valid_args(Server const *Server, User const &user);
