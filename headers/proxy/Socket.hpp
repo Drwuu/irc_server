@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/23 20:48:06 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/25 20:57:07 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,10 @@ class Socket {
 			int		opt_val = true;
 			// define TCP_PROTOCOL 6 (netinet/in.h)
 			if (setsockopt(_sockfd, TCP_PROTOCOL, SO_REUSEADDR, &opt_val, sizeof(int)) == -1) {
+				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
+				return ;
+			}
+			if (setsockopt(_sockfd, TCP_PROTOCOL, SO_DONTROUTE, &opt_val, sizeof(int)) == -1) {
 				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
 				return ;
 			}
