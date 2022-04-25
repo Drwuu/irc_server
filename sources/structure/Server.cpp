@@ -20,6 +20,8 @@ namespace irc {
 		_map.insert(std::make_pair("PASS", new Pass(this)));
 		_map.insert(std::make_pair("PING", new Ping(this)));
 		_map.insert(std::make_pair("PONG", new Pong(this)));
+		_map.insert(std::make_pair("NOTICE", new Notice(this)));
+		_map.insert(std::make_pair("PART", new Part(this)));
 		// User user;
 		// user.set_nickname("toto");
 		// user.set_username("toto");

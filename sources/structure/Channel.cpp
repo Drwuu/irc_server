@@ -74,8 +74,10 @@ namespace irc {
 	{
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
 		{
-			if ((*it)->get_username() == user->get_username())
+			if ((*it)->get_nickname() == user->get_nickname()){
 				this->_user_list.erase(it);
+				break;
+			}
 		}
 	}
 
@@ -87,11 +89,6 @@ namespace irc {
 
 	void Channel::transmit_message(std::string msg, User * user)
 	{
-		if (this->_user_list.size() < 2)
-		{
-			std::cout << "Channel size is " << this->_user_list.size() << std::endl;
-			return;
-		}
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
 		{
 			if ((*it)->get_username() != user->get_username()){

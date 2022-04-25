@@ -82,7 +82,7 @@ namespace irc {
 			void						set_password_status(bool status);
 			void						set_chan_status(ChanStatus &chanStatus, bool op);
 			void						join_channel(ChanStatus &status); // Command JOIN
-			void						leave_channel(Channel * channel);
+			void						leave_channel(std::string channel); // Command PART
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
 
 			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG

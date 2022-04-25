@@ -84,6 +84,7 @@ namespace irc {
 	}
 
 	bool	Privmsg::is_valid_args(User const &user) {
+		_receiver.clear();
 		// Possible numeric reply ERR_NORECIPIENT ERR_NOTEXTTOSEND ERR_CANNOTSENDTOCHAN
 		//ERR_NOTOPLEVEL ERR_WILDTOPLEVEL ERR_TOOMANYTARGETS ERR_NOSUCHNICK RPL_AWAY
 		// WIP mask a gere Oui ? Non
@@ -93,7 +94,6 @@ namespace irc {
 			throw error(_args[0] + ": No text to send", ERR_NOTEXTTOSEND);
 		else if (_args.size() < 4 && _args[2].size() == 0)
 			throw error(_args[0] + ": No text to send", ERR_NOTEXTTOSEND);
-		//Split ',' in args[2] and push into _receiver
 		std::string tmp = _args[1];
 		std::string::size_type pos = 0;
 		std::string::size_type prev = 0;

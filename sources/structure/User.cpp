@@ -143,14 +143,13 @@ namespace irc {
 // 		new_chan->add_user(this);
 // 	}
 
-	void User::leave_channel(Channel * channel){
-
-		std::vector<ChanStatus>		chan_list = this->get_chan_list();
-		for (std::vector<ChanStatus>::iterator it = chan_list.begin(); it != chan_list.end(); ++it){
-			if ((*it).channel->get_name() == channel->get_name()){
+	void User::leave_channel(std::string channel) {
+		for (std::vector<ChanStatus>::iterator it = _chan_list.begin(); it != _chan_list.end(); ++it){
+			if ((*it).channel->get_name() == channel){
 				(*it).channel->del_user(this);
-				get_chan_list().erase(it);
-				break;
+				(*it).channel = NULL;
+				_chan_list.erase(it);
+				return ; // Channel found
 			}
 		}
 	}
