@@ -41,9 +41,10 @@ namespace irc {
 			else {
 				Channel *chan = new Channel(_chans[i]);
 				ChanStatus status(chan);
-				status.is_operator = true;
-				user.join_channel(status);													// create channel and add user on it
 				chan->add_user(&user);
+				user.join_channel(status);													// create channel and add user on it
+				chan->add_operator(&user);
+				user.set_chan_status(chan, true);
 				_server->add_channel(chan);
 
 				std::stringstream s;

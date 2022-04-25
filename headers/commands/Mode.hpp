@@ -19,8 +19,6 @@ namespace irc {
 			// };
 	/* Variables */
 		private:
-			std::string		_modes;
-			std::string		_modes_args;
 			char			_sign;
 
 		public:
@@ -53,7 +51,7 @@ namespace irc {
 			// With args
 			void	_channel_mode_o(Channel *channel, vector_string::const_iterator nickname,const User &author); // User
 			void	_channel_mode_l(Channel *channel, vector_string::const_iterator nickname,const User &author); // limit -> ONLY  if (is_positive == true)
-			void	_channel_mode_b(Channel *channel, vector_string::const_iterator arg,const User &author); // ban mask
+			void	_channel_mode_b(std::string::const_iterator pos, Channel *channel, vector_string::const_iterator arg, const User &user); // ban mask
 			void	_channel_mode_k(Channel *channel, vector_string::const_iterator arg,const User &author); // channel key : password
 			// Mute or not mute
 			void	_channel_mode_v(Channel *channel, vector_string::const_iterator arg,const User &author);

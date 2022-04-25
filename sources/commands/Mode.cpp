@@ -36,7 +36,7 @@ namespace irc {
 	Mode::~Mode() {};
 	Mode::Mode() {};
 	Mode::Mode(Server *server)
-		: command(server), _modes(), _modes_args(), _sign(0) {};
+		: command(server), _sign(0) {};
 
 /* Operators */
 /* Functions */
@@ -167,14 +167,29 @@ namespace irc {
 	//
 
 	bool	Mode::_sign_handler(const char new_sign) {
-		if (new_sign != _sign) {
-			_modes.push_back(_sign);
+		if (new_sign != _sign)
 			_sign = new_sign;
-		}
 		return '+' == new_sign;
 	}
 
-	void	Mode::_build_return_message(User const &) { }
+	void	Mode::_build_return_message(User const &user) {
+		// <channel> <mode> <mode params>
+
+		if (std::find(_args[2].begin(), _args[2].end(), 'b') != _args[2].end()) {
+			std::stringstream	rpl;
+			rpl << ":" << _server->get_name() << " " << RPL_ENDOFBANLIST << " "
+				<< _args[1] << " :End of channel ban list"<< "\r\n\0";
+			_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(),
+						rpl.str().c_str()));
+		}
+
+		std::stringstream	rpl;
+		rpl << ":" << _server->get_name() << " " << RPL_CHANNELMODEIS;
+		for (size_t i = 0 ; i < _args.size() ; ++i)
+			rpl << " " << _args[i];
+		rpl << "\r\n\0";
+		_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), rpl.str().c_str()));
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
@@ -187,27 +202,22 @@ namespace irc {
 			return ;
 
 		vec_chan		channel_list = _server->get_channel_list();
-		vec_cit_chan 	it_chan = _server->find_chan_name(_args[0], channel_list);
-		vec_user		chanop_list = (*it_chan)->get_operator_list();
-		User			*target = (*it_chan)->find_user(*arg);
+		User			*target = channel->find_user(*arg);
 
 		if (target == NULL)
 			throw error(": " + *arg + " No such channel/nick", ERR_NOSUCHNICK);
 		if (_sign == '+') {
-			if (author.get_operator_status(channel)
-					|| std::find(chanop_list.begin(), chanop_list.end(), target) != chanop_list.end())
+			if (author.get_operator_status(channel) || channel->is_operator(target))
 				return ;
-			chanop_list.push_back(target);
-			target->set_chan_status(*it_chan, true);
-			_modes_args.append(" " + *arg);
+			channel->add_operator(target);
+			target->set_chan_status(channel, true);
 		}
 		else {
 			if (author.get_operator_status(channel) == false
-					|| std::find(chanop_list.begin(), chanop_list.end(), target) == chanop_list.end())
+					|| channel->is_operator(target) == false)
 				return ;
-			chanop_list.erase(std::find(chanop_list.begin(), chanop_list.end(), target));
-			target->set_chan_status(*it_chan, false);
-			_modes_args.append(" " + *arg);
+			channel->del_operator(target);
+			target->set_chan_status(channel, false);
 		}
 	}
 
@@ -221,11 +231,10 @@ namespace irc {
 		if (new_limit > 100 || _sign == '-')
 			return ;
 		channel->set_userlimit(new_limit);
-		_modes_args.append(" " + *arg);
 	}
 
 	// ban mask
-	void	Mode::_channel_mode_b(Channel *channel, vector_string::const_iterator arg, const User &) {
+	void	Mode::_channel_mode_b(std::string::const_iterator pos, Channel *channel, vector_string::const_iterator arg, const User &user) {
 		vector_string	banned_list = channel->get_banned_user();
 		if (_sign == '+') {
 			if (std::find(banned_list.begin(), banned_list.end(), *arg) != banned_list.end())
@@ -234,6 +243,18 @@ namespace irc {
 		}
 		else
 			banned_list.erase(std::find(banned_list.begin(), banned_list.end(), *arg));
+		// ":" + user.get_server()->get_name() + " 001 " +;
+		std::stringstream rpl;
+		rpl << ":" << _server->get_name() << " " << RPL_BANLIST << " "
+			<< channel->get_name() << " " << *arg << "\r\n\0";
+		_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), rpl.str().c_str()));
+		if (std::find(++pos, (std::string::const_iterator)_args[2].end(), 'b') == _args[2].end()) {
+			std::stringstream	rpl;
+			rpl << ":" << _server->get_name() << " " << RPL_ENDOFBANLIST << " "
+				<< _args[1] << " :End of channel ban list"<< "\r\n\0";
+			_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(),
+						rpl.str().c_str()));
+		}
 	}
 
 	// channel key : password
@@ -289,52 +310,44 @@ namespace irc {
 				// No args needed
 				case 't':
 					_channel_mode_t(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				case 'n':
 					_channel_mode_n(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				case 'm':
 					_channel_mode_m(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				case 'v':
 					_channel_mode_v(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				case 'p':
 					_channel_mode_p(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				case 's':
 					_channel_mode_s(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				case 'i':
 					_channel_mode_i(channel, it_args, author);
-					_modes.push_back(*it);
 					break;
 				// Args needed
 				case 'o':
 					_channel_mode_o(channel, it_args, author);
-					_modes.push_back(*it);
 					++it_args;
+					break;
 				case 'l':
 					_channel_mode_l(channel, it_args, author);
-					_modes.push_back(*it);
 					++it_args;
+					break;
 				case 'b':
-					_channel_mode_b(channel, it_args, author);
-					_modes.push_back(*it);
+					_channel_mode_b(it, channel, it_args, author);
 					++it_args;
+					break;
 				case 'k':
 					_channel_mode_k(channel, it_args, author);
-					_modes.push_back(*it);
 					++it_args;
+					break;
 			}
 		}
-
 		_build_return_message(author);
 	}
 
