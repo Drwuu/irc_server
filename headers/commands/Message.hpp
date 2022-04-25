@@ -9,7 +9,7 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
-		bool	_is_channel;
+		std::vector<std::string>	_receiver;
 		public:
 	/* Constructors & Destructors */
 		private:

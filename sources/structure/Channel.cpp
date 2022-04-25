@@ -94,8 +94,10 @@ namespace irc {
 		}
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
 		{
-			std::cout << "------------Transmit message to " << (*it)->get_username() << std::endl;
-			(*it)->receive_message(user,msg);
+			if ((*it)->get_username() != user->get_username()){
+				std::cout << "------------Transmit message to " << (*it)->get_username() << std::endl;
+				(*it)->receive_message(user,msg);
+			}
 		}
 	}
 

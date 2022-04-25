@@ -23,7 +23,8 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
-			bool 	is_nickname_valid() const;
+			bool	is_nickname_valid() const;
+			void	send_connection_rpl(User &user);
 		public:
 			bool	is_valid_args(User const &user);
 			void	exec_cmd(User &user);
