@@ -20,7 +20,7 @@ namespace irc {
 			}
 			return true;
 	}
-	void User_cmd::send_connection_rpl(User &user) {
+	void Nick::send_connection_rpl(User &user) {
 		string ret;
 		ret = ":" + user.get_server()->get_name() + " 001 " +user.get_nickname() + " :" + "Welcome to our 42Lyon IRC network " + user.get_nickname() + "!" + user.get_username() + "@" + user.get_hostname() + "\n"
 			+ ":" + user.get_server()->get_name() + " 002 " + user.get_nickname() + " :" + "Your host is " + user.get_server()->get_name() + ", running version 1.0 " + "\n"
@@ -37,7 +37,7 @@ namespace irc {
 			user.set_uuid();
 			send_connection_rpl(user);
 		}
-	};
+	}
 
 	bool Nick::is_valid_args(User const &) {
 		// Possible Error : ERR_NONICKNAMEGIVEN  ERR_ERRONEUSNICKNAME ERR_NICKNAMEINUSE ERR_NICKCOLLISION
@@ -50,6 +50,7 @@ namespace irc {
 		if (_server->find_nickname(_args[1],userlist) != userlist.end())
 		{
 			throw error("Nickname already in use", ERR_NICKNAMEINUSE);
+		}
 		return true;
 	}
 }

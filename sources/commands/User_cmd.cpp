@@ -43,5 +43,6 @@ namespace irc {
 		for (string::const_iterator it = _args[4].begin(); it != _args[4].end(); ++it)
 			if ((*it) == 0 or (*it) == 10  or (*it) == 13 or (*it) == 64)
 				throw error("Invalid realname", ERR_ERRONEUSNICKNAME);
+		return true;
 	};
 }
