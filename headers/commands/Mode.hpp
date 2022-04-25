@@ -46,6 +46,8 @@ namespace irc {
 			bool 	_is_valid_arg_nb(string const &modes);
 			void	_check_modes(string const &arg) const;
 
+			void	_build_return_message(User const &authore);
+
 			bool	_sign_handler(const char new_sign);
 
 			// With args

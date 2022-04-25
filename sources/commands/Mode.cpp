@@ -172,6 +172,7 @@ namespace irc {
 		return '+' == new_sign;
 	}
 
+	void	Mode::_build_return_message(User const &) { }
 	// erase repetitive flags
 	//+obbobi guhernan2 guhernan3 guhernan3 guhernan2 guhernan2 = +oo guhernan2 guhernan2
 
@@ -282,6 +283,8 @@ namespace irc {
 					++it_args;
 			}
 		}
+
+		_build_return_message(author);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -299,7 +302,6 @@ namespace irc {
 
 
 	void Mode::_exec_userMode() {
-
 		for (std::string::const_iterator it = _args[2].begin() ; it != _args[2].end() ; ++it) {
 			switch (*it) {
 				case '+' :
@@ -312,5 +314,7 @@ namespace irc {
 				case 'o' :
 			}
 		}
+
+		_build_return_message(author);
 	}
 }
