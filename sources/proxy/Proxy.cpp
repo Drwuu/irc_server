@@ -103,10 +103,17 @@ void			irc::Proxy::queuing() {
 	fd_type		server_fd = _server.get_fd();
 	int			rtn = 0;
 
+	std::cerr << " UPDATE FLAGS --------------" << std::endl;
 	set_flags();
+	std::cerr << " LAUNCH POLL --------------" << std::endl;
 	rtn = poll(_poll_data.data(), _poll_data.size(), _timeout);
 	if (rtn == -1)
 		std::clog << "POLL ERROR : " << strerror(errno) << std::endl;
+	else if (rtn == 0) {
+		for (client_tree_type::iterator it = _clients.begin() ; it != _clients.end() ; ++it)
+			_to_server.push_back(new Server_queue::Message("PING", it->second));
+	}
+	std::cerr << " FINISH POLL --------------" << std::endl;
 
 	// Need to save the old pollfd size to secure the loop.
 	// The _poll_data vector is modified if there is a new connexion
@@ -115,6 +122,7 @@ void			irc::Proxy::queuing() {
 	// this is not safe to use iterators or _poll_data.size().
 	int		size = _poll_data.size();
 
+	std::cerr << " LAUNCH LOOP --------------" << std::endl;
 	for (int i = 0 ; i < size ; ++i) {
 		// If there is no event trigered
 		if (_poll_data[i].revents == 0)
@@ -157,6 +165,7 @@ void			irc::Proxy::queuing() {
 			}
 		}
 	}
+	std::cerr << " FINISH LOOP --------------" << std::endl;
 	std::clog << " ---- Queuing done. " << std::endl;
 }
 
@@ -164,7 +173,6 @@ void			irc::Proxy::queuing() {
 irc::Proxy::api_type		irc::Proxy::send_api() {
 	std::clog << " <--- API Sending ... " << std::endl;
 	return _to_server;
-	std::clog << " <--- API Sent. " << std::endl;
 }
 
 // Take the list to handle() instiated classes then delete them.
@@ -176,7 +184,6 @@ void				irc::Proxy::receive_api(api_type &data) {
 
 	std::clog << " ---> API Handling ... " << std::endl;
 	for (; !data.empty() ; data.pop_front()) {
-		std::cerr << " PROX ===========> SOMETHING TO HANDLE " << std::endl;
 		try {
 			data.front()->handle(*this);
 		}

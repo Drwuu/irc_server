@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 18:46:28 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 17:49:49 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/23 19:56:15 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,21 +63,6 @@ namespace irc {
 			~Client_disconnected();
 			void			handle(irc::Server &server);
 		};
-
-		class	Error : public Socket_event {
-			// Inform the irc::Server of an error on sockets
-			private:
-				// Data took from the error (if needed)
-				char				_data[513];
-				const socket_type	*_socket;
-				void			handle(irc::Proxy &proxy);
-				Error();
-			public:
-				Error(data_type data, const socket_type *socket);
-				~Error();
-				void			handle(irc::Server &server);
-		};
-
 	};
 }
 

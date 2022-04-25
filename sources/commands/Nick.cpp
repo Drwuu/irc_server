@@ -8,17 +8,17 @@ namespace irc {
 /* Operators */
 /* Functions */
 	bool Nick::is_nickname_valid() const{
-			string::const_iterator it = _args[1].begin();
-			if (!(*it >= 65 && *it <= 125))
+		string::const_iterator it = _args[1].begin();
+		if (!(*it >= 65 && *it <= 125))
+			return false;
+		it++;
+		for (;it != _args[1].end();++it)
+		{
+			if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
 				return false;
-			it++;
-			for (;it != _args[1].end();++it)
-			{
-				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
-					return false;
-				}
 			}
-			return true;
+		}
+		return true;
 	}
 	void Nick::send_connection_rpl(User &user) {
 		string ret;

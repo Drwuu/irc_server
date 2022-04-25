@@ -45,11 +45,8 @@ namespace irc {
 		if (it[0] == ':')
 			_skip_param(line, it, ' ');											// skip user
 		for (; it != line.end(); it++) {
-			if (*it == ' ') {
-				while (*it && *it == ' ')
-					it++;														// line parameters can be separated by multiple spaces
+			if (*it == ' ')
 				break ;
-			}
 			cmd.push_back(*it);
 		}
 		map_citerator_cmd cmd_it = _commands.find(cmd);
@@ -109,7 +106,7 @@ namespace irc {
 	std::list<std::string> const parser::	split_command(string const &line) const {
 		std::list<std::string>	cmd_list;
 
-		for (std::string::size_type i = 0, k = 0 ; i != line.npos && i != line.size() ; i = k + 1) {
+		for (std::string::size_type i = 0, k = 0 ; i != line.npos && i < line.size() && k < line.size() && k != line.npos ; i = k + 1) {
 			k = line.find("\n", i);
 			if (k == line.npos)
 				k = line.size();

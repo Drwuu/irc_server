@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:58:42 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/16 20:59:13 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/23 19:45:01 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,8 @@ std::string						Address_ipv6::get_readable_address() const {
 	return std::string(tmp, address_length);
 }
 
-
 Address_ipv6::len_type			Address_ipv6::get_len() const { return _len; }
 Address_ipv6::family_type		Address_ipv6::get_family() const { return _family; }
-
 
 void			Address_ipv6::renew(const port_type &port) {
 	bzero(&_address, sizeof(value_type));

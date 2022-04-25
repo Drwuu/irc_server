@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 19:31:37 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/21 19:18:26 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/23 21:23:44 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ irc::Proxy_queue::Write::Write() { }
 
 irc::Proxy_queue::Write::Write(fd_type socketfd, data_type data)
 	: _data(strdup(data)), _socketfd(socketfd) {
-	// std::clog << " ------------------- MESSAGE to SEND :" << _data << std::endl;
-	// std::clog << " ---------- fd = " << _socketfd << std::endl;
 	}
 
 irc::Proxy_queue::Write::~Write() { }
@@ -35,8 +33,6 @@ void			irc::Proxy_queue::Write::handle(Proxy &proxy) {
 irc::Proxy_queue::Write_priority::Write_priority() { }
 irc::Proxy_queue::Write_priority::Write_priority(fd_type socketfd, data_type data)
 	: _data(data), _socketfd(socketfd) {
-	// std::clog << " ------------------- MESSAGE to SEND :" << _data << std::endl;
-	// std::clog << " ---------- fd = " << _socketfd << std::endl;
 	}
 irc::Proxy_queue::Write_priority::~Write_priority() { }
 
@@ -57,8 +53,6 @@ void			irc::Proxy_queue::Disconnect_all::handle(Proxy &proxy) { proxy.end_all_co
 irc::Proxy_queue::Disconnect::Disconnect() { }
 irc::Proxy_queue::Disconnect::Disconnect(const fd_type &socket_id)
 	:_socket_id(socket_id) {
-		// std::clog << " ------------------- DISCONNECT RECEIVED " << std::endl;
-		// std::clog << " ---------- fd = " << _socket_id << std::endl;
 	}
 irc::Proxy_queue::Disconnect::~Disconnect() { }
 

@@ -72,14 +72,15 @@ namespace irc {
 			if (is_valid_channel((*it)) == true){
 				std::vector<Channel *>		chan_list = _server->get_channel_list();
 				std::vector<Channel *>::const_iterator receiver = _server->find_chan_name((*it), chan_list);
-				user.send_message(" PRIVMSG " + (*it) + " :" + _args[2], *(*receiver));
+				user.send_message(" PRIVMSG " + (*it) + " " + _args[2], *(*receiver));
 			}
 			else {
 				std::vector<User *>		user_list = _server->get_user_list();
 				std::vector<User *>::const_iterator receiver = _server->find_nickname((*it), user_list);
-				user.send_message(" PRIVMSG " + (*receiver)->get_nickname() + " :" + _args[2], *(*receiver));
+				user.send_message(" PRIVMSG " + (*receiver)->get_nickname() + " " + _args[2], *(*receiver));
 			}
 		}
+		_receiver.clear();
 	}
 
 	bool	Privmsg::is_valid_args(User const &user) {

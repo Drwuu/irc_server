@@ -85,14 +85,17 @@ namespace irc {
 
 	void User::set_password_status(bool status){
 		this->_is_pass_checked = status;}
-	// FIXME : why do you use server ?
-	void	User::join_channel(Channel * channel) {
-		this->_chan_list.push_back(ChanStatus(channel));
-	}
-
 	void	User::set_socket(Socket<Address_ipv6> const *socket) {
 		(void)socket; // FIXME : fix that shit. The function wasn't created.
 	}
+	void User::set_chan_status(ChanStatus &chanStatus, bool op) {
+		chanStatus.is_operator = op;
+	};
+	void	User::join_channel(ChanStatus &status) {
+		this->_chan_list.push_back(status);
+	}
+
+
 
 // void User::join_channel(Server & Server, std::string channel){
 // 	srand(time(NULL));
