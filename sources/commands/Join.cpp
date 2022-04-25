@@ -86,9 +86,9 @@ namespace irc {
 					throw error(_chans[i] + " :Cannot join channel (+l)", ERR_CHANNELISFULL);
 				if ((*mchan)->is_invite())
 					throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
-				vec_user bannedUsers = (*mchan)->get_banned_user();
+				vector_string bannedUsers = (*mchan)->get_banned_user();
 				for (size_t j = 0; j < bannedUsers.size(); j++) {
-					if (user .get_nickname() == bannedUsers[j]->get_nickname())
+					if (user .get_nickname() == bannedUsers[j])
 						throw error(_chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
 				}
 			}

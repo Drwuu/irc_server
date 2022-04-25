@@ -40,11 +40,11 @@ namespace irc {
 
 /* Operators */
 /* Functions */
-	void Mode::exec_cmd(User &) {
+	void Mode::exec_cmd(User &author) {
 		if (_args[1][0] == '#' || _args[1][0] == '&')
-			_exec_chanMode();
+			_exec_chanMode(author);
 		else
-			_exec_userMode();
+			_exec_userMode(author);
 	};
 
 	//// How to valid arguments :
@@ -167,15 +167,14 @@ namespace irc {
 	//
 
 	bool	Mode::_sign_handler(const char new_sign) {
-		if (new_sign != _sign)
+		if (new_sign != _sign) {
+			_modes.push_back(_sign);
 			_sign = new_sign;
+		}
 		return '+' == new_sign;
 	}
 
 	void	Mode::_build_return_message(User const &) { }
-	// erase repetitive flags
-	//+obbobi guhernan2 guhernan3 guhernan3 guhernan2 guhernan2 = +oo guhernan2 guhernan2
-
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +199,7 @@ namespace irc {
 				return ;
 			chanop_list.push_back(target);
 			target->set_chan_status(*it_chan, true);
-			// set user as chanop --> use a seter TODO
+			_modes_args.append(" " + *arg);
 		}
 		else {
 			if (author.get_operator_status() == false
@@ -208,38 +207,77 @@ namespace irc {
 				return ;
 			chanop_list.erase(std::find(chanop_list.begin(), chanop_list.end(), target));
 			target->set_chan_status(*it_chan, false);
+			_modes_args.append(" " + *arg);
 		}
+	}
 
+	// limit -> ONLY  if (is_positive == true)
+	void	Mode::_channel_mode_l(Channel *channel, vector_string::const_iterator arg, const User &) { 
+		// Validity of the channel has been tested in _is_valid_arg.
+		for (std::string::const_iterator it = arg->begin() ; it != arg->end() ; ++it)
+			if (!std::isdigit(*it))
+				return ;
+		int		new_limit = atoi(arg->c_str());
+		if (new_limit > 100 || _sign == '-')
+			return ;
+		channel->set_userlimit(new_limit);
+		_modes_args.append(" " + *arg);
 	}
-	void	Mode::_channel_mode_l(vector_string::const_iterator arg, const User &author) { // limit -> ONLY  if (is_positive == true)
+
+	// ban mask
+	void	Mode::_channel_mode_b(Channel *channel, vector_string::const_iterator arg, const User &) {
+		vector_string	banned_list = channel->get_banned_user();
+		if (_sign == '+') {
+			if (std::find(banned_list.begin(), banned_list.end(), *arg) != banned_list.end())
+				return ;
+			banned_list.push_back(*arg);
+		}
+		else
+			banned_list.erase(std::find(banned_list.begin(), banned_list.end(), *arg));
 	}
-	void	Mode::_channel_mode_b(vector_string::const_iterator arg, const User &author) { // ban mask
+
+	// channel key : password
+	void	Mode::_channel_mode_k(Channel *channel, vector_string::const_iterator arg, const User &) {
+		if (_sign == '+')
+			channel->set_key(*arg);
 	}
-	void	Mode::_channel_mode_k(vector_string::const_iterator arg, const User &author) { // channel key : password
+
+	// Authorise or not to speak on moderated channel
+	void	Mode::_channel_mode_v(Channel *channel, vector_string::const_iterator arg, const User &) {
+		if (channel->is_moderated() == false)
+			return ;
+		User	*target = channel->find_user(*arg);
+		_sign == '+' ? target->set_mute(channel, false) : target->set_mute(channel, true);
 	}
 
 	// No args
-	void	Mode::_channel_mode_t(vector_string::const_iterator arg, const User &author) {
+	void	Mode::_channel_mode_n(Channel *channel, vector_string::const_iterator, const User &) {
+		_sign == '+' ? channel->set_external_msg(true) : channel->set_external_msg(false);
 	}
-	void	Mode::_channel_mode_n(vector_string::const_iterator arg, const User &author) {
-	}
-	void	Mode::_channel_mode_m(vector_string::const_iterator arg, const User &author) {
-	}
-	void	Mode::_channel_mode_v(vector_string::const_iterator arg, const User &author) {
+	void	Mode::_channel_mode_m(Channel *channel, vector_string::const_iterator, const User &) {
+		_sign == '+' ? channel->set_moderated(true) : channel->set_moderated(false);
 	}
 
 	// flag
-	void	Mode::_channel_mode_p(vector_string::const_iterator arg, const User &author) {
+	void	Mode::_channel_mode_p(Channel *channel, vector_string::const_iterator, const User &) {
+		_sign == '+' ? channel->set_private(true) : channel->set_private(false);
 	}
-	void	Mode::_channel_mode_s(vector_string::const_iterator arg, const User &author) {
+	void	Mode::_channel_mode_s(Channel *channel, vector_string::const_iterator, const User &) {
+		_sign == '+' ? channel->set_secret(true) : channel->set_secret(false);
 	}
-	void	Mode::_channel_mode_i(vector_string::const_iterator arg, const User &author) {
+	void	Mode::_channel_mode_i(Channel *channel, vector_string::const_iterator, const User &) {
+		_sign == '+' ? channel->set_invite_only(true) : channel->set_invite_only(false);
+	}
+	void	Mode::_channel_mode_t(Channel *channel, vector_string::const_iterator, const User &) {
+		_sign == '+' ? channel->set_topic_chanop_only(true) : channel->set_topic_chanop_only(false);
 	}
 
-	void Mode::_exec_chanMode(const User &author) {
+	void	Mode::_exec_chanMode(User const &author) {
 		// bool is_positive = false;
 		vector_string::const_iterator	it_args = _args.begin() + 3;
-		for (std::string::const_iterator it = _args[2].begin() ; it != _args.end() ; ++it) {
+		Channel	*channel = author.find_channel(_args[1]);
+		std::string		mode_string = _args[2];
+		for (std::string::const_iterator it = mode_string.begin() ; it != mode_string.end() ; ++it) {
 			switch (*it) {
 				// Sign
 				case '+':
@@ -250,36 +288,49 @@ namespace irc {
 					break;
 				// No args needed
 				case 't':
-					_channel_mode_t(*it_args);
+					_channel_mode_t(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				case 'n':
-					_channel_mode_n(it_args, author);
+					_channel_mode_n(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				case 'm':
-					_channel_mode_m(it_args, author);
+					_channel_mode_m(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				case 'v':
-					_channel_mode_v(it_args, author);
+					_channel_mode_v(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				case 'p':
-					_channel_mode_p(it_args, author);
+					_channel_mode_p(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				case 's':
-					_channel_mode_s(it_args, author);
+					_channel_mode_s(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				case 'i':
-					_channel_mode_i(it_args, author);
+					_channel_mode_i(channel, it_args, author);
+					_modes.push_back(*it);
 					break;
 				// Args needed
 				case 'o':
 					_channel_mode_o(it_args, author);
+					_modes.push_back(*it);
+					++it_args;
 				case 'l':
-					_channel_mode_l(it_args, author);
+					_channel_mode_l(channel, it_args, author);
+					_modes.push_back(*it);
+					++it_args;
 				case 'b':
-					_channel_mode_b(it_args, author);
+					_channel_mode_b(channel, it_args, author);
+					_modes.push_back(*it);
+					++it_args;
 				case 'k':
-					_channel_mode_k(it_args, author);
-				default :
+					_channel_mode_k(channel, it_args, author);
+					_modes.push_back(*it);
 					++it_args;
 			}
 		}
@@ -291,27 +342,32 @@ namespace irc {
 	//////////////////////////////////////////////////////////////////////////////////
 	// USER MODE
 
-	void	Mode::_user_mode_i(vector_string::const_iterator arg, const User &author) {
-	}              u
-	void	Mode::_user_mode_s(vector_string::const_iterator arg, const User &author) {
-	}              u
-	void	Mode::_user_mode_w(vector_string::const_iterator arg, const User &author) {
-	}              u
-	void	Mode::_user_mode_o(vector_string::const_iterator arg, const User &author) {
-	}
+	// void	Mode::_user_mode_i(vector_string::const_iterator arg, const User &author) {
+	// }
+	// void	Mode::_user_mode_s(vector_string::const_iterator arg, const User &author) {
+	// }
+	// void	Mode::_user_mode_w(vector_string::const_iterator arg, const User &author) {
+	// }
+	// void	Mode::_user_mode_o(vector_string::const_iterator arg, const User &author) {
+	// }
 
-
-	void Mode::_exec_userMode() {
+	void Mode::_exec_userMode(User const &author) {
 		for (std::string::const_iterator it = _args[2].begin() ; it != _args[2].end() ; ++it) {
 			switch (*it) {
 				case '+' :
 					_sign_handler(*it);
+					break;
 				case '-' :
 					_sign_handler(*it);
+					break;
 				case 'i' :
+					break;
 				case 's' :
+					break;
 				case 'w' :
+					break;
 				case 'o' :
+					break;
 			}
 		}
 

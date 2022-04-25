@@ -20,7 +20,7 @@ namespace irc {
 	User::User() : _is_pass_checked(false) {}
 	User::~User(){}
 	User::User(Socket<Address_ipv6> const *socket): _is_pass_checked(false), _socket(socket){}
-	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
+	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_mute(false),is_operator(false){}
 
 	int User::get_port() const{
 		return (this->_port);}
@@ -78,11 +78,26 @@ namespace irc {
 		return chans.end();
 	}
 
+	std::vector<ChanStatus>::iterator	User::get_chan_status(const Channel *channel) {
+		for (std::vector<ChanStatus>::iterator it = _chan_list.begin() ; it != _chan_list.end() ; ++it)
+			if (it->channel == channel)
+				return it;
+		return _chan_list.end();
+	}
+
 	Socket<Address_ipv6> const *User::get_socket() const{
 		return (this->_socket);}
 
 	bool User::get_operator_status() const{
 		return _is_irc_operator;}
+
+	Channel		*User::find_channel(std::string const &name) const {
+		for (std::vector<ChanStatus>::const_iterator it = _chan_list.begin() ;
+				it != _chan_list.end() ; ++it)
+			if (it->channel->get_name() == name)
+				return it->channel;
+		return NULL;
+	}
 
 	void User::set_ip(std::string ip) {
 		this->_ip = ip;}
@@ -110,10 +125,18 @@ namespace irc {
 		(void)socket; // FIXME : fix that shit. The function wasn't created.
 	}
 	void User::set_chan_status(const Channel *channel, bool op) {
-		std::vector<ChanStatus>::iterator	it_chanst = std::find(_chan_list.begin(), _chan_list.end(), channel);
-		if (it_chanst != _chan_list.end())
-			it_chanst->is_operator = op;
+		std::vector<ChanStatus>::iterator	it_chan = get_chan_status(channel);
+		if (it_chan != _chan_list.end())
+			it_chan->is_operator = op;
 	};
+
+	void	User::set_mute(const Channel *channel, bool value) {
+		for (std::vector<ChanStatus>::iterator it = _chan_list.begin() ; 
+				it != _chan_list.end() ; ++it)
+			if (it->channel == channel)
+				it->is_mute = value;
+	}
+
 	void	User::join_channel(ChanStatus &status) {
 		this->_chan_list.push_back(status);
 	}
@@ -166,7 +189,7 @@ namespace irc {
 // 		new_chan->add_user(this);
 // 	}
 
-	void User::leave_channel(Channel * channel){
+	void User::leave_channel(Channel * channel) {
 
 		std::vector<ChanStatus>		chan_list = this->get_chan_list();
 		for (std::vector<ChanStatus>::iterator it = chan_list.begin(); it != chan_list.end(); ++it){
@@ -207,11 +230,17 @@ namespace irc {
 
 	void User::kick_user(User & user, Channel & channel,std::string msg){(void)user;(void)channel;(void)msg;}
 
-	void User::ban_user(User & user, Channel & channel){(void)user;(void)channel;}
+	void User::ban_user(User & user, Channel & channel) {
+		if (this->get_operator_status() == false)
+			return ;
+		channel.ban_user(user._nickname);
+	}
 
-	void User::unban_user(User & user,Channel & channel){(void)user;(void)channel;}
-
-	void User::op_user(User & user, Channel & channel){(void)user;(void)channel;}
+	void User::unban_user(User & user,Channel & channel) {
+		if (this->get_operator_status() == false)
+			return ;
+		channel.unban_user(user._nickname);
+	}
 
 	void User::change_topic(Channel & channel,std::string topic){(void)channel,(void)topic;}
 

@@ -9,8 +9,6 @@ namespace irc {
 	{
 		ChanStatus(Channel * channel);
 		Channel *channel;
-		bool is_admin;
-		bool is_banned;
 		bool is_mute;
 		bool is_operator;
 	};
@@ -40,7 +38,8 @@ namespace irc {
 			Server * _server; //TEMP
 
 		protected:
-			/*Arg*/
+			std::vector<ChanStatus>::iterator	get_chan_status(const Channel *channel);		
+
 		public:
 			User();
 			User(Socket<Address_ipv6> const *socket);
@@ -60,7 +59,7 @@ namespace irc {
 			bool							get_password_status() const;
 			bool							get_away_status() const;
 			std::vector<std::string>		get_past_username();
-			std::vector<ChanStatus>			get_chan_list() ;
+			std::vector<ChanStatus>			get_chan_list();
 			const std::vector<ChanStatus>	get_chan_list() const;
 			std::vector<ChanStatus>::const_iterator		get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> &chans) const;
 			const Socket<Address_ipv6>		*get_socket() const;
@@ -69,6 +68,8 @@ namespace irc {
 			void set_server(Server * server);
 			std::list<Socket_event *>		get_event_list();
 			void set_event_list(std::list<Socket_event *> &event_list);
+
+			Channel							*find_channel(std::string const &name) const;
 
 			void						set_ip(std::string ip);
 			void						set_port(int port);
@@ -81,9 +82,12 @@ namespace irc {
 			void						set_registered_status(bool status);
 			void						set_password_status(bool status);
 			void						set_chan_status(const Channel *channel, bool op);
+			void						set_mute(const Channel *channel, bool value);
 			void						join_channel(ChanStatus &status); // Command JOIN
 			void						leave_channel(Channel * channel);
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
+			bool						is_mute(bool value);
+																							   //
 
 			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
 			void						send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG
@@ -98,7 +102,6 @@ namespace irc {
 			void						kick_user(User & user, Channel & channel,std::string msg); // Command Kick Need to test is this is op
 			void						ban_user(User & user, Channel & channel); // Use /mode #channel + b pseudo
 			void						unban_user(User & user, Channel & channel); // Use Command UNBAN
-			void						op_user(User & user, Channel & channel); // Use /mode #channel -o pseudo
 			void						unmute_user(User & user, Channel & Channel); // Use /mode username -v Authorize talking in moderated channel (mode m)
 			void						change_topic(Channel & channel,std::string msg); // Used for TOPIC function
 			int							disconnect_user();
