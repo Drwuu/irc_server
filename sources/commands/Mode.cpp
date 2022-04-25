@@ -36,7 +36,7 @@ namespace irc {
 	Mode::~Mode() {};
 	Mode::Mode() {};
 	Mode::Mode(Server *server)
-		: command(server), _stage(), _modes(), _modes_args(), _sign(0) {};
+		: command(server), _modes(), _modes_args(), _sign(0) {};
 
 /* Operators */
 /* Functions */
@@ -163,65 +163,79 @@ namespace irc {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
 	//
 
 	bool	Mode::_sign_handler(const char new_sign) {
 		if (new_sign != _sign)
-			_stage.push_back(new_sign);
+			_sign = new_sign;
 		return '+' == new_sign;
 	}
 
 	// erase repetitive flags
 	//+obbobi guhernan2 guhernan3 guhernan3 guhernan2 guhernan2 = +oo guhernan2 guhernan2
 
-	//  With args
-	void	Mode::_mode_o(vector_string::const_iterator arg, const User &user) { // user
-		if (user.get_nickname() == *arg) {
-			_stage.clear();
-			return ;
-		}
 
-		vec_chan		channel_list(_server->get_channel_list());
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	//
+	// CHANNEL MODE
+	//
+	//  With args
+	void	Mode::_channel_mode_o(vector_string::const_iterator arg, const User &author) { // user
+		if (author.get_nickname() == *arg)
+			return ;
+
+		vec_chan		channel_list = _server->get_channel_list();
 		vec_cit_chan 	it_chan = _server->find_chan_name(_args[0], channel_list);
+		vec_user		chanop_list = (*it_chan)->get_operator_list();
 		User			*target = (*it_chan)->find_user(*arg);
+
 		if (target == NULL)
 			throw error(": " + *arg + " No such channel/nick", ERR_NOSUCHNICK);
-		if (_stage.front() == '+') {
-			// put in channel->chanop_list
-			// set user as chanop
+		if (_sign == '+') {
+			if (author.get_operator_status()
+					|| std::find(chanop_list.begin(), chanop_list.end(), target) != chanop_list.end())
+				return ;
+			chanop_list.push_back(target);
+			target->set_chan_status(*it_chan, true);
+			// set user as chanop --> use a seter TODO
 		}
 		else {
-			// remove from channel->chanop_list
-			// unset user as chanop
+			if (author.get_operator_status() == false
+					|| std::find(chanop_list.begin(), chanop_list.end(), target) == chanop_list.end())
+				return ;
+			chanop_list.erase(std::find(chanop_list.begin(), chanop_list.end(), target));
+			target->set_chan_status(*it_chan, false);
 		}
 
 	}
-	void	Mode::_mode_l(vector_string::const_iterator arg, const User &user) { // limit -> ONLY  if (is_positive == true)
+	void	Mode::_channel_mode_l(vector_string::const_iterator arg, const User &author) { // limit -> ONLY  if (is_positive == true)
 	}
-	void	Mode::_mode_b(vector_string::const_iterator arg, const User &user) { // ban mask
+	void	Mode::_channel_mode_b(vector_string::const_iterator arg, const User &author) { // ban mask
 	}
-	void	Mode::_mode_k(vector_string::const_iterator arg, const User &user) { // channel key : password
+	void	Mode::_channel_mode_k(vector_string::const_iterator arg, const User &author) { // channel key : password
 	}
 
 	// No args
-	void	Mode::_mode_t(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_t(vector_string::const_iterator arg, const User &author) {
 	}
-	void	Mode::_mode_n(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_n(vector_string::const_iterator arg, const User &author) {
 	}
-	void	Mode::_mode_m(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_m(vector_string::const_iterator arg, const User &author) {
 	}
-	void	Mode::_mode_v(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_v(vector_string::const_iterator arg, const User &author) {
 	}
 
 	// flag
-	void	Mode::_mode_p(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_p(vector_string::const_iterator arg, const User &author) {
 	}
-	void	Mode::_mode_s(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_s(vector_string::const_iterator arg, const User &author) {
 	}
-	void	Mode::_mode_i(vector_string::const_iterator arg, const User &user) {
+	void	Mode::_channel_mode_i(vector_string::const_iterator arg, const User &author) {
 	}
 
-	void Mode::_exec_chanMode(const User &user) {
+	void Mode::_exec_chanMode(const User &author) {
 		// bool is_positive = false;
 		vector_string::const_iterator	it_args = _args.begin() + 3;
 		for (std::string::const_iterator it = _args[2].begin() ; it != _args.end() ; ++it) {
@@ -235,43 +249,68 @@ namespace irc {
 					break;
 				// No args needed
 				case 't':
-					_mode_t(*it_args);
+					_channel_mode_t(*it_args);
 					break;
 				case 'n':
-					_mode_n();
+					_channel_mode_n(it_args, author);
 					break;
 				case 'm':
-					_mode_m();
+					_channel_mode_m(it_args, author);
 					break;
 				case 'v':
-					_mode_v();
+					_channel_mode_v(it_args, author);
 					break;
 				case 'p':
-					_mode_p();
+					_channel_mode_p(it_args, author);
 					break;
 				case 's':
-					_mode_s();
+					_channel_mode_s(it_args, author);
 					break;
 				case 'i':
-					_mode_i();
+					_channel_mode_i(it_args, author);
 					break;
 				// Args needed
 				case 'o':
-					_mode_o(user);
+					_channel_mode_o(it_args, author);
 				case 'l':
-					_mode_l();
+					_channel_mode_l(it_args, author);
 				case 'b':
-					_mode_b();
+					_channel_mode_b(it_args, author);
 				case 'k':
-					_mode_k();
+					_channel_mode_k(it_args, author);
 				default :
 					++it_args;
 			}
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////
+	// USER MODE
+
+	void	Mode::_user_mode_i(vector_string::const_iterator arg, const User &author) {
+	}              u
+	void	Mode::_user_mode_s(vector_string::const_iterator arg, const User &author) {
+	}              u
+	void	Mode::_user_mode_w(vector_string::const_iterator arg, const User &author) {
+	}              u
+	void	Mode::_user_mode_o(vector_string::const_iterator arg, const User &author) {
+	}
+
+
 	void Mode::_exec_userMode() {
-		// bool is_positive = false;
-		std::string			mode_args;
+
+		for (std::string::const_iterator it = _args[2].begin() ; it != _args[2].end() ; ++it) {
+			switch (*it) {
+				case '+' :
+					_sign_handler(*it);
+				case '-' :
+					_sign_handler(*it);
+				case 'i' :
+				case 's' :
+				case 'w' :
+				case 'o' :
+			}
+		}
 	}
 }

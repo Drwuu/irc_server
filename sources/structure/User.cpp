@@ -109,8 +109,10 @@ namespace irc {
 	void	User::set_socket(Socket<Address_ipv6> const *socket) {
 		(void)socket; // FIXME : fix that shit. The function wasn't created.
 	}
-	void User::set_chan_status(ChanStatus &chanStatus, bool op) {
-		chanStatus.is_operator = op;
+	void User::set_chan_status(const Channel *channel, bool op) {
+		std::vector<ChanStatus>::iterator	it_chanst = std::find(_chan_list.begin(), _chan_list.end(), channel);
+		if (it_chanst != _chan_list.end())
+			it_chanst->is_operator = op;
 	};
 	void	User::join_channel(ChanStatus &status) {
 		this->_chan_list.push_back(status);

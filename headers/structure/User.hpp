@@ -80,7 +80,7 @@ namespace irc {
 			void						set_socket(Socket<Address_ipv6> const *socket);
 			void						set_registered_status(bool status);
 			void						set_password_status(bool status);
-			void						set_chan_status(ChanStatus &chanStatus, bool op);
+			void						set_chan_status(const Channel *channel, bool op);
 			void						join_channel(ChanStatus &status); // Command JOIN
 			void						leave_channel(Channel * channel);
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
