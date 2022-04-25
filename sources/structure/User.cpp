@@ -48,33 +48,12 @@ namespace irc {
 		return (this->_chan_list);}
 	const std::vector<ChanStatus> User::get_chan_list() const {
 		return (this->_chan_list);}
-	// ChanStatus 				*User::get_chanstatus_from_list(Channel * channel) {
-	// 	std::vector<ChanStatus> chans = get_chan_list();
-	// 	for (std::vector<ChanStatus>::iterator it = chans.begin(); it != chans.end();++it)
-	// 	{
-	// 		if ((*(it)).channel->get_name() == channel->get_name())
-	// 			return &(*it);
-	// 	}
-	// 	std::cout << "Channel not found\n";
-	// 	return NULL;
-	// }
-	// const ChanStatus				*User::get_chanstatus_from_list(const Channel * channel) const {
-	// 	std::vector<ChanStatus> chans = get_chan_list();
-	// 	for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
-	// 	{
-	// 		if ((*(it)).channel->get_name() == channel->get_name())
-	// 			return &(*it);
-	// 	}
-	// 	std::cout << "Channel not found\n";
-	// 	return NULL;
-	// }
 	std::vector<ChanStatus>::const_iterator	User::get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> &chans)const {
 		for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
 		{
 			if ((*(it)).channel->get_name() == channel.get_name())
 				return it;
 		}
-		std::cout << "Channel not found\n";
 		return chans.end();
 	}
 
