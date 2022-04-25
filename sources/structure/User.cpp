@@ -22,6 +22,7 @@ namespace irc {
 	User::User(Socket<Address_ipv6> const *socket): _is_pass_checked(false), _socket(socket){}
 	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_admin(false),is_banned(false),is_mute(false),is_operator(false){}
 
+
 	int User::get_port() const{
 		return (this->_port);}
 	const std::string User::get_username() const{

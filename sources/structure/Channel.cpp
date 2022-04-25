@@ -59,6 +59,14 @@ namespace irc {
 	void Channel::set_userlimit(const int & userlimit){
 		this->_userlimit = userlimit;}
 
+	User *    Channel::find_user(std::string nickname) {
+	        for (vec_user::iterator it = _user_list.begin() ; it < _user_list.end() ; ++it) {
+	            if ((*it)->get_nickname() == nickname)
+	                return *it;
+	        }
+	        return NULL;
+	    }
+
 	void Channel::add_user(User * user){
 		for (std::vector<User *>::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
 		{
