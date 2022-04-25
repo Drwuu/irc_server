@@ -102,7 +102,7 @@ namespace irc {
 
 		vec_user chanUsers = (*mchan)->get_user_list();
 		vec_cit_user it2 = _server->find_nickname(user.get_nickname(), chanUsers);
-		if (it2 == chanUsers.end())
+		if (user.get_operator_status(user.find_channel(_args[1])) == false || it2 == chanUsers.end())
 			throw error(_args[1] + " :You're not on that channel", ERR_NOTONCHANNEL);
 	}
 
@@ -182,7 +182,7 @@ namespace irc {
 	// CHANNEL MODE
 	//
 	//  With args
-	void	Mode::_channel_mode_o(vector_string::const_iterator arg, const User &author) { // user
+	void	Mode::_channel_mode_o(Channel *channel, vector_string::const_iterator arg, const User &author) { // user
 		if (author.get_nickname() == *arg)
 			return ;
 
@@ -194,7 +194,7 @@ namespace irc {
 		if (target == NULL)
 			throw error(": " + *arg + " No such channel/nick", ERR_NOSUCHNICK);
 		if (_sign == '+') {
-			if (author.get_operator_status()
+			if (author.get_operator_status(channel)
 					|| std::find(chanop_list.begin(), chanop_list.end(), target) != chanop_list.end())
 				return ;
 			chanop_list.push_back(target);
@@ -202,7 +202,7 @@ namespace irc {
 			_modes_args.append(" " + *arg);
 		}
 		else {
-			if (author.get_operator_status() == false
+			if (author.get_operator_status(channel) == false
 					|| std::find(chanop_list.begin(), chanop_list.end(), target) == chanop_list.end())
 				return ;
 			chanop_list.erase(std::find(chanop_list.begin(), chanop_list.end(), target));
@@ -317,7 +317,7 @@ namespace irc {
 					break;
 				// Args needed
 				case 'o':
-					_channel_mode_o(it_args, author);
+					_channel_mode_o(channel, it_args, author);
 					_modes.push_back(*it);
 					++it_args;
 				case 'l':

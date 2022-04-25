@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/24 19:58:31 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/25 22:46:49 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int		main(int ac, char **av) {
 
 	proxy.switch_on();
 
-	proxy.set_timeout(20 * 1000);
+	proxy.set_timeout(40 * 1000);
 
 
 	while (1){

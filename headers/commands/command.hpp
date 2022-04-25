@@ -51,3 +51,5 @@ namespace irc {
 #include "../commands/Pass.hpp"
 #include "../commands/Ping.hpp"
 #include "../commands/Pong.hpp"
+#include "../commands/Notice.hpp"
+#include "../commands/Part.hpp"

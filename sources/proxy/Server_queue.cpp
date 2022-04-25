@@ -33,8 +33,8 @@ void			irc::Server_queue::Message::handle(Server &server) {
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->check_auth(user);
 			cmd->set_args(server._parser.get_args(cmd_list.front()));
-			cmd->is_valid_args(user);
-			cmd->exec_cmd(user);
+			if (cmd->is_valid_args(user) == true)
+				cmd->exec_cmd(user);
 		}
 		catch (irc::error &e) {
 			// Return the event to the client

@@ -1,5 +1,6 @@
 #include "../../headers/structure/User.hpp"
 #include "../../headers/proxy/Server_queue.hpp"
+#include <istream>
 #include <vector>
 
 namespace irc {
@@ -48,33 +49,12 @@ namespace irc {
 		return (this->_chan_list);}
 	const std::vector<ChanStatus> User::get_chan_list() const {
 		return (this->_chan_list);}
-	// ChanStatus 				*User::get_chanstatus_from_list(Channel * channel) {
-	// 	std::vector<ChanStatus> chans = get_chan_list();
-	// 	for (std::vector<ChanStatus>::iterator it = chans.begin(); it != chans.end();++it)
-	// 	{
-	// 		if ((*(it)).channel->get_name() == channel->get_name())
-	// 			return &(*it);
-	// 	}
-	// 	std::cout << "Channel not found\n";
-	// 	return NULL;
-	// }
-	// const ChanStatus				*User::get_chanstatus_from_list(const Channel * channel) const {
-	// 	std::vector<ChanStatus> chans = get_chan_list();
-	// 	for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
-	// 	{
-	// 		if ((*(it)).channel->get_name() == channel->get_name())
-	// 			return &(*it);
-	// 	}
-	// 	std::cout << "Channel not found\n";
-	// 	return NULL;
-	// }
-	std::vector<ChanStatus>::const_iterator	User::get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> &chans)const {
+	std::vector<ChanStatus>::const_iterator	User::get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> const &chans)const {
 		for (std::vector<ChanStatus>::const_iterator it = chans.begin(); it != chans.end();++it)
 		{
 			if ((*(it)).channel->get_name() == channel.get_name())
 				return it;
 		}
-		std::cout << "Channel not found\n";
 		return chans.end();
 	}
 
@@ -88,8 +68,10 @@ namespace irc {
 	Socket<Address_ipv6> const *User::get_socket() const{
 		return (this->_socket);}
 
-	bool User::get_operator_status() const{
-		return _is_irc_operator;}
+	bool User::get_operator_status(const Channel *channel) const{
+		std::vector<ChanStatus>::const_iterator 	it = this->get_chanstatus_from_list(*channel, _chan_list);
+		return _chan_list.end() != it && it->is_operator;
+	}
 
 	Channel		*User::find_channel(std::string const &name) const {
 		for (std::vector<ChanStatus>::const_iterator it = _chan_list.begin() ;
@@ -189,14 +171,13 @@ namespace irc {
 // 		new_chan->add_user(this);
 // 	}
 
-	void User::leave_channel(Channel * channel) {
-
-		std::vector<ChanStatus>		chan_list = this->get_chan_list();
-		for (std::vector<ChanStatus>::iterator it = chan_list.begin(); it != chan_list.end(); ++it){
-			if ((*it).channel->get_name() == channel->get_name()){
+	void User::leave_channel(std::string channel) {
+		for (std::vector<ChanStatus>::iterator it = _chan_list.begin(); it != _chan_list.end(); ++it){
+			if ((*it).channel->get_name() == channel){
 				(*it).channel->del_user(this);
-				get_chan_list().erase(it);
-				break;
+				(*it).channel = NULL;
+				_chan_list.erase(it);
+				return ; // Channel found
 			}
 		}
 	}
@@ -231,13 +212,13 @@ namespace irc {
 	void User::kick_user(User & user, Channel & channel,std::string msg){(void)user;(void)channel;(void)msg;}
 
 	void User::ban_user(User & user, Channel & channel) {
-		if (this->get_operator_status() == false)
+		if (this->get_operator_status(&channel) == false)
 			return ;
 		channel.ban_user(user._nickname);
 	}
 
 	void User::unban_user(User & user,Channel & channel) {
-		if (this->get_operator_status() == false)
+		if (this->get_operator_status(&channel) == false)
 			return ;
 		channel.unban_user(user._nickname);
 	}

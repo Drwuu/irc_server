@@ -3,32 +3,28 @@
 
 namespace irc {
 	class Server;
-	class Privmsg: public command {
+	class Notice: public command {
 	/* Typedefs */
 		private:
 		public:
 	/* Variables */
 		private:
-		std::vector<std::string>	_receiver;
 		public:
 	/* Constructors & Destructors */
 		private:
-			Privmsg(Privmsg const &src);
+			Notice(Notice const &src);
 		public:
-			Privmsg();
-			Privmsg(Server *server);
-			virtual ~Privmsg();
+			Notice();
+			Notice(Server *server);
+			virtual ~Notice();
 	/* Operators */
 		private:
-			Privmsg &operator=(Privmsg const &src);
+			Notice &operator=(Notice const &src);
 		public:
 	/* Functions */
 		private:
 			bool	find_receiver(Server const *server,const std::string receiver);
-			bool	is_valid_channel(const std::string &channel) const;
 			bool	is_valid_nickname(const std::string &nickname) const;
-			bool	is_valid_receiver(const std::string &receiver) const;
-			bool	is_authorized(const Channel & channel, const User & user) const;
 		public:
 			void			exec_cmd(User &user);
 			virtual bool	is_valid_args(User const &user);

@@ -38,7 +38,7 @@ namespace irc {
 			Server * _server; //TEMP
 
 		protected:
-			std::vector<ChanStatus>::iterator	get_chan_status(const Channel *channel);		
+			std::vector<ChanStatus>::iterator	get_chan_status(const Channel *channel);
 
 		public:
 			User();
@@ -54,14 +54,14 @@ namespace irc {
 			const std::string				get_uuid() const; // Not in use
 			const std::string				get_ip() const; // Not in use
 			const std::string				get_mode() const; // Not in use
-			bool							get_operator_status() const;
+			bool							get_operator_status(const Channel *channel) const;
 			bool							get_registered_status()const ;
 			bool							get_password_status() const;
 			bool							get_away_status() const;
 			std::vector<std::string>		get_past_username();
 			std::vector<ChanStatus>			get_chan_list();
 			const std::vector<ChanStatus>	get_chan_list() const;
-			std::vector<ChanStatus>::const_iterator		get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> &chans) const;
+			std::vector<ChanStatus>::const_iterator		get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> const &chans) const;
 			const Socket<Address_ipv6>		*get_socket() const;
 
 			Server * get_server();
@@ -84,7 +84,7 @@ namespace irc {
 			void						set_chan_status(const Channel *channel, bool op);
 			void						set_mute(const Channel *channel, bool value);
 			void						join_channel(ChanStatus &status); // Command JOIN
-			void						leave_channel(Channel * channel);
+			void						leave_channel(std::string channel); // Command PART
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
 			bool						is_mute(bool value);
 																							   //

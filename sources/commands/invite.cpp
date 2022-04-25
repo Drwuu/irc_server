@@ -8,7 +8,22 @@ namespace irc {
 /* Operators */
 /* Functions */
 	void invite::exec_cmd(User &user) {
-		(void)user;
+		vec_chan const servChans = _server->get_channel_list();
+		vec_cit_chan mchan = _server->find_chan_name(_args[2], servChans);
+		std::stringstream s;
+		if (mchan != servChans.end()) {
+			s << ":" << _server->get_name() << " " << RPL_INVITING << " "
+			<< user.get_nickname() << " " << _args[1] << " " << (*mchan)->get_name() << "\r\n\0";
+			Proxy_queue::Write *msg = new Proxy_queue::Write(user.get_socket()->get_fd(), s.str().c_str());
+			_server->get_event_list().push_back(msg);
+
+			vec_user servUsers =  _server->get_user_list();
+			vec_cit_user it = _server->find_nickname(_args[1], servUsers);
+			s << ":" << user.get_nickname() << " INVITE " << _args[1] << " :" << (*mchan)->get_name() << "\r\n\0";
+			Socket<Address_ipv6> const *sock = (*it)->get_socket();
+			msg = new Proxy_queue::Write(sock->get_fd(), s.str().c_str());
+			_server->get_event_list().push_back(msg);
+		}
 	};
 
 	bool invite::is_valid_args(User const &user) {
@@ -17,31 +32,32 @@ namespace irc {
 		if (_args.size() < 3)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 
-		vec_user const serv_users = _server->get_user_list();
-		vec_chan const serv_chans = _server->get_channel_list();
-		vec_cit_chan mchan = _server->find_chan_name(_args[2], serv_chans);
-		// dprintf (2, "is_valid_args | mchan =  %s\n", (*mchan)->get_name().c_str());
-		if (serv_chans.size() == 0 || mchan == serv_chans.end())
+		/* Throw error no such channel */
+		vec_chan servChans = _server->get_channel_list();
+		vec_cit_chan const mchan = _server->find_chan_name(_args[2], servChans);
+		if (mchan == servChans.end())
 			throw error(_args[2] + " :No such channel", ERR_NOSUCHCHANNEL);
 
 		/* User that invite is not on channel */
-		vec_user const chan_users = (*mchan)->get_user_list();
-		if (_server->find_username(user.get_username(), chan_users) == chan_users.end())
-			throw error(user.get_username() + " :You're not on that channel", ERR_NOTONCHANNEL);
-		if (!user.get_operator_status())
-			throw error(user.get_username() + " :You're not channel operator", ERR_CHANOPRIVSNEEDED);
+		vec_user const chanUsers = (*mchan)->get_user_list();
+		vec_cit_user const muser = _server->find_nickname(user.get_nickname(), chanUsers);
+		if (muser == chanUsers.end())
+			throw error(user.get_nickname() + " :You're not on that channel", ERR_NOTONCHANNEL);
+		std::vector<ChanStatus> userChans = (*muser)->get_chan_list();
 
-		/* Throw error on nick and channel */
-		if (serv_users.size() == 0 || _server->find_nickname(_args[1], serv_users) == serv_users.end())
-			throw error(_args[1] + " :No such nick", ERR_NOSUCHNICK);
 		/* Throw error already on channel */
-		if (chan_users.size() != 0 && _server->find_nickname(_args[1], chan_users) != chan_users.end())
+		if (chanUsers.size() != 0 && _server->find_nickname(_args[1], chanUsers) != chanUsers.end())
 			throw error(_args[1] + " :is already on channel " + _args[2], ERR_USERONCHANNEL);
 
-		// if (...)
-			// throw error(args[2] + " " + args[1], RPL_INVITING);
-		// if (...)
-			// throw error(args[1] + ": <message d'absence>" + args[1], RPL_AWAY);
+		/* User that invite is not channel operator */
+		std::vector<ChanStatus>::const_iterator userStatut = (*muser)->get_chanstatus_from_list(**mchan, userChans);
+		if (!userStatut->is_operator)
+			throw error(user.get_nickname() + " :You're not channel operator", ERR_CHANOPRIVSNEEDED);
+
+		/* Throw error on nick and channel */
+		vec_user const servUsers = _server->get_user_list();
+		if (servUsers.size() == 0 || _server->find_nickname(_args[1], servUsers) == servUsers.end())
+			throw error(_args[1] + " :No such nick", ERR_NOSUCHNICK);
 
 		return true;
 	};

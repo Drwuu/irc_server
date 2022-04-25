@@ -19,6 +19,7 @@ namespace irc {
 				ChanStatus status(*mchan);
 				user.join_channel(status);													// create channel and add user on it
 				(*mchan)->add_user(&user);
+				(*mchan)->transmit_message( " JOIN " + (*mchan)->get_name(), &user);
 
 				std::stringstream s;
 				s << ":" << user.get_nickname() << " JOIN " << (*mchan)->get_name() << "\r\n\0";
@@ -96,7 +97,7 @@ namespace irc {
 		for (size_t i = 0; i < _keys.size(); i++) {
 			if (i >= _chans.size())															// ignore too much _keys
 				break ;
-			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);				// pos of key must be the same as chan
+			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);			// pos of key must be the same as chan
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				if (_keys[i] != (*mchan)->get_key())										// check key
 					throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
@@ -109,24 +110,17 @@ namespace irc {
 	string Join::_send_RPL_user_list(User const &user, Channel const &chan) const {
 		std::stringstream s;
 		s << ":" << _server->get_name() << " " << RPL_NAMREPLY << " "
-		<< user.get_nickname();
-
-		string op = " ";
-		std::vector<ChanStatus> chans = user.get_chan_list();
-		std::vector<ChanStatus>::const_iterator userStatut = user.get_chanstatus_from_list(chan, chans);
-		if (userStatut != chans.end() && userStatut->is_operator)
-			op = " @ ";
-		s << op << chan.get_name() << " :";
+		<< user.get_nickname() << " @ " << chan.get_name() << " :";
 
 		vec_user chanUsers = chan.get_user_list();
-		for (size_t i = 0; i < chanUsers.size(); i++) {
-			std::vector<ChanStatus> chans = chanUsers[i]->get_chan_list();
-			std::vector<ChanStatus>::const_iterator userStatut = chanUsers[i]->get_chanstatus_from_list(chan, chans);
+		for (std::vector<User *>::reverse_iterator it = chanUsers.rbegin(); it != chanUsers.rend(); ++it) {
+			std::vector<ChanStatus> chans = (*it)->get_chan_list();
+			std::vector<ChanStatus>::const_iterator userStatut = (*it)->get_chanstatus_from_list(chan, chans);
 			if (userStatut != chans.end() && userStatut->is_operator)
 				s << "@";
-			else if (userStatut != chans.end() && !userStatut->is_mute)
+			else if (userStatut != chans.end() && !userStatut->is_mute && userStatut->channel->is_moderated())
 				s << "+";
-			s << chanUsers[i]->get_nickname() << " ";
+			s << (*it)->get_nickname() << " ";
 		}
 		s << "\r\n\0";
 		return s.str();
