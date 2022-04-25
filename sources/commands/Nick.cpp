@@ -14,27 +14,29 @@ namespace irc {
 			it++;
 			for (;it != _args[1].end();++it)
 			{
-				// FIXME : '\n' not accepted maybe
 				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) {
-					std::clog << "Nickname invalid : " << (int)*it << std::endl;
 					return false;
 				}
 			}
 			return true;
 	}
+	void User_cmd::send_connection_rpl(User &user) {
+		string ret;
+		ret = ":" + user.get_server()->get_name() + " 001 " +user.get_nickname() + " :" + "Welcome to our 42Lyon IRC network " + user.get_nickname() + "!" + user.get_username() + "@" + user.get_hostname() + "\n"
+			+ ":" + user.get_server()->get_name() + " 002 " + user.get_nickname() + " :" + "Your host is " + user.get_server()->get_name() + ", running version 1.0 " + "\n"
+			+ ":" + user.get_server()->get_name() + " 003 " + user.get_nickname() + " :" + "This server was created 00:20:08 Apr 21 2022\n"
+			+ ":" + user.get_server()->get_name() + " 004 " + user.get_nickname() + " " + user.get_server()->get_name() + " 1.0 BDHILRSTWcdghikorswxz ABCDEFIJKLMNOPQRSTUWXYZbcdefhijklmnoprstuvwz BEFIJLWXYZbdefhjklovw\r\n";
+		Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
+		_server->get_event_list().push_back(msg);
+	}
 	void	Nick::exec_cmd(User &user) {
 		user.set_nickname(_args[1]);
-		if (user.get_username() != "" && user.get_realname() != "")
-			if (user.get_registered_status() == false)
-			{
-				user.set_registered_status(true);
-				user.set_uuid();
-				//throw error("Welcome to our 42Lyon IRC network " + user.get_nickname(), RPL_WELCOME);
-				std::string ret = "Welcome to our 42Lyon IRC network " + user.get_nickname() + "\n";
-				//// FIXME : add to api list
-				Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
-				_server->get_event_list().push_back(msg);
-			}
+		if (user.get_registered_status() == false and !user.get_username().empty())
+		{
+			user.set_registered_status(true);
+			user.set_uuid();
+			send_connection_rpl(user);
+		}
 	};
 
 	void Nick::is_valid_args(Server const *Server, User const &) {
@@ -45,7 +47,6 @@ namespace irc {
 			throw error("Invalid nickname", ERR_ERRONEUSNICKNAME);
 
 		irc::vec_user userlist = Server->get_user_list();
-		// if (Server->find_nickname(this->_args[1]) != NULL && Server->find_nickname(this->_args[1]).get_socket() != NULL) Possible integration
 		if (Server->find_nickname(_args[1],userlist) != userlist.end())
 		{
 			throw error("Nickname already in use", ERR_NICKNAMEINUSE);

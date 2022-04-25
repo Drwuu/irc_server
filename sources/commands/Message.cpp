@@ -34,8 +34,6 @@ namespace irc {
 		return true;
 	}
 
-	// Big problem : std::string 'nickname' is not used :P
-	// I think this is a malfunction or an error
 	bool Privmsg::is_valid_nickname(const std::string &) const{
 			string::const_iterator it = _args[1].begin();
 			if (!(*it >= 65 && *it <= 125))
@@ -43,7 +41,7 @@ namespace irc {
 			it++;
 			for (;it != _args[1].end();++it)
 			{
-				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125)) // PTDR CA PUE LE SEXE
+				if ((*it < 48 && *it != 45) or (*it > 57 and *it < 65) or (*it > 125))
 					return false;
 			}
 			return true;
@@ -68,7 +66,7 @@ namespace irc {
 		return true;
 	}
 
-	void	Privmsg::exec_cmd(User &user ) { // TODO Add server for command to use
+	void	Privmsg::exec_cmd(User &user ) {
 		std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
 		std::clog << "Message From : " << user.get_nickname();
 		Server *server = user.get_server();
