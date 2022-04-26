@@ -12,7 +12,7 @@ INCLUDES		= headers
 
 
 SRCS			= \
-				  $(addprefix commands/, command.cpp invite.cpp kick.cpp Mode.cpp User_cmd.cpp Nick.cpp Message.cpp Join.cpp Cap.cpp Pass.cpp Ping.cpp Pong.cpp Notice.cpp Part.cpp) \
+				  $(addprefix commands/, command.cpp invite.cpp Mode.cpp User_cmd.cpp Nick.cpp Kick.cpp Message.cpp Join.cpp Cap.cpp Pass.cpp Ping.cpp Pong.cpp Notice.cpp Part.cpp) \
 				  $(addprefix error/, error.cpp) \
 				  $(addprefix parser/, parser.cpp) \
 				  $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
@@ -21,7 +21,7 @@ SRCS			= \
 HEADERS			= \
 				  irc.hpp \
 				  $(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
-				  $(addprefix commands/, command.hpp invite.hpp kick.hpp Mode.hpp User_cmd.hpp Nick.hpp Message.hpp Join.hpp Cap.hpp Pass.hpp Ping.hpp Pong.hpp Notice.hpp Part.hpp) \
+				  $(addprefix commands/, command.hpp invite.hpp Mode.hpp User_cmd.hpp Nick.hpp Kick.hpp Message.hpp Join.hpp Cap.hpp Pass.hpp Ping.hpp Pong.hpp Notice.hpp Part.hpp) \
 				  $(addprefix error/, error.hpp) \
 				  $(addprefix parser/, parser.hpp) \
 				  $(addprefix proxy/, Address.hpp Socket_event.hpp Server_queue.hpp Proxy_queue.hpp Proxy.hpp)

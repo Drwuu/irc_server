@@ -10,7 +10,6 @@ namespace irc {
 /* Constructors & Destructors */
 	Server::Server(): _line(), _map(), _parser(parser()) {
 		_map.insert(std::make_pair("INVITE", new invite(this)));
-		_map.insert(std::make_pair("KICK", new kick(this)));
 		_map.insert(std::make_pair("MODE", new Mode(this)));
 		_map.insert(std::make_pair("USER", new User_cmd(this)));
 		_map.insert(std::make_pair("NICK", new Nick(this)));
@@ -21,6 +20,7 @@ namespace irc {
 		_map.insert(std::make_pair("PING", new Ping(this)));
 		_map.insert(std::make_pair("PONG", new Pong(this)));
 		_map.insert(std::make_pair("NOTICE", new Notice(this)));
+		_map.insert(std::make_pair("KICK", new Kick(this)));
 		_map.insert(std::make_pair("PART", new Part(this)));
 		// User user;
 		// user.set_nickname("toto");
