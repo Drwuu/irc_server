@@ -59,7 +59,7 @@ namespace irc {
 		if (chanstatus == chanlist.end() and channel.is_no_external_msg() == true)
 			return false;
 		else if (chanstatus != chanlist.end()){
-			if (channel.is_moderated() == true && (chanstatus->is_operator == false or chanstatus->is_mute == true))
+			if (channel.is_moderated() == true && (chanstatus->is_operator == false && chanstatus->is_mute == true))
 				return false;
 			if (std::find(list_banned.begin(), list_banned.end(), user.get_nickname()) != list_banned.end())
 				return false;
