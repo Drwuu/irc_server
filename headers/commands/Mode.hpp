@@ -37,8 +37,6 @@ namespace irc {
 		private:
 			void	_valid_chanMode(User const &author);
 			void	_exec_chanMode(User const &author);
-			void	_valid_userMode(User const &author);
-			void	_exec_userMode(User const &author);
 			bool	_is_valid_mode(string const &arg, string const &modes, string &pos) const;
 			bool	_is_valid_flag_mode(string const &arg) const;
 			bool 	_is_valid_arg_nb(string const &modes);
@@ -65,11 +63,6 @@ namespace irc {
 			void	_channel_mode_p(Channel *channel, vector_string::const_iterator arg,const User &author);
 			void	_channel_mode_s(Channel *channel, vector_string::const_iterator arg,const User &author);
 			void	_channel_mode_i(Channel *channel, vector_string::const_iterator arg,const User &author);
-
-			void	_user_mode_i(vector_string::const_iterator arg, const User &author);
-			void	_user_mode_s(vector_string::const_iterator arg, const User &author);
-			void	_user_mode_w(vector_string::const_iterator arg, const User &author);
-			void	_user_mode_o(vector_string::const_iterator arg, const User &author);
 
 		public:
 			void	exec_cmd(User &user);

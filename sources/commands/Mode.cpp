@@ -44,7 +44,7 @@ namespace irc {
 		if (_args[1][0] == '#' || _args[1][0] == '&')
 			_exec_chanMode(author);
 		else
-			_exec_userMode(author);
+			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 	};
 
 	//// How to valid arguments :
@@ -61,7 +61,7 @@ namespace irc {
 		else if (_args[1][0] == '#' || _args[1][0] == '&')
 			_valid_chanMode(user);
 		else
-			_valid_userMode(user);
+			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 		return true;
 	};
 
@@ -105,30 +105,6 @@ namespace irc {
 		if (user.get_operator_status(user.find_channel(_args[1])) == false || it2 == chanUsers.end())
 			throw error(_args[1] + " :You're not on that channel", ERR_NOTONCHANNEL);
 	}
-
-	//// User mode errors :
-	//	ERR_UMODEUNKNOWNFLAG
-	//	ERR_USERSDONTMATCH
-	//
-	void Mode::_valid_userMode(User const &user) {
-		/* We don't need this part : if the nickname doesn't match with user's one,
-		 a ERR_USERSDONTMATCH is thrown.
-		 Reason : 'A user MODE command may only be accepted if both the sender of the
-		 message and the nickname given as a parameter are both the same.' */
-		//
-		// vec_user const serv_users = _server->get_user_list();
-		// vec_cit_user muser = _server->find_nickname(_args[1], serv_users);
-		// if (serv_users.size() == 0 || muser == serv_users.end())
-			// throw error(_args[1] + " :No such nick", ERR_NOSUCHNICK);
-		
-		if (user.get_nickname() != _args[1])
-			throw error(" :Cant change mode for other users", ERR_USERSDONTMATCH);
-
-		string pos;
-		if (!_is_valid_mode(_args[2], "iwso", pos))
-			throw error(pos + " :Unknown MODE flag", ERR_UMODEUNKNOWNFLAG);
-	}
-
 
 	/*
 	*	*RESUME*
@@ -351,39 +327,4 @@ namespace irc {
 		_build_return_message(author);
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////
-	// USER MODE
-
-	// void	Mode::_user_mode_i(vector_string::const_iterator arg, const User &author) {
-	// }
-	// void	Mode::_user_mode_s(vector_string::const_iterator arg, const User &author) {
-	// }
-	// void	Mode::_user_mode_w(vector_string::const_iterator arg, const User &author) {
-	// }
-	// void	Mode::_user_mode_o(vector_string::const_iterator arg, const User &author) {
-	// }
-
-	void Mode::_exec_userMode(User const &author) {
-		for (std::string::const_iterator it = _args[2].begin() ; it != _args[2].end() ; ++it) {
-			switch (*it) {
-				case '+' :
-					_sign_handler(*it);
-					break;
-				case '-' :
-					_sign_handler(*it);
-					break;
-				case 'i' :
-					break;
-				case 's' :
-					break;
-				case 'w' :
-					break;
-				case 'o' :
-					break;
-			}
-		}
-
-		_build_return_message(author);
-	}
 }

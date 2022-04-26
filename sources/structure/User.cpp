@@ -182,6 +182,12 @@ namespace irc {
 		}
 	}
 
+
+	bool	User::is_mute(const Channel *channel) { return get_chan_status(channel)->is_mute; }
+
+
+
+
 	void User::send_message(std::string msg, Channel & channel){
 		channel.transmit_message(msg, this);
 	}
