@@ -104,6 +104,6 @@ namespace irc {
 			void						unban_user(User & user, Channel & channel); // Use Command UNBAN
 			void						unmute_user(User & user, Channel & Channel); // Use /mode username -v Authorize talking in moderated channel (mode m)
 			void						change_topic(Channel & channel,std::string msg); // Used for TOPIC function
-			int							disconnect_user();
+			int							disconnect_user(string const msg_quit);
 };
 }

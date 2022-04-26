@@ -78,6 +78,7 @@ void			irc::Server_queue::Client_disconnected::handle(Proxy &) { }
 
 void			irc::Server_queue::Client_disconnected::handle(Server &server) {
 	irc::User	*user = server.get_user_from_socket(_socket);
+	user->disconnect_user(user->get_nickname());
 	fd_type		user_sockfd = server.del_user(*user);
 	if (user_sockfd != -1)
 		server._event_list.push_back(new Proxy_queue::Disconnect(user_sockfd));
