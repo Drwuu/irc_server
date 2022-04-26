@@ -56,6 +56,9 @@ namespace irc {
 	// 5 - check if double letters
 	// 6 - check if enough arguments
 	bool Mode::is_valid_args(User const &user) {
+		if (_args.size() == 2) {
+			return true;
+		}
 		if (_args.size() < 3)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 		else if (_args[1][0] == '#' || _args[1][0] == '&')
@@ -64,7 +67,6 @@ namespace irc {
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 		return true;
 	};
-
 
 	/* Calculate the number of arguments required to make MODE works */
 	bool 	Mode::_is_valid_arg_nb(string const &modes) {
@@ -149,13 +151,49 @@ namespace irc {
 		return '+' == new_sign;
 	}
 
-	void	Mode::_build_return_message(User const &user) {
+	void	Mode::_return_channel_modes(User const &author) {
+		Channel *channel = author.find_channel(_args[1]);
+		std::stringstream	ss_modes;
+		std::stringstream	ss_param;
+		ss_modes << "+";
+		if (channel->is_limited()) {
+			ss_modes << "l";
+			ss_param << " " << channel->get_userlimit();
+		}
+		if (!channel->get_key().empty()) {
+			ss_modes << "k";
+			ss_param << " " << channel->get_key();
+		}
+		if (channel->is_topic())
+			ss_modes << "t";
+		if (channel->is_no_external_msg())
+			ss_modes << "n";
+		if (channel->is_moderated())
+			ss_modes << "m";
+		if (channel->is_private())
+			ss_modes << "p";
+		if (channel->is_secret())
+			ss_modes << "s";
+		if (channel->is_invite())
+			ss_modes << "i";
+
+		std::stringstream	 rpl;
+		rpl << ":" << _server->get_name() << " " << RPL_CHANNELMODEIS << " " << author.get_nickname()
+			<< " " << channel->get_name() << " " << ss_modes.str() << " " << ss_param.str() << "\r\n\0";
+		_server->get_event_list().push_back(new Proxy_queue::Write(author.get_socket()->get_fd(),
+					rpl.str().c_str()));
+	}
+
+
+	void	Mode::_build_return_message(Channel *channel, User &user) {
 		std::stringstream	rpl;
-		rpl << ":" << user.get_nickname() << " ";
+		std::stringstream	rpl_author;
 		for (size_t i = 0 ; i < _args.size() ; ++i)
 			rpl << " " << _args[i];
 		rpl << "\r\n\0";
-		_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), rpl.str().c_str()));
+		channel->transmit_message(rpl.str(), &user);
+		rpl_author << ":" << user.get_nickname() << " " << rpl.str();
+		_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), rpl_author.str().c_str()));
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -259,8 +297,11 @@ namespace irc {
 		_sign == '+' ? channel->set_topic_chanop_only(true) : channel->set_topic_chanop_only(false);
 	}
 
-	void	Mode::_exec_chanMode(User const &author) {
-		// bool is_positive = false;
+	void	Mode::_exec_chanMode(User &author) {
+		if (_args.size() == 2) {
+			_return_channel_modes(author);
+			return ;
+		}
 		vector_string::const_iterator	it_args = _args.begin() + 3;
 		Channel	*channel = author.find_channel(_args[1]);
 		std::string		mode_string = _args[2];
@@ -314,7 +355,7 @@ namespace irc {
 					break;
 			}
 		}
-		_build_return_message(author);
+		_build_return_message(channel, author);
 	}
 
 }
