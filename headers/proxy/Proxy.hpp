@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/22 14:06:27 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/26 23:18:10 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ namespace irc {
 
 			typedef		std::map<fd_type, socket_type *>			client_tree_type;
 			typedef		std::map<fd_type, cache_queue_type >		cache_tree_type;
+			typedef		std::map<fd_type, std::string >				cache_recv_type;
 			typedef		std::vector<pollfd>							pollfd_type;
 
 			typedef		std::map<flag_type, IPoll_handling *>		flag_tree_type;
@@ -200,7 +201,8 @@ namespace irc {
 
 			// Tree to find and use : connected clients, flags actions, pending messages.
 			client_tree_type		_clients;
-			cache_tree_type			_cache;
+			cache_tree_type			_cache_sending;
+			cache_recv_type			_cache_receiving;
 			flag_tree_type			_flags;
 
 			// Poll() arguments : pollfd *, timeout.
@@ -238,11 +240,13 @@ namespace irc {
 
 			void		add_client(const socket_type &new_client);
 			void		insert_client(const socket_type &new_client);
-			void		insert_empty_cache(const socket_type &new_client);
+			void		insert_empty_cache_sending(const socket_type &new_client);
+			void		insert_empty_cache_receiving(const socket_type &new_client);
 			void		insert_pollfd(const socket_type &new_client);
 
 			void		delete_client(const socket_type &target);
-			void		erase_cache(const socket_type &target);
+			void		erase_cache_sending(const socket_type &target);
+			void		erase_cache_receiving(const socket_type &target);
 			void		erase_pollfd(const socket_type &target);
 			void		erase_client_socket(const socket_type &target);
 

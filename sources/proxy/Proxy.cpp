@@ -4,12 +4,13 @@
 
 // Should stay unaccessible
 irc::Proxy::Proxy()
-	: _server(0, SOCK_STREAM), _clients(client_tree_type()), _cache(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
+	: _server(0, SOCK_STREAM), _clients(client_tree_type()), _cache_sending(cache_tree_type()),
+	_cache_receiving(cache_recv_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
 	_timeout(60 * 1000), _to_server(api_type()),
 	_cl_base_pevents(), _cl_message_pevents(), _sv_pevents() { }
 
 irc::Proxy::Proxy(const port_type &port)
-	: _server(port, SOCK_STREAM), _clients(client_tree_type()), _cache(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
+	: _server(port, SOCK_STREAM), _clients(client_tree_type()), _cache_sending(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
 	_timeout(60 * 1000), _to_server(api_type()),
 	_cl_base_pevents(0), _cl_message_pevents(0), _sv_pevents(0),
 	_cl_hang_up(0), _cl_invalid(0), _cl_error(0) {
@@ -21,7 +22,7 @@ irc::Proxy::Proxy(const port_type &port)
 	}
 
 irc::Proxy::Proxy(const irc::Proxy &source)
-	: _server(source._server), _clients(source._clients), _cache(source._cache),
+	: _server(source._server), _clients(source._clients), _cache_sending(source._cache_sending),
 	_flags(source._flags), _poll_data(source._poll_data),
 	_timeout(source._timeout),  _to_server(source._to_server),
 	_cl_base_pevents(source._cl_base_pevents), _cl_message_pevents(source._cl_message_pevents),
@@ -39,7 +40,7 @@ irc::Proxy	&irc::Proxy::operator=(const irc::Proxy &source) {
 	_server.end_connexion();
 	_server = source._server;
 	_clients = source._clients;
-	_cache = source._cache;
+	_cache_sending = source._cache_sending;
 	_flags = source._flags;
 	_poll_data = source._poll_data;
 	_timeout = source._timeout;
@@ -62,7 +63,8 @@ irc::Proxy	&irc::Proxy::operator=(const irc::Proxy &source) {
 void		irc::Proxy::end_all_connexions() {
 	for (client_tree_type::iterator it = _clients.begin() ; it != _clients.end(); ) {
 		client_tree_type::iterator tmp = it;
-		erase_cache(*tmp->second);
+		erase_cache_sending(*tmp->second);
+		erase_cache_receiving(*tmp->second);
 		erase_pollfd(*tmp->second);
 		it->second->end_connexion();
 		delete it->second;
@@ -248,7 +250,8 @@ void	irc::Proxy::init_server_socket() {
 	_server.bind_socket();
 	_server.listen_for_connexion(); // set on 5 maximum requested connexion (default)
 
-	_cache.insert(std::make_pair(_server.get_fd(), cache_queue_type()));
+	_cache_sending.insert(std::make_pair(_server.get_fd(), cache_queue_type()));
+	_cache_receiving.insert(std::make_pair(_server.get_fd(), std::string()));
 
 	struct pollfd	server_sock;
 
@@ -284,10 +287,10 @@ void		irc::Proxy::set_flags() {
 	for (irc::Proxy::pollfd_type::iterator it = _poll_data.begin() ;
 			it != _poll_data.end() ; ++it) {
 		if (it->fd != server_fd) {
-			irc::Proxy::cache_tree_type::iterator it_cache = _cache.find(it->fd);
+			irc::Proxy::cache_tree_type::iterator it_cache_sending = _cache_sending.find(it->fd);
 			// If there are pending messages for this client,
 			// then use different flag set.
-			if (!it_cache->second.empty())
+			if (!it_cache_sending->second.empty())
 				it->events = _cl_message_pevents;
 			else
 				it->events = _cl_base_pevents;
@@ -307,8 +310,12 @@ void		irc::Proxy::insert_client(const socket_type &new_client) {
 	_clients.insert(std::make_pair(new_client.get_fd(), new socket_type(new_client)));
 }
 
-void		irc::Proxy::insert_empty_cache(const socket_type &new_client) {
-	_cache.insert(std::make_pair(new_client.get_fd(), cache_queue_type()));
+void		irc::Proxy::insert_empty_cache_sending(const socket_type &new_client) {
+	_cache_sending.insert(std::make_pair(new_client.get_fd(), cache_queue_type()));
+}
+
+void		irc::Proxy::insert_empty_cache_receiving(const socket_type &new_client) {
+	_cache_receiving.insert(std::make_pair(new_client.get_fd(), std::string()));
 }
 
 void		irc::Proxy::insert_pollfd(const socket_type &new_client) {
@@ -325,7 +332,8 @@ void		irc::Proxy::insert_pollfd(const socket_type &new_client) {
 // Only call on Poll_in.handle_server().
 void		irc::Proxy::add_client(const socket_type &new_client) {
 	insert_client(new_client);
-	insert_empty_cache(new_client);
+	insert_empty_cache_sending(new_client);
+	insert_empty_cache_receiving(new_client);
 	insert_pollfd(new_client);
 }
 
@@ -352,16 +360,28 @@ void		irc::Proxy::receive(socket_type *client) {
 			<< " [" << client->get_address_readable() << "]" << std::endl;
 		throw Disconnection_exception(ss.str(), client);
 	}
-	_to_server.push_back(new irc::Server_queue::Message(buffer, client));
-	std::clog << " ---> New message. [" << client->get_fd() << "]"
-		<< " [" << client->get_address_readable() << "]" << std::endl;
+
+	std::string				str_buffer(buffer);
+	// If a carriage is found in the buffer
+	if (str_buffer.find('\r') != str_buffer.npos
+			|| (str_buffer.find('\r') == str_buffer.npos && str_buffer.find('\n') != str_buffer.npos)) {
+		cache_recv_type::iterator it_cache = _cache_receiving.find(client->get_fd());
+		// Add the content of the cache if there is one
+		if (!it_cache->second.empty())
+			str_buffer.assign(it_cache->second.append(str_buffer));
+		_to_server.push_back(new irc::Server_queue::Message(str_buffer.c_str(), client));
+		std::clog << " ---> New message. [" << client->get_fd() << "]"
+			<< " [" << client->get_address_readable() << "]" << std::endl;
+	}
+	else
+		_cache_receiving.find(client->get_fd())->second.append(str_buffer);
 	bzero(&buffer, buffer_len);
 }
 
 void		irc::Proxy::push_back_queue(fd_type client_fd, data_type data) {
-	cache_tree_type::iterator	it = _cache.find(client_fd);
+	cache_tree_type::iterator	it = _cache_sending.find(client_fd);
 
-	if (it == _cache.end()) {
+	if (it == _cache_sending.end()) {
 		std::stringstream	ss;
 		ss << " ---- [ERROR] Cache : client not found. ["
 			<< client_fd << "] data :[" << data << "] " << std::endl;
@@ -393,14 +413,18 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 //////////////////////////////////////////////////////////////////////////
 // Erasers : DELETE
 
-void		irc::Proxy::erase_cache(const socket_type &target) {
-	cache_queue_type	queue = _cache.find(target.get_fd())->second;
+void		irc::Proxy::erase_cache_sending(const socket_type &target) {
+	cache_queue_type	queue = _cache_sending.find(target.get_fd())->second;
 
 	while (!queue.empty()) {
 		delete queue.front();
 		queue.pop_front();
 	}
-	_cache.erase(target.get_fd());
+	_cache_sending.erase(target.get_fd());
+}
+
+void		irc::Proxy::erase_cache_receiving(const socket_type &target) {
+	_cache_receiving.erase(target.get_fd());
 }
 
 void		irc::Proxy::erase_pollfd(const socket_type &target) {
@@ -430,7 +454,8 @@ void		irc::Proxy::erase_client_socket(const socket_type &target) {
 // Delete the socket in : client tree, cache, pollfd array.
 void		irc::Proxy::delete_client(const socket_type &client) {
 	erase_pollfd(client);
-	erase_cache(client);
+	erase_cache_sending(client);
+	erase_cache_receiving(client);
 	erase_client_socket(client);
 }
 
@@ -569,15 +594,15 @@ irc::Proxy::Poll_out::Poll_out(irc::Proxy *proxy) : IPoll_handling(proxy)
 { }
 
 void	irc::Proxy::Poll_out::handle(socket_type *client) {
-	cache_tree_type::iterator		it_cache = _proxy->_cache.find(client->get_fd());
-	if (it_cache == _proxy->_cache.end()) {
+	cache_tree_type::iterator		it_cache_sending = _proxy->_cache_sending.find(client->get_fd());
+	if (it_cache_sending == _proxy->_cache_sending.end()) {
 		std::stringstream	ss;
 		ss << " <--- [ERROR] : Wrong flag, no data to send to client "
 			<< "[" << client->get_fd() << "] [" << client->get_address_readable() << "]"
 			<< std::endl;
 		throw Error_exception(ss.str());
 	}
-	else if (it_cache->second.empty()) {
+	else if (it_cache_sending->second.empty()) {
 		std::stringstream	ss;
 		ss << " <--- [ERROR] : Wrong flag, no pending messages to send "
 			<< "[" << client->get_fd() << "] [" << client->get_address_readable() << "]"
@@ -585,12 +610,12 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 		throw Error_exception(ss.str());
 	}
 	// FIXME : error on send ?
-	_proxy->send_to_client(client, it_cache->second.front());
-	const char *tmp = it_cache->second.front();
+	_proxy->send_to_client(client, it_cache_sending->second.front());
+	const char *tmp = it_cache_sending->second.front();
 	if (tmp != NULL)
 		free((void *)tmp);
-	it_cache->second.front() = NULL;
-	it_cache->second.pop_front();
+	it_cache_sending->second.front() = NULL;
+	it_cache_sending->second.pop_front();
 }
 
 void	irc::Proxy::Poll_out::handle_server(socket_type *) { }
