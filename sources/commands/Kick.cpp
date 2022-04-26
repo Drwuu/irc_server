@@ -83,9 +83,8 @@ namespace irc {
 		for (std::vector<std::string>::iterator it = _channel.begin(); it != _channel.end(); ++it){
 			vec_chan tmp = _server->get_channel_list();
 			vec_cit_chan chan = _server->find_chan_name((*it),tmp);
-			std::clog << "Chan name _channel = " << (*it) << std::endl;
 			if (chan == tmp.end()) {
-				throw error(user.get_nickname() + "No such channel", ERR_NOSUCHCHANNEL);
+				throw error(*it + " No such channel", ERR_NOSUCHCHANNEL);
 			}
 			// Test if user is in channel
 			if (_channel.size() == 1)
@@ -99,7 +98,7 @@ namespace irc {
 							break;
 						}
 						if (userit == tmp.end())
-							throw error((*it2) + "No such nickname", ERR_USERNOTINCHANNEL);
+							throw error((*it2) + " No such nickname", ERR_USERNOTINCHANNEL);
 					}
 				}
 			}
@@ -112,16 +111,16 @@ namespace irc {
 						break;
 					}
 					if (userit == tmp.end())
-						throw error(_nickname[it - _channel.begin()] + "No such nickname", ERR_USERNOTINCHANNEL);
+						throw error(_nickname[it - _channel.begin()] + " No such nickname", ERR_USERNOTINCHANNEL);
 				}
 			}
 			std::vector<ChanStatus> chanlist = user.get_chan_list();
 			std::vector<ChanStatus>::const_iterator chan_status = user.get_chanstatus_from_list(*(*chan), chanlist);
 			if (chan_status == chanlist.end()) {
-				throw error(user.get_nickname() + "You are not on this channel", ERR_NOTONCHANNEL);
+				throw error(user.get_nickname() + " You are not on this channel", ERR_NOTONCHANNEL);
 			}
 			if (chan_status->is_operator == false)
-				throw error(user.get_nickname() + "You are not an operator", ERR_CHANOPRIVSNEEDED);
+				throw error(user.get_nickname() + " You are not an operator", ERR_CHANOPRIVSNEEDED);
 		}
 		return true;
 	}

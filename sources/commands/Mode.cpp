@@ -202,20 +202,20 @@ namespace irc {
 	// CHANNEL MODE
 	//
 	//  With args
-	void	Mode::_channel_mode_o(Channel *channel, vector_string::const_iterator arg, const User &author) { // user
+	void	Mode::_channel_mode_o(Channel *channel, vector_string::const_iterator arg, const User &) { // user
 		vec_chan		channel_list = _server->get_channel_list();
 		User			*target = channel->find_user(*arg);
 
 		if (target == NULL)
 			throw error(": " + *arg + " No such channel/nick", ERR_NOSUCHNICK);
 		if (_sign == '+') {
-			if (author.get_operator_status(channel) || channel->is_operator(target))
+			if (target->get_operator_status(channel) || channel->is_operator(target))
 				return ;
 			channel->add_operator(target);
 			target->set_chan_status(channel, true);
 		}
 		else {
-			if (author.get_operator_status(channel) == false
+			if (target->get_operator_status(channel) == false
 					|| channel->is_operator(target) == false)
 				return ;
 			channel->del_operator(target);
@@ -224,7 +224,7 @@ namespace irc {
 	}
 
 	// limit -> ONLY  if (is_positive == true)
-	void	Mode::_channel_mode_l(Channel *channel, vector_string::const_iterator arg, const User &) { 
+	void	Mode::_channel_mode_l(Channel *channel, vector_string::const_iterator arg, const User &) {
 		// Validity of the channel has been tested in _is_valid_arg.
 		for (std::string::const_iterator it = arg->begin() ; it != arg->end() ; ++it)
 			if (!std::isdigit(*it))
