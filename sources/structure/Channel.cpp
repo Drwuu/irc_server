@@ -109,6 +109,8 @@ namespace irc {
 	}
 
 	void	Channel::unban_user(std::string nick) {
-		_ban_list.erase(std::find(_ban_list.begin(), _ban_list.end(), nick));
+		vector_string::iterator		it = std::find(_ban_list.begin(), _ban_list.end(), nick);
+		if (it != _ban_list.end())
+			_ban_list.erase(it);
 	}
 }

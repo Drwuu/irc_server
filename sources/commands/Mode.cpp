@@ -36,7 +36,7 @@ namespace irc {
 	Mode::~Mode() {};
 	Mode::Mode() {};
 	Mode::Mode(Server *server)
-		: command(server), _sign(0) {};
+		: command(server), _sign('+') {};
 
 /* Operators */
 /* Functions */
@@ -102,8 +102,9 @@ namespace irc {
 
 		vec_user chanUsers = (*mchan)->get_user_list();
 		vec_cit_user it2 = _server->find_nickname(user.get_nickname(), chanUsers);
-		if (user.get_operator_status(user.find_channel(_args[1])) == false || it2 == chanUsers.end())
+		if (user.get_operator_status(user.find_channel(_args[1])) == false || it2 == chanUsers.end()) {
 			throw error(_args[1] + " :You're not on that channel", ERR_NOTONCHANNEL);
+		}
 	}
 
 	/*
@@ -149,18 +150,8 @@ namespace irc {
 	}
 
 	void	Mode::_build_return_message(User const &user) {
-		// <channel> <mode> <mode params>
-
-		if (std::find(_args[2].begin(), _args[2].end(), 'b') != _args[2].end()) {
-			std::stringstream	rpl;
-			rpl << ":" << _server->get_name() << " " << RPL_ENDOFBANLIST << " "
-				<< _args[1] << " :End of channel ban list"<< "\r\n\0";
-			_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(),
-						rpl.str().c_str()));
-		}
-
 		std::stringstream	rpl;
-		rpl << ":" << _server->get_name() << " " << RPL_CHANNELMODEIS;
+		rpl << ":" << user.get_nickname() << " ";
 		for (size_t i = 0 ; i < _args.size() ; ++i)
 			rpl << " " << _args[i];
 		rpl << "\r\n\0";
@@ -174,9 +165,6 @@ namespace irc {
 	//
 	//  With args
 	void	Mode::_channel_mode_o(Channel *channel, vector_string::const_iterator arg, const User &author) { // user
-		if (author.get_nickname() == *arg)
-			return ;
-
 		vec_chan		channel_list = _server->get_channel_list();
 		User			*target = channel->find_user(*arg);
 
@@ -210,27 +198,29 @@ namespace irc {
 	}
 
 	// ban mask
-	void	Mode::_channel_mode_b(std::string::const_iterator pos, Channel *channel, vector_string::const_iterator arg, const User &user) {
-		vector_string	banned_list = channel->get_banned_user();
-		if (_sign == '+') {
-			if (std::find(banned_list.begin(), banned_list.end(), *arg) != banned_list.end())
-				return ;
-			banned_list.push_back(*arg);
-		}
-		else
-			banned_list.erase(std::find(banned_list.begin(), banned_list.end(), *arg));
-		// ":" + user.get_server()->get_name() + " 001 " +;
-		std::stringstream rpl;
-		rpl << ":" << _server->get_name() << " " << RPL_BANLIST << " "
-			<< channel->get_name() << " " << *arg << "\r\n\0";
-		_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(), rpl.str().c_str()));
-		if (std::find(++pos, (std::string::const_iterator)_args[2].end(), 'b') == _args[2].end()) {
-			std::stringstream	rpl;
-			rpl << ":" << _server->get_name() << " " << RPL_ENDOFBANLIST << " "
-				<< _args[1] << " :End of channel ban list"<< "\r\n\0";
-			_server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(),
-						rpl.str().c_str()));
-		}
+	void	Mode::_channel_mode_b(size_t, Channel *channel, vector_string::const_iterator arg, const User &) {
+		_sign == '+' ? channel->ban_user(*arg) : channel->unban_user(*arg);
+
+		////////////////////////////////////////////////////////////
+		//// BANLIST
+		////	-> Code for possible implementation
+		//
+		// std::string		mode_string = _args[2];
+		// std::stringstream rpl;
+		// rpl << ":" << user.get_nickname() << " " << RPL_BANLIST << " "
+			// << channel->get_name() << " " << *arg << "\r\n\0";
+		// _server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(),
+					// rpl.str().c_str()));
+
+		// Find if 'mode b' is the last one on mode string, or at the end position
+		// return :End of channel ban list.
+		// if (pos == _args[2].find_last_of(_args[2], pos)) {
+			// std::stringstream	rpl;
+			// rpl << ":" << user.get_nickname() << " " << RPL_ENDOFBANLIST << " "
+				// << _args[1] << " :End of channel ban list"<< "\r\n\0";
+			// _server->get_event_list().push_back(new Proxy_queue::Write(user.get_socket()->get_fd(),
+						// rpl.str().c_str()));
+		// }
 	}
 
 	// channel key : password
@@ -315,7 +305,7 @@ namespace irc {
 					++it_args;
 					break;
 				case 'b':
-					_channel_mode_b(it, channel, it_args, author);
+					_channel_mode_b(it - mode_string.begin(), channel, it_args, author);
 					++it_args;
 					break;
 				case 'k':
