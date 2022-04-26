@@ -31,7 +31,6 @@ namespace irc {
 
 	// Server is unused here.
 	bool User_cmd::is_valid_args(User const &user) {
-		// Possible Error : ERR_NEEDMOREPARAMS ERR_ALREADYREGISTRED
 		if (this->_args.size() < 5)
 			throw error(this->_args[0] + ": Not enough parameters", ERR_NEEDMOREPARAMS);
 		if (user.get_registered_status() == true)

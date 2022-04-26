@@ -8,6 +8,8 @@ namespace irc {
 /* Operators */
 /* Functions */
 	bool Nick::is_nickname_valid() const{
+		if (_args[1].size() > 9)
+			return false;
 		string::const_iterator it = _args[1].begin();
 		if (!(*it >= 65 && *it <= 125))
 			return false;
@@ -40,7 +42,7 @@ namespace irc {
 	}
 
 	bool Nick::is_valid_args(User const &) {
-		if (this->_args.size() < 1)
+		if (this->_args.size() < 2)
 			throw error("No nickname given", ERR_NONICKNAMEGIVEN);
 		if (is_nickname_valid() == false)
 			throw error("Invalid nickname", ERR_ERRONEUSNICKNAME);
