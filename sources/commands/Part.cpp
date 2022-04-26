@@ -50,6 +50,8 @@ namespace irc {
 		_chan_list.clear();
 		if (_args.size() < 2)
 			throw error("PART : Not enough arguments", ERR_NEEDMOREPARAMS);
+		if (_args[1].size() == 1 && _args[1][0] == ':')
+			throw error("PART : Not enough arguments", ERR_NEEDMOREPARAMS);
 		std::string tmp = _args[1];
 		std::string::size_type pos = 0;
 		std::string::size_type prev = 0;
@@ -61,10 +63,7 @@ namespace irc {
 		for(std::vector<std::string>::iterator it = _chan_list.begin(); it != _chan_list.end(); ++it)
 		{
 			if (!is_valid_channel(*it))
-			{
-				std::clog << "Channel name invalid = " << *it << std::endl;
 				throw error("PART : Invalid channel name", ERR_NOSUCHCHANNEL);
-			}
 			std::vector<Channel *> chanlist = _server->get_channel_list();
 			std::vector<ChanStatus> chanstatuslist = user.get_chan_list();
 			std::vector<ChanStatus>::const_iterator chanstatus;
