@@ -93,7 +93,7 @@ namespace irc {
 				}
 				vector_string bannedUsers = (*mchan)->get_banned_user();
 				for (size_t j = 0; j < bannedUsers.size(); j++) {
-					if (user .get_nickname() == bannedUsers[j])
+					if (user.get_nickname() == bannedUsers[j])
 						throw error(_chans[i] + " :Cannot join channel (+b)", ERR_BANNEDFROMCHAN);
 				}
 			}

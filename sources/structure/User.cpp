@@ -204,7 +204,7 @@ namespace irc {
 	}
 
 	void User::send_invite(User & user, Channel & channel){
-		channel.invite_user(&user);
+		user.receive_invite(channel);
 		std::string ret = channel.get_name() + user.get_nickname() + " has been invited to join the channel\r\n";
 		Server_queue::Message * new_msg = new Server_queue::Message(ret.c_str(),this->get_socket());
 		_event_list.push_back(new_msg); // This is how you should do it

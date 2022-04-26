@@ -10,6 +10,8 @@ namespace irc {
 	void invite::exec_cmd(User &user) {
 		vec_chan const servChans = _server->get_channel_list();
 		vec_cit_chan mchan = _server->find_chan_name(_args[2], servChans);
+		_server->find_username(_args[1], _server->get_user_list());
+		(*mchan)->invite_user(_args[1]);
 		std::stringstream s;
 		if (mchan != servChans.end()) {
 			s << ":" << _server->get_name() << " " << RPL_INVITING << " "

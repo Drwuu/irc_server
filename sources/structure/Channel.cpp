@@ -16,29 +16,21 @@ namespace irc {
 	Channel::~Channel(){}
 
 
-	const std::string& 			Channel::get_name() const{ return (this->_name);}
-	const std::string& 			Channel::get_prefix() const{ return (this->_prefix);}
-	const std::string& 			Channel::get_key() const { return _key; };
-	const size_t & 				Channel::get_userlimit() const{ return (this->_userlimit);}
-	const std::vector<User *> 	Channel::get_user_list() const{ return (this->_user_list);}
-	const vector_string 		Channel::get_banned_user() const{ return (this->_ban_list);}
-	const std::vector<User *> 	Channel::get_invite_list() const{ return (this->_invite_list);}
-	const std::vector<User *> 	Channel::get_operator_list() const{ return (this->_operator_list);}
+	const std::string& 				Channel::get_name() const{ return (this->_name);}
+	const std::string& 				Channel::get_prefix() const{ return (this->_prefix);}
+	const std::string& 				Channel::get_key() const { return _key; };
+	const size_t & 					Channel::get_userlimit() const{ return (this->_userlimit);}
+	const std::vector<User *> 		Channel::get_user_list() const{ return (this->_user_list);}
+	const vector_string 			Channel::get_banned_user() const{ return (this->_ban_list);}
+	const std::vector<std::string> 	Channel::get_invite_list() const{ return (this->_invite_list);}
+	const std::vector<User *> 		Channel::get_operator_list() const{ return (this->_operator_list);}
 
 
 	bool Channel::is_private() const{ return (this->_is_private);}
 	bool Channel::is_secret() const{ return (this->_is_secret);}
 	bool Channel::is_invite() const{ return (this->_is_invite_only);}
-	bool Channel::is_invite(std::string nickname) const{
-		for (vec_user::const_iterator it = _invite_list.begin()
-				; it != _invite_list.end() ; ++it) {
-			if ((*it)->get_nickname() == nickname)
-				return true;
-		}
-		return false;
-	}
-	bool Channel::is_invite(const User *user) const{
-		return std::find(_invite_list.begin(), _invite_list.end(), user) == _invite_list.end();
+	bool Channel::is_invite(std::string const &nickname) const{
+		return std::find(_invite_list.begin(), _invite_list.end(), nickname) == _invite_list.end();
 	}
 	bool Channel::is_topic() const{ return (this->_is_topic_chop_only);}
 	bool Channel::is_no_external_msg() const{ return (this->_is_no_external_msg);}
@@ -100,7 +92,11 @@ namespace irc {
 		}
 	}
 
-	void Channel::invite_user(User * user) { user->receive_invite(*this); }
+	void Channel::invite_user(std::string const &nickname) {
+		_invite_list.push_back(nickname);
+		//// could be usefull but how ?
+		// user->receive_invite(*this);
+	}
 
 	void Channel::transmit_message(std::string msg, User * user)
 	{
