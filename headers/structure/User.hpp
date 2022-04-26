@@ -86,8 +86,7 @@ namespace irc {
 			void						join_channel(ChanStatus &status); // Command JOIN
 			void						leave_channel(std::string channel); // Command PART
 			void						leave_channel(const Server & Server, Channel *channel);// Command PART
-			bool						is_mute(bool value);
-																							   //
+			bool						is_mute(const Channel *channel);
 
 			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
 			void						send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG

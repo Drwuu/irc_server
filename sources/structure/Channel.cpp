@@ -34,6 +34,12 @@ namespace irc {
 	bool Channel::is_moderated() const{ return (this->_is_moderated);}
 	bool Channel::is_limited() const{ return (this->_is_limited);}
 
+	bool Channel::is_operator(const User *user) const {
+		if (std::find(_operator_list.begin(), _operator_list.end(), user) == _operator_list.end())
+			return false;
+		return true;
+	}
+
 	User *	Channel::find_user(std::string nickname) {
 		for (vec_user::iterator it = _user_list.begin() ; it < _user_list.end() ; ++it) {
 			if ((*it)->get_nickname() == nickname)
@@ -68,6 +74,10 @@ namespace irc {
 		this->_user_list.push_back(user);
 	}
 
+	void Channel::add_operator(User * user) { _operator_list.push_back(user); }
+
+	void Channel::del_operator(User * user) { _operator_list.erase(std::find(_operator_list.begin(), _operator_list.end(), user)); }
+
 	void Channel::del_user(User * user)
 	{
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
@@ -99,6 +109,8 @@ namespace irc {
 	}
 
 	void	Channel::unban_user(std::string nick) {
-		_ban_list.erase(std::find(_ban_list.begin(), _ban_list.end(), nick));
+		vector_string::iterator		it = std::find(_ban_list.begin(), _ban_list.end(), nick);
+		if (it != _ban_list.end())
+			_ban_list.erase(it);
 	}
 }

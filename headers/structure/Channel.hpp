@@ -50,6 +50,7 @@ namespace irc {
 			bool						is_no_external_msg() const;
 			bool						is_moderated() const;
 			bool						is_limited() const;
+			bool						is_operator(const User *user) const;
 
 			User *						find_user(std::string nickname);
 
@@ -72,6 +73,8 @@ namespace irc {
 			void						set_topic_chanop_only(bool value);
 
 			void						add_user(User * user);
+			void						add_operator(User * user);
+			void						del_operator(User * user);
 			void						del_user(User * user);
 			void						ban_user(std::string nick);
 			void						unban_user(std::string nick);
