@@ -23,6 +23,7 @@ namespace irc {
 	User::User(Socket<Address_ipv6> const *socket): _is_pass_checked(false), _socket(socket){}
 	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_mute(false),is_operator(false){}
 
+
 	int User::get_port() const{
 		return (this->_port);}
 	const std::string User::get_username() const{
@@ -113,7 +114,7 @@ namespace irc {
 	};
 
 	void	User::set_mute(const Channel *channel, bool value) {
-		for (std::vector<ChanStatus>::iterator it = _chan_list.begin() ; 
+		for (std::vector<ChanStatus>::iterator it = _chan_list.begin() ;
 				it != _chan_list.end() ; ++it)
 			if (it->channel == channel)
 				it->is_mute = value;
@@ -233,10 +234,11 @@ namespace irc {
 
 	void User::unmute_user(User & user, Channel & channel){(void)user;(void)channel;}
 
-int	User::disconnect_user(){
+int	User::disconnect_user(string const msg_quit){
 	int ret = this->_socket->get_fd();
-	this->_socket = NULL;
 	for (std::vector<ChanStatus>::const_iterator it = this->_chan_list.begin(); it != this->_chan_list.end(); ++it){
+		(*it).channel->transmit_message(" PART " + (*it).channel->get_name() + " " + this->get_nickname(), this);
+		(*it).channel->transmit_message(" QUIT " + msg_quit, this);
 		(*it).channel->del_user(this);
 	}
 	this->_chan_list.clear();

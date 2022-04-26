@@ -2,23 +2,30 @@
 #include "command.hpp"
 
 namespace irc {
-	class kick: public command {
+	class Quit: public command {
 	/* Typedefs */
 		private:
+			typedef std::vector<Channel *>		vec_chans;
 		public:
 	/* Variables */
 		private:
 		public:
 	/* Constructors & Destructors */
 		private:
-			kick(kick const &src);
+			Quit(Quit const &src);
 		public:
-			kick();
-			kick(Server *server);
-			virtual ~kick();
+			Quit();
+			Quit(Server *server);
+			virtual ~Quit();
 	/* Operators */
 		private:
-			kick &operator=(kick const &src);
+			Quit &operator=(Quit const &src);
+		public:
+	/* Getters */
+		private:
+		public:
+	/* Setters */
+		private:
 		public:
 	/* Functions */
 		private:
