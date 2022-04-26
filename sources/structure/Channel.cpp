@@ -63,14 +63,6 @@ namespace irc {
 	void Channel::set_invite_only(bool value) { this->_is_invite_only = value; }
 	void Channel::set_topic_chanop_only(bool value) { this->_is_topic_chop_only = value; }
 
-	User *    Channel::find_user(std::string nickname) {
-	        for (vec_user::iterator it = _user_list.begin() ; it < _user_list.end() ; ++it) {
-	            if ((*it)->get_nickname() == nickname)
-	                return *it;
-	        }
-	        return NULL;
-	    }
-
 	void Channel::add_user(User * user){
 		for (vector_string::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
 		{

@@ -50,11 +50,8 @@ namespace irc {
 			bool						is_no_external_msg() const;
 			bool						is_moderated() const;
 			bool						is_limited() const;
-<<<<<<< HEAD
-=======
 			bool						is_operator(const User *user) const;
 
->>>>>>> main
 			User *						find_user(std::string nickname);
 
 			void						set_name(const std::string& name);
