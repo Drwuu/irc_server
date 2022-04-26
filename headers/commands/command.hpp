@@ -54,3 +54,4 @@ namespace irc {
 #include "../commands/Pong.hpp"
 #include "../commands/Notice.hpp"
 #include "../commands/Part.hpp"
+#include "../commands/Quit.hpp"
