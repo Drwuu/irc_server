@@ -87,8 +87,10 @@ namespace irc {
 				vec_user users = (*mchan)->get_user_list();
 				if (users.size() >= (*mchan)->get_userlimit())
 					throw error(_chans[i] + " :Cannot join channel (+l)", ERR_CHANNELISFULL);
-				if ((*mchan)->is_invite())
-					throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
+				if ((*mchan)->is_invite()) {
+					if ((*mchan)->is_invite(user.get_nickname()) == false)
+						throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
+				}
 				vector_string bannedUsers = (*mchan)->get_banned_user();
 				for (size_t j = 0; j < bannedUsers.size(); j++) {
 					if (user .get_nickname() == bannedUsers[j])

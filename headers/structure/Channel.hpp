@@ -46,6 +46,8 @@ namespace irc {
 			bool						is_private() const;
 			bool						is_secret() const;
 			bool						is_invite() const;
+			bool						is_invite(const User *user) const;
+			bool						is_invite(std::string nickname) const;
 			bool						is_topic() const;
 			bool						is_no_external_msg() const;
 			bool						is_moderated() const;
