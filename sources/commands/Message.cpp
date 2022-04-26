@@ -54,12 +54,14 @@ namespace irc {
 	bool Privmsg::is_authorized(const Channel & channel, const User & user) const {
 		std::vector<ChanStatus> chanlist = user.get_chan_list();
 		std::vector<ChanStatus>::const_iterator chanstatus = user.get_chanstatus_from_list(channel, chanlist);
+		vector_string	list_banned = channel.get_banned_user();
+
 		if (chanstatus == chanlist.end() and channel.is_no_external_msg() == true)
 			return false;
 		else if (chanstatus != chanlist.end()){
 			if (channel.is_moderated() == true && (chanstatus->is_operator == false or chanstatus->is_mute == true))
 				return false;
-			if (chanstatus->is_banned == true)
+			if (std::find(list_banned.begin(), list_banned.end(), user.get_nickname()) != list_banned.end())
 				return false;
 		}
 		return true;

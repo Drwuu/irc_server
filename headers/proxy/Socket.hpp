@@ -6,7 +6,11 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2022/04/25 20:57:07 by mhaman           ###   ########lyon.fr   */
+=======
+/*   Updated: 2022/04/26 16:40:09 by guhernan         ###   ########.fr       */
+>>>>>>> main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,10 +121,8 @@ class Socket {
 
 		void			bind_socket() {
 			std::clog << " ---- Binding socket on port " << this->get_port() << " ... " <<  std::endl;
-			if (bind(_sockfd, (sockaddr *)&(*_address), _address.get_len()) == -1) {
-				std::cerr << " [ERROR] bind_socket failed " << std::endl;
-				return ;
-			}
+			while (bind(_sockfd, (sockaddr *)&(*_address), _address.get_len()) == -1)
+				sleep(1);
 			std::clog << " ---- Binding done." <<  std::endl;
 		}
 
