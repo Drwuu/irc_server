@@ -379,8 +379,7 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 	if (strlen(data) > strlcpy(buffer, data, buffer_len - 1) )
 		std::clog << "[DETAIL] : Data sent had been truncated" << std::endl;
 
-	std::clog << " \n ======================================================== DATA SENT : " << buffer << " ==" << std::endl;
-
+	std::clog << " \n ======================================================== DATA SENT : " << buffer << " USER FD: " << client->get_fd() << std::endl;
 	rtn = send(client->get_fd(), buffer, strlen(buffer), 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;

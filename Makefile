@@ -15,12 +15,11 @@ SRCS			= \
 				  $(addprefix commands/, command.cpp invite.cpp kick.cpp Mode.cpp \
 				  User_cmd.cpp Nick.cpp Message.cpp Join.cpp Cap.cpp Pass.cpp Ping.cpp \
 				  Pong.cpp Notice.cpp Part.cpp Quit.cpp) \
-				  $(addprefix error/, error.cpp) \
 				  $(addprefix parser/, parser.cpp) \
 				  $(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
 				  $(addprefix proxy/, Address.cpp Socket_event.cpp Server_queue.cpp \
 				  Proxy_queue.cpp Proxy.cpp)
-
+          
 HEADERS			= \
 				  irc.hpp \
 				  $(addprefix structure/, Server.hpp User.hpp Channel.hpp) \

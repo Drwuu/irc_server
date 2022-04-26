@@ -87,9 +87,6 @@ namespace irc {
 
 	bool	Privmsg::is_valid_args(User const &user) {
 		_receiver.clear();
-		// Possible numeric reply ERR_NORECIPIENT ERR_NOTEXTTOSEND ERR_CANNOTSENDTOCHAN
-		//ERR_NOTOPLEVEL ERR_WILDTOPLEVEL ERR_TOOMANYTARGETS ERR_NOSUCHNICK RPL_AWAY
-		// WIP mask a gere Oui ? Non
 		if (user.get_registered_status() == false)
 			throw error("You must be registered to use this command",ERR_NOTREGISTERED );
 		if (_args.size() < 3)
