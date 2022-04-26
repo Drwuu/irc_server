@@ -12,6 +12,7 @@ namespace irc {
 		public:
 	/* Variables */
 		private:
+			std::string					_kick_message;
 			std::vector<std::string>	_channel;
 			std::vector<std::string>	_nickname;
 			std::vector<std::pair<User *,Channel *> > _chan_user_pair;

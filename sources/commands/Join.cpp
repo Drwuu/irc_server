@@ -31,7 +31,8 @@ namespace irc {
 				// _server->get_event_list().push_back(msg);
 
 				string str = _send_RPL_user_list(user, **mchan);
-				msg = new Proxy_queue::Write(user.get_socket()->get_fd(), str.c_str());
+				Socket<Address_ipv6> const *sock = user.get_socket();
+				msg = new Proxy_queue::Write(sock->get_fd(), str.c_str());
 				_server->get_event_list().push_back(msg);
 
 				str = _send_RPL(RPL_ENDOFNAMES, user, **mchan, " :End of /NAMES list.\r\n\0");
