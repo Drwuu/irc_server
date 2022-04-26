@@ -29,6 +29,17 @@ namespace irc {
 	bool Channel::is_private() const{ return (this->_is_private);}
 	bool Channel::is_secret() const{ return (this->_is_secret);}
 	bool Channel::is_invite() const{ return (this->_is_invite_only);}
+	bool Channel::is_invite(std::string nickname) const{
+		for (vec_user::const_iterator it = _invite_list.begin()
+				; it != _invite_list.end() ; ++it) {
+			if ((*it)->get_nickname() == nickname)
+				return true;
+		}
+		return false;
+	}
+	bool Channel::is_invite(const User *user) const{
+		return std::find(_invite_list.begin(), _invite_list.end(), user) == _invite_list.end();
+	}
 	bool Channel::is_topic() const{ return (this->_is_topic_chop_only);}
 	bool Channel::is_no_external_msg() const{ return (this->_is_no_external_msg);}
 	bool Channel::is_moderated() const{ return (this->_is_moderated);}
