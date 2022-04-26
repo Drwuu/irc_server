@@ -15,7 +15,7 @@ namespace irc {
 		vec_chan const serv_chans = _server->get_channel_list();
 		for (size_t i = 0; i < _chans.size(); i++) {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
-			if (mchan != serv_chans.end()) {												// if it founds a channel, add user on it
+			if (mchan != serv_chans.end() and (*mchan)->find_user(user.get_nickname()) == NULL) {												// if it founds a channel, add user on it
 				ChanStatus status(*mchan);
 				user.join_channel(status);													// create channel and add user on it
 				(*mchan)->add_user(&user);
@@ -39,8 +39,11 @@ namespace irc {
 				msg = new Proxy_queue::Write(user.get_socket()->get_fd(), str.c_str());
 				_server->get_event_list().push_back(msg);
 			}
-			else {
+			else if (mchan == serv_chans.end() ){ // Add key when chans got one Maybe create pair system
 				Channel *chan = new Channel(_chans[i]);
+				if (_keys.size() != 0)
+					if (i <= _keys.size() - 1)
+						chan->set_key(_keys[i]);
 				ChanStatus status(chan);
 				chan->add_user(&user);
 				user.join_channel(status);													// create channel and add user on it
@@ -76,7 +79,6 @@ namespace irc {
 
 		if (_args.size() >= 3)																// get keys
 			_keys = _get_instructions(_args[2], ',');
-
 		vec_chan const serv_chans = _server->get_channel_list();
 		if (serv_chans.size() == 0)															// if no chans, all chans will be created
 			return true;
@@ -104,9 +106,13 @@ namespace irc {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);			// pos of key must be the same as chan
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				if (_keys[i] != (*mchan)->get_key())										// check key
-					throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
+					{
+						std::clog << "_keys[i] = " << _keys[i] << " | get_key = " << (*mchan)->get_key() << std::endl;
+						throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
+					}
 			}
 		}
+
 		return true;
 	};
 
