@@ -15,7 +15,7 @@ namespace irc {
 		vec_chan const serv_chans = _server->get_channel_list();
 		for (size_t i = 0; i < _chans.size(); i++) {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
-			if (mchan != serv_chans.end()) {												// if it founds a channel, add user on it
+			if (mchan != serv_chans.end() and (*mchan)->find_user(user.get_nickname()) == NULL) {												// if it founds a channel, add user on it
 				ChanStatus status(*mchan);
 				user.join_channel(status);													// create channel and add user on it
 				(*mchan)->add_user(&user);
@@ -39,7 +39,7 @@ namespace irc {
 				msg = new Proxy_queue::Write(user.get_socket()->get_fd(), str.c_str());
 				_server->get_event_list().push_back(msg);
 			}
-			else {
+			else if (mchan == serv_chans.end() ){
 				Channel *chan = new Channel(_chans[i]);
 				ChanStatus status(chan);
 				chan->add_user(&user);

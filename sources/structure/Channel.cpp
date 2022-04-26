@@ -30,7 +30,7 @@ namespace irc {
 	bool Channel::is_secret() const{ return (this->_is_secret);}
 	bool Channel::is_invite() const{ return (this->_is_invite_only);}
 	bool Channel::is_invite(std::string const &nickname) const{
-		return std::find(_invite_list.begin(), _invite_list.end(), nickname) == _invite_list.end();
+		return std::find(_invite_list.begin(), _invite_list.end(), nickname) != _invite_list.end();
 	}
 	bool Channel::is_topic() const{ return (this->_is_topic_chop_only);}
 	bool Channel::is_no_external_msg() const{ return (this->_is_no_external_msg);}
