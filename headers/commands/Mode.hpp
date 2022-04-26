@@ -36,13 +36,14 @@ namespace irc {
 	/* Functions */
 		private:
 			void	_valid_chanMode(User const &author);
-			void	_exec_chanMode(User const &author);
+			void	_exec_chanMode(User &author);
 			bool	_is_valid_mode(string const &arg, string const &modes, string &pos) const;
 			bool	_is_valid_flag_mode(string const &arg) const;
 			bool 	_is_valid_arg_nb(string const &modes);
 			void	_check_modes(string const &arg) const;
 
-			void	_build_return_message(User const &authore);
+			void	_return_channel_modes(User const &author);
+			void	_build_return_message(Channel *channel, User &user);
 
 			bool	_sign_handler(const char new_sign);
 
