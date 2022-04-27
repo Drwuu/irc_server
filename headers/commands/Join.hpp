@@ -31,6 +31,7 @@ namespace irc {
 		public:
 	/* Functions */
 		private:
+			bool				_is_valid_channel(const std::string &channel);
 			string				_send_RPL_user_list(User const &user, Channel const &chan) const;
 			string				_send_RPL(rpl_type const &rpl, User const &user, Channel const &chan, string const &msg) const;
 			vector_string		_get_instructions(string const &arg, char const separator) const;

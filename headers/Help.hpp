@@ -26,7 +26,7 @@ namespace irc {
 	/* Functions */
 		private:
 		public:
-			void	receive_message(User * user,std::string msg);
-			void	send_message(std::string msg, User & user);
+			virtual void	receive_message(User * user,std::string msg);
+			virtual void	send_message(std::string msg, User & user);
 	};
 }

@@ -79,6 +79,11 @@ namespace irc {
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 
 		_chans = _get_instructions(_args[1], ',');
+		for (std::vector<std::string>::iterator it = _chans.begin(); it != _chans.end();it++)
+		{
+			if (_is_valid_channel(*it) == false)
+				throw error(*it + " :No such Channel", ERR_CHANNELISFULL);
+		}
 
 		if (_args.size() >= 3)																// get keys
 			_keys = _get_instructions(_args[2], ',');
@@ -124,6 +129,20 @@ namespace irc {
 	};
 
 /* Functions private */
+
+	bool Join::_is_valid_channel(const std::string &channel) {
+		if (channel[0] != '#' and channel[0] != '&' and channel[0] != '+' and channel[0] != '!')
+			return false;
+		if (channel.size() > 50)
+			return false;
+		for (std::string::const_iterator it = channel.begin(); it != channel.end();++it)
+		{
+			if (*it == 0 or *it == 7 or *it == 10 or *it == 13 or *it == 32 or *it == 44 or *it == 58)
+				return false;
+		}
+		return true;
+	}
+
 	string Join::_send_RPL_user_list(User const &user, Channel const &chan) const {
 		std::stringstream s;
 		s << ":" << _server->get_name() << " " << RPL_NAMREPLY << " "

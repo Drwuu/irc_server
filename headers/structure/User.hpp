@@ -89,10 +89,10 @@ namespace irc {
 			bool						is_mute(const Channel *channel);
 
 			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
-			void						send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG
+			virtual void						send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG
 			void						send_message(std::string msg, Channel & channel);
 			void						receive_message(Server & Server,	Channel& channel,std::string msg){(void)Server;(void)channel;(void)msg;};
-			void						receive_message(User * user,std::string msg);
+			virtual void						receive_message(User * user,std::string msg);
 			void						receive_message(Server & Server,User& user, std::string msg){(void)Server;(void)user;(void)msg;};
 
 			void						send_invite(User & user, Channel & channel);

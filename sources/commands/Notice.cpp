@@ -39,7 +39,7 @@ namespace irc {
 					user.send_message(" NOTICE " + (*receiver)->get_nickname() + " " + _args[2], *(*receiver));
 				else
 				{
-					dynamic_cast<irc::Help *>(*receiver)->send_message("NOTICE " + (*receiver)->get_nickname() + " " + _args[2], user);
+					(*receiver)->send_message("NOTICE " + (*receiver)->get_nickname() + " " + _args[2], user);
 				}
 			}
 	}
