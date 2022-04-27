@@ -59,7 +59,7 @@ namespace irc {
 			ret += "PONG Parameters: <daemon> [<daemon2>]\r\n";
 		}
 		else
-			ret += _args[2]  + ": Command not dound\r\n";
+			ret += _args[2]  + ": Available Commands: PRIVMSG JOIN MODE KICK INVITE USER NICK NOTICE PART QUIT PING PONG\r\n";
 		Proxy_queue::Write * new_msg = new Proxy_queue::Write(user->get_socket()->get_fd(),ret.c_str());
 		_server->get_event_list().push_back(new_msg);
 	}
