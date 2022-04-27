@@ -22,7 +22,7 @@ namespace irc {
 			vec_user servUsers =  _server->get_user_list();
 			vec_cit_user it = _server->find_nickname(_args[1], servUsers);
 			s << ":" << user.get_nickname() << " INVITE " << _args[1] << " :" << (*mchan)->get_name() << "\r\n\0";
-			Socket<Address_ipv6> const *sock = (*it)->get_socket();
+			Socket<Address_ipv4> const *sock = (*it)->get_socket();
 			msg = new Proxy_queue::Write(sock->get_fd(), s.str().c_str());
 			_server->get_event_list().push_back(msg);
 		}

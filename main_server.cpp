@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/25 22:46:49 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 18:21:04 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,12 @@ int		main(int ac, char **av) {
 	// Manual test for Server socket -> connexion test
 	///////////////////////////////////////////////////////////////////////////////////
 
-	// Socket<Address_ipv6>		server_socket(port_nb, SOCK_STREAM);
+	// Socket<Address_ipv4>		server_socket(port_nb, SOCK_STREAM);
 
 	// server_socket.create_endpoint();
 	// server_socket.bind_socket();
 	// server_socket.listen_for_connexion(5);
-	// Socket<Address_ipv6>	client_socket = server_socket.accept_connexion();
+	// Socket<Address_ipv4>	client_socket = server_socket.accept_connexion();
 
 	// std::clog << client_socket.get_fd() << std::endl;
 

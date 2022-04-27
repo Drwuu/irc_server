@@ -19,7 +19,7 @@ namespace irc {
 	}
 	User::User() : _is_pass_checked(false) {}
 	User::~User(){}
-	User::User(Socket<Address_ipv6> const *socket): _is_pass_checked(false), _socket(socket){}
+	User::User(Socket<Address_ipv4> const *socket): _is_pass_checked(false), _socket(socket){}
 	ChanStatus::ChanStatus(Channel * channel):channel(channel),is_mute(false),is_operator(false){}
 
 
@@ -65,7 +65,7 @@ namespace irc {
 		return _chan_list.end();
 	}
 
-	Socket<Address_ipv6> const *User::get_socket() const{
+	Socket<Address_ipv4> const *User::get_socket() const{
 		return (this->_socket);}
 
 	bool User::get_operator_status(const Channel *channel) const{
@@ -103,7 +103,7 @@ namespace irc {
 
 	void User::set_password_status(bool status){
 		this->_is_pass_checked = status;}
-	void	User::set_socket(Socket<Address_ipv6> const *socket) {
+	void	User::set_socket(Socket<Address_ipv4> const *socket) {
 		(void)socket; // FIXME : fix that shit. The function wasn't created.
 	}
 	void User::set_chan_status(const Channel *channel, bool op) {

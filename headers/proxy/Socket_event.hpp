@@ -6,7 +6,7 @@
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/19 18:43:59 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/20 14:11:29 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 18:17:45 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ namespace irc {
 
 	class	Socket_event {
 		public:
-			typedef		Socket<Address_ipv6>	socket_type;
+			typedef		Socket<Address_ipv4>	socket_type;
 			typedef		socket_type::fd_type	fd_type;
 			typedef		socket_type::data_type	data_type;
 

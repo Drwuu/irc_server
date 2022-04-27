@@ -195,7 +195,7 @@ namespace irc {
 	};
 
 
-	User * Server::get_user_from_socket(Socket<Address_ipv6> const *sock) {
+	User * Server::get_user_from_socket(Socket<Address_ipv4> const *sock) {
 		vec_cit_user it = _user_list.begin();
 		for (; it != _user_list.end(); it++) {
 			if ((*it)->get_socket() == sock)

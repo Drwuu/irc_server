@@ -33,7 +33,7 @@ namespace irc {
 			bool _is_pass_checked;
 			bool _is_registered;
 			bool _is_irc_operator; // FIXME : REMOVE
-			Socket<Address_ipv6> const	*_socket;
+			Socket<Address_ipv4> const	*_socket;
 			User(User const & copy);
 			Server * _server; //TEMP
 
@@ -42,7 +42,7 @@ namespace irc {
 
 		public:
 			User();
-			User(Socket<Address_ipv6> const *socket);
+			User(Socket<Address_ipv4> const *socket);
 			~User();
 
 			int								get_port() const; // Not in use
@@ -62,7 +62,7 @@ namespace irc {
 			std::vector<ChanStatus>			get_chan_list();
 			const std::vector<ChanStatus>	get_chan_list() const;
 			std::vector<ChanStatus>::const_iterator		get_chanstatus_from_list(Channel const & channel,std::vector<ChanStatus> const &chans) const;
-			const Socket<Address_ipv6>		*get_socket() const;
+			const Socket<Address_ipv4>		*get_socket() const;
 
 			Server * get_server();
 			void set_server(Server * server);
@@ -78,7 +78,7 @@ namespace irc {
 			void						set_realname(std::string realname);
 			void						set_hostname(std::string hostname);
 			void						set_nickname(std::string nickname); // Command NICK
-			void						set_socket(Socket<Address_ipv6> const *socket);
+			void						set_socket(Socket<Address_ipv4> const *socket);
 			void						set_registered_status(bool status);
 			void						set_password_status(bool status);
 			void						set_chan_status(const Channel *channel, bool op);

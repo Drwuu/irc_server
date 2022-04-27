@@ -34,7 +34,7 @@ namespace irc {
 				// _server->get_event_list().push_back(msg);
 
 				string str = _send_RPL_user_list(user, **mchan);
-				Socket<Address_ipv6> const *sock = user.get_socket();
+				Socket<Address_ipv4> const *sock = user.get_socket();
 				msg = new Proxy_queue::Write(sock->get_fd(), str.c_str());
 				_server->get_event_list().push_back(msg);
 

@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/27 03:34:59 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 18:32:02 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@
 # include <netinet/tcp.h>
 # include <netinet/in.h>
 # include <fcntl.h>
-# include "Address.hpp"
+# include "Address_ipv4.hpp"
+# include "Address_ipv6.hpp"
 
 # include <iostream>
 
@@ -90,20 +91,6 @@ class Socket {
 				std::cerr << " [ERROR] : socket function failed -- " << strerror(errno) << std::endl;
 				return ;
 			}
-			int		opt_val = true;
-			// define TCP_PROTOCOL 6 (netinet/in.h)
-			if (setsockopt(_sockfd, IPPROTO_TCP, SO_REUSEADDR, &opt_val, sizeof(int)) == -1) {
-				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
-				return ;
-			}
-			if (setsockopt(_sockfd, IPPROTO_IP, SO_DONTROUTE, &opt_val, sizeof(int)) == -1) {
-				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
-				return ;
-			}
-			if (setsockopt(_sockfd, IPPROTO_IP, TCP_NODELAY, &opt_val, sizeof(int)) == -1) {
-				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
-				return ;
-			}
 			std::clog << " ---- Endpoint created on the address " << "" << std::endl;
 		}
 
@@ -169,7 +156,6 @@ class Socket {
 			friend bool		operator!=(const Socket<T> &rhs, const Socket<T> &lhs) {
 				return !(rhs == lhs);
 			}
-
 };
 
 
