@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Address.cpp                                        :+:      :+:    :+:   */
+/*   Address_ipv6.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:58:42 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/23 19:45:01 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 17:37:45 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/proxy/Address.hpp"
+#include "../../headers/proxy/Address_ipv6.hpp"
 
 // Unaccessible
 Address_ipv6::Address_ipv6() { }

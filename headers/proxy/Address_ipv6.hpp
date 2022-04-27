@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Address.hpp                                        :+:      :+:    :+:   */
+/*   Address_ipv6.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: guhernan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 16:40:21 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/14 19:21:08 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 18:34:34 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ADDRESS_HPP
-# define ADDRESS_HPP
+#ifndef ADDRESS_IPV6_HPP
+# define ADDRESS_IPV6_HPP
 
 # include <_wctype.h>
 # include <netinet/in.h>

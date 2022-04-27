@@ -19,7 +19,7 @@ SRCS			= \
 				$(addprefix error/, error.cpp) \
 				$(addprefix parser/, parser.cpp) \
 				$(addprefix structure/, Server.cpp User.cpp Channel.cpp) \
-				$(addprefix proxy/, Address.cpp Socket_event.cpp Server_queue.cpp \
+				$(addprefix proxy/, Address_ipv4.cpp Address_ipv6.cpp Socket_event.cpp Server_queue.cpp \
 				Proxy_queue.cpp Proxy.cpp)
 
 HEADERS			= \
@@ -31,7 +31,7 @@ HEADERS			= \
 				Pong.hpp Notice.hpp Part.hpp Quit.hpp) \
 				$(addprefix error/, error.hpp) \
 				$(addprefix parser/, parser.hpp) \
-				$(addprefix proxy/, Address.hpp Socket_event.hpp Server_queue.hpp \
+				$(addprefix proxy/, Socket.hpp Address_ipv4.hpp Address_ipv6.hpp Socket_event.hpp Server_queue.hpp \
 				Proxy_queue.hpp Proxy.hpp)
 
 PATH_HEADERS	= $(addprefix $(INCLUDES)/, $(HEADERS))

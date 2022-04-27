@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/09 15:36:31 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/26 23:18:10 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 18:09:47 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define PROXY_HPP
 
 # include "Socket.hpp"
-# include "Address.hpp"
+# include "Address_ipv4.hpp"
+# include "Address_ipv6.hpp"
 
 
 # include <sys/types.h>
@@ -88,7 +89,7 @@ namespace irc {
 	class	Proxy {
 
 		public:
-			typedef		Socket<Address_ipv6>		socket_type;
+			typedef		Socket<Address_ipv4>		socket_type;
 			typedef		socket_type::port_type		port_type;
 			typedef		socket_type::fd_type		fd_type;
 			typedef		socket_type::data_type		data_type;
