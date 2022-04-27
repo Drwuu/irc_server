@@ -15,7 +15,7 @@ namespace irc {
 			+ ":" + user.get_server()->get_name() + " 004 " + user.get_nickname() + " " + user.get_server()->get_name() + " 1.0 BDHILRSTWcdghikorswxz ABCDEFIJKLMNOPQRSTUWXYZbcdefhijklmnoprstuvwz BEFIJLWXYZbdefhjklovw\r\n";
 		Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 		ret = ":" + user.get_server()->get_name() + " NOTICE " + user.get_nickname() + " :Authors: mhaman guhernan lwourms\n"
-			+ ":" + user.get_server()->get_name() + " NOTICE " + user.get_nickname() + " :Available Commands: PRIVMSG JOIN MODE KICK INVITE USER NICK NOTICE PART QUIT PING PONG\n";
+			+ ":" + user.get_server()->get_name() + " NOTICE " + user.get_nickname() + " :Available Commands: PRIVMSG JOIN MODE KICK INVITE USER NICK NOTICE PART QUIT PING PONG\n"
 			+ ":" + user.get_server()->get_name() + " NOTICE " + user.get_nickname() + " :Available Service: Help_Bot Usage NOTICE Help_bot COMMAND\r\n";
 		Proxy_queue::Write * notice = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 
