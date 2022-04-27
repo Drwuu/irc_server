@@ -77,7 +77,8 @@ namespace irc {
 	bool Join::is_valid_args(User const &user) {
 		if (_args.size() < 2)
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
-
+		if (user.get_registered_status() == false)
+			throw error(_args[0] + " :Not Registered", ERR_NOTREGISTERED);
 		_chans = _get_instructions(_args[1], ',');
 		for (std::vector<std::string>::iterator it = _chans.begin(); it != _chans.end();it++)
 		{
