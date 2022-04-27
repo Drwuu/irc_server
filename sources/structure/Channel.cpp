@@ -3,15 +3,33 @@
 
 namespace irc {
 
+	// bool						_is_private;
+	// bool						_is_secret;
+	// bool						_is_invite_only;
+	// bool						_is_topic_chop_only;
+	// bool						_is_no_external_msg;
+	// bool						_is_moderated;
+	// bool						_is_limited;
+
 	Channel::Channel(){}
 
-	Channel::Channel(std::string name): _name(name), _userlimit(10), _is_limited(false){}
+	Channel::Channel(std::string name)
+		: _name(name), _userlimit(10),
+		_is_private(false), _is_secret(false), _is_invite_only(false),
+		_is_topic_chop_only(false), _is_no_external_msg(false),
+		_is_moderated(false), _is_limited(false){}
 
 	Channel::Channel(std::string name, char *prefix)
-		: _name(name), _prefix(prefix), _userlimit(10), _is_limited(false) {}
+		: _name(name), _prefix(prefix), _userlimit(10),
+		_is_private(false), _is_secret(false), _is_invite_only(false),
+		_is_topic_chop_only(false), _is_no_external_msg(false),
+		_is_moderated(false), _is_limited(false){}
 
 	Channel::Channel(std::string name, char *prefix, std::string key)
-		: _name(name), _prefix(prefix), _key(key), _userlimit(10), _is_limited(false) {}
+		: _name(name), _prefix(prefix), _key(key), _userlimit(10),
+		_is_private(false), _is_secret(false), _is_invite_only(false),
+		_is_topic_chop_only(false), _is_no_external_msg(false),
+		_is_moderated(false), _is_limited(false){}
 
 	Channel::Channel(Channel const & copy){*this = copy;}
 
