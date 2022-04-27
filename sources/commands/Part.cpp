@@ -29,10 +29,6 @@ namespace irc {
 				Proxy_queue::Write * msg = new Proxy_queue::Write(user.get_socket()->get_fd(),ret.c_str());
 				_server->get_event_list().push_back(msg);
 				chanstatus->channel->transmit_message( " PART " + chanstatus->channel->get_name(), &user);
-				if (chanstatus->channel->get_user_list().size() == 1)
-				{
-					_server->del_channel(*chanstatus->channel);
-				}
 				user.leave_channel(*it);
 			}
 			else
