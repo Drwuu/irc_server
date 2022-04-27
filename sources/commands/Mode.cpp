@@ -47,14 +47,6 @@ namespace irc {
 			throw error(_args[0] + " :Not enough parameters", ERR_NEEDMOREPARAMS);
 	};
 
-	//// How to valid arguments :
-	// 1 - check if channel exists
-	// 2 - check if option exists
-	// 3 - check privileges
-	// 4 - check if is in channel
-	//// Pending
-	// 5 - check if double letters
-	// 6 - check if enough arguments
 	bool Mode::is_valid_args(User const &user) {
 		if (_args.size() == 2) {
 			return true;

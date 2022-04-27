@@ -5,7 +5,7 @@ namespace irc {
 
 	Channel::Channel(){}
 
-	Channel::Channel(std::string name): _name(name){}
+	Channel::Channel(std::string name): _name(name), _userlimit(10), _is_limited(false){}
 
 	Channel::Channel(std::string name, char *prefix)
 		: _name(name), _prefix(prefix), _userlimit(10), _is_limited(false) {}
