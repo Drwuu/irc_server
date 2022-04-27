@@ -12,6 +12,7 @@ INCLUDES		= headers
 
 
 SRCS			= \
+				Help.cpp \
 				$(addprefix commands/, command.cpp invite.cpp Kick.cpp Mode.cpp \
 				User_cmd.cpp Nick.cpp Message.cpp Join.cpp Cap.cpp Pass.cpp Ping.cpp \
 				Pong.cpp Notice.cpp Part.cpp Quit.cpp) \
@@ -23,6 +24,7 @@ SRCS			= \
 
 HEADERS			= \
 				irc.hpp \
+				Help.hpp \
 				$(addprefix structure/, Server.hpp User.hpp Channel.hpp) \
 				$(addprefix commands/, command.hpp invite.hpp Kick.hpp Mode.hpp \
 				User_cmd.hpp Nick.hpp Message.hpp Join.hpp Cap.hpp Pass.hpp Ping.hpp \

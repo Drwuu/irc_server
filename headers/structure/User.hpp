@@ -35,15 +35,15 @@ namespace irc {
 			bool _is_irc_operator; // FIXME : REMOVE
 			Socket<Address_ipv4> const	*_socket;
 			User(User const & copy);
-			Server * _server; //TEMP
 
 		protected:
 			std::vector<ChanStatus>::iterator	get_chan_status(const Channel *channel);
+			Server * _server;
 
 		public:
 			User();
 			User(Socket<Address_ipv4> const *socket);
-			~User();
+			virtual ~User();
 
 			int								get_port() const; // Not in use
 			const std::string				get_nickname() const;
@@ -89,10 +89,10 @@ namespace irc {
 			bool						is_mute(const Channel *channel);
 
 			void						send_message(Server & Server, Channel & Channel,std::string msg); // Command MSG et/ou PRIVMSG
-			void						send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG
+			virtual void				send_message(std::string msg, User & User); // Command MSG et/ou PRIVMSG
 			void						send_message(std::string msg, Channel & channel);
 			void						receive_message(Server & Server,	Channel& channel,std::string msg){(void)Server;(void)channel;(void)msg;};
-			void						receive_message(User * user,std::string msg);
+			virtual void				receive_message(User * user,std::string msg);
 			void						receive_message(Server & Server,User& user, std::string msg){(void)Server;(void)user;(void)msg;};
 
 			void						send_invite(User & user, Channel & channel);

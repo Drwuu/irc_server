@@ -127,6 +127,10 @@ namespace irc {
 		for (std::vector<ChanStatus>::iterator it = _chan_list.begin(); it != _chan_list.end(); ++it){
 			if ((*it).channel->get_name() == channel){
 				(*it).channel->del_user(this);
+				if ((*it).channel->get_user_list().size() == 0)
+				{
+					_server->del_channel(*(*it).channel);
+				}
 				(*it).channel = NULL;
 				_chan_list.erase(it);
 				return ; // Channel found
