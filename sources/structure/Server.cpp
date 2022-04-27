@@ -228,6 +228,7 @@ namespace irc {
 	void Server::del_channel(Channel & channel) { // WIP need to delete user chan list and chanstatus
 		for (std::vector<Channel *>::iterator it = this->_channel_list.begin(); it != this->_channel_list.end(); ++it) {
 			if (*it == &channel) {
+				delete *it;
 				this->_channel_list.erase(it);
 				break;
 			}
@@ -238,6 +239,7 @@ namespace irc {
 		int		sockfd = user.get_socket()->get_fd();
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if (*it == &user) {
+				delete *it;
 				this->_user_list.erase(it);
 				return sockfd;
 			}

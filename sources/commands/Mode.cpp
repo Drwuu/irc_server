@@ -69,13 +69,19 @@ namespace irc {
 	};
 
 	/* Calculate the number of arguments required to make MODE works */
+	/* If the flag require an argument */
 	bool 	Mode::_is_valid_arg_nb(string const &modes) {
 		size_t	mode_nb = 0;
+		bool	is_positive = true;
 
 		for (string::const_iterator it = modes.begin() ; it != modes.end() ; ++it) {
-			// If the flag require an argument
-			if (*it == 'o' || *it == 'l' || *it == 'b' || *it == 'k')
+			if (*it == '+' || *it == '-')
+				*it == '+' ? is_positive = true : is_positive = false;
+			else if (*it == 'o' || *it == 'b')
 				++mode_nb;
+			else if (*it == 'l' || *it == 'k')
+				if (is_positive)
+					++mode_nb;
 		}
 		return !(mode_nb > _args.size() - 3);
 	}
@@ -226,13 +232,17 @@ namespace irc {
 	// limit -> ONLY  if (is_positive == true)
 	void	Mode::_channel_mode_l(Channel *channel, vector_string::const_iterator arg, const User &) {
 		// Validity of the channel has been tested in _is_valid_arg.
-		for (std::string::const_iterator it = arg->begin() ; it != arg->end() ; ++it)
-			if (!std::isdigit(*it))
+		if (_sign == '+') {
+			for (std::string::const_iterator it = arg->begin() ; it != arg->end() ; ++it)
+				if (!std::isdigit(*it))
+					return ;
+			int		new_limit = atoi(arg->c_str());
+			if (new_limit > 100)
 				return ;
-		int		new_limit = atoi(arg->c_str());
-		if (new_limit > 100 || _sign == '-')
-			return ;
-		channel->set_userlimit(new_limit);
+			channel->set_userlimit(new_limit);
+		}
+		else
+			channel->set_limited(false);
 	}
 
 	// ban mask
@@ -265,6 +275,8 @@ namespace irc {
 	void	Mode::_channel_mode_k(Channel *channel, vector_string::const_iterator arg, const User &) {
 		if (_sign == '+')
 			channel->set_key(*arg);
+		else
+			channel->del_key();
 	}
 
 	// Authorise or not to speak on moderated channel
