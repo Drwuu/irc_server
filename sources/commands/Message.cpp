@@ -68,7 +68,6 @@ namespace irc {
 	}
 
 	void	Privmsg::exec_cmd(User &user ) {
-		std::clog << "-------------EXECUTION COMMANDE PRIVMSG" << std::endl;
 		for(std::vector<std::string>::iterator it = _receiver.begin(); it != _receiver.end();++it)
 		{
 			if (is_valid_channel((*it)) == true){

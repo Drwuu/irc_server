@@ -106,9 +106,7 @@ void			irc::Proxy::queuing() {
 	fd_type		server_fd = _server.get_fd();
 	int			rtn = 0;
 
-	std::cerr << " UPDATE FLAGS --------------" << std::endl;
 	set_flags();
-	std::cerr << " LAUNCH POLL --------------" << std::endl;
 	rtn = poll(_poll_data.data(), _poll_data.size(), _timeout);
 	if (rtn == -1)
 		std::clog << "POLL ERROR : " << strerror(errno) << std::endl;
@@ -116,7 +114,6 @@ void			irc::Proxy::queuing() {
 		for (client_tree_type::iterator it = _clients.begin() ; it != _clients.end() ; ++it)
 			_to_server.push_back(new Server_queue::Message("PING", it->second));
 	}
-	std::cerr << " FINISH POLL --------------" << std::endl;
 
 	// Need to save the old pollfd size to secure the loop.
 	// The _poll_data vector is modified if there is a new connexion
@@ -125,7 +122,6 @@ void			irc::Proxy::queuing() {
 	// this is not safe to use iterators or _poll_data.size().
 	int		size = _poll_data.size();
 
-	std::cerr << " LAUNCH LOOP --------------" << std::endl;
 	for (int i = 0 ; i < size ; ++i) {
 		// If there is no event trigered
 		if (_poll_data[i].revents == 0)
@@ -168,7 +164,6 @@ void			irc::Proxy::queuing() {
 			}
 		}
 	}
-	std::cerr << " FINISH LOOP --------------" << std::endl;
 	std::clog << " ---- Queuing done. " << std::endl;
 }
 
@@ -404,7 +399,7 @@ void		irc::Proxy::send_to_client(const socket_type *client, const data_type data
 	if (strlen(data) > strlcpy(buffer, data, buffer_len - 1) )
 		std::clog << "[DETAIL] : Data sent had been truncated" << std::endl;
 
-	std::clog << " \n ======================================================== DATA SENT : " << buffer << " USER FD: " << client->get_fd() << std::endl;
+	std::clog << " ===================== > DATA SENT : " << buffer;
 	rtn = send(client->get_fd(), buffer, strlen(buffer), 0);
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;

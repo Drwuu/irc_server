@@ -42,13 +42,6 @@ OBJS			= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 all:				$(NAME)
 
-server_test:		./server_test/server_test.cpp
-						c++ $< -o $@_
-						./$@_
-clean_server_test:
-					rm -f server_test_
-					rm -f ./server_test/*.o
-
 exec:				$(NAME)
 						./$(NAME) $(ARGS)
 
@@ -71,7 +64,7 @@ fclean:				clean
 
 re:					fclean all
 
-.PHONY:				all clean fclean re $(NAME) server_test clean_server_test
+.PHONY:				all clean fclean re $(NAME)
 .SILENT:
 
 BLACK			=	\033[0;30m

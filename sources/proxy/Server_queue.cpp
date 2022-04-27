@@ -24,12 +24,9 @@ void			irc::Server_queue::Message::handle(Server &server) {
 		if (*it == '\r')
 			data.erase(it);
 	std::list<std::string>	cmd_list = server._parser.split_command(data);
-	std::clog << " ---- Split command. " << std::endl;
-
 	while (!cmd_list.empty()) {
 		command *cmd = NULL;
 		try {
-			std::clog << " ---------- COMMAND : " << cmd_list.front() << std::endl;
 			cmd = server._parser.get_command(cmd_list.front(), server._map)->second;
 			cmd->check_auth(user);
 			cmd->set_args(server._parser.get_args(cmd_list.front()));

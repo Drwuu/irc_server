@@ -76,7 +76,7 @@ namespace irc {
 		for (vector_string::iterator it = this->_ban_list.begin(); it != this->_ban_list.end();++it)
 		{
 			if (user->get_username() == (*it)) {
-				dprintf(2, "User '%s' already banned from this channel\n", user->get_username().c_str());
+				std::clog << "User '" << user->get_username().c_str() << "' already banned from this channel\n";
 				return ; // User already banned from this channel
 			}
 		}
@@ -109,7 +109,6 @@ namespace irc {
 		for (std::vector<User *>::iterator it = this->_user_list.begin(); it != this->_user_list.end();++it)
 		{
 			if ((*it)->get_username() != user->get_username()){
-				std::cout << "------------Transmit message to " << (*it)->get_username() << std::endl;
 				(*it)->receive_message(user,msg);
 			}
 		}

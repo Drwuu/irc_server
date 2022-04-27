@@ -23,22 +23,6 @@ namespace irc {
 		_map.insert(std::make_pair("KICK", new Kick(this)));
 		_map.insert(std::make_pair("PART", new Part(this)));
 		_map.insert(std::make_pair("QUIT", new Quit(this)));
-		// User user;
-		// user.set_nickname("toto");
-		// user.set_username("toto");
-		// add_user(&user);
-		// Channel chan("prout");
-		// chan.add_user(&user);
-		// add_channel(chan);
-		// command *cmd = parse_line(user);
-		// (void)cmd;
-		// admin.join_channel(*this, "PROUT"); //FIXME : doubled user in chan
-		// vec_user vec =  get_user_list();
-		// for (vec_cit_user it = vec.begin(); it != vec.end(); it++)
-		// 	dprintf (2, "it =  %s\n", (*it)->get_nickname().c_str());
-		// vec_user chans =  chan.get_user_list();
-		// for (vec_cit_user it = chans.begin(); it != chans.end(); it++)
-		// 	dprintf (2, "chans =  %s\n", (*it)->get_nickname().c_str());
 	};
 	Server::Server(std::string password,int port): _password(password), _port(port) {
 		_map.insert(std::make_pair("INVITE", new invite()));
@@ -209,14 +193,12 @@ namespace irc {
 	};
 
 	void			Server::receive_api(std::list<Socket_event *> &api) {
-	std::clog << " ---> API Received. " << std::endl;
 		_event_list.clear();
 		while (!api.empty()) {
 			api.front()->handle(*this);
 			delete api.front();
 			api.pop_front();
 		}
-		std::clog << " ---- API Handled. " << std::endl;
 	}
 
 	void Server::add_user(User * user) {
@@ -246,12 +228,7 @@ namespace irc {
 		}
 		return -1;
 	}
-	void Server::exec_cmd(User & user, irc::command *command) {
-		(void)user;
-		(void)command;
-		// command->get_args();
-		// command->exec_cmd(const command &cmd);
-	}
+
 	User * Server::check_user_existance(User & user) {
 		for( vec_cit_user it = this->_user_list.begin(); it != this->_user_list.end(); ++it) {
 			if ((*it)->get_uuid() == user.get_uuid()) {

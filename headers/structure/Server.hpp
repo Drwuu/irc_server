@@ -76,7 +76,6 @@ namespace irc {
 			void							set_line(std::string line);
 
 
-
 	/* Functions */
 		private:
 		public:
@@ -86,7 +85,6 @@ namespace irc {
 			User *							get_user_from_socket(Socket<Address_ipv4> const *sock);
 
 			command							*parse_line(User const &user) const;
-			void							exec_cmd(User & user, command *command);
 			User *							check_user_existance(User & user);
 
 			void							receive_api(std::list<Socket_event *> &api);

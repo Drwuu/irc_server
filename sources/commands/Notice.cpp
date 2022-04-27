@@ -30,7 +30,6 @@ namespace irc {
 	}
 
 	void	Notice::exec_cmd(User &user ) {
-		std::clog << "-------------EXECUTION COMMANDE Notice" << std::endl;
 			if (is_valid_nickname(_args[1]) == true){
 				std::vector<User *>		user_list = _server->get_user_list();
 				std::vector<User *>::const_iterator receiver = _server->find_nickname(_args[1], user_list);
