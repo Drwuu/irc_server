@@ -1,4 +1,5 @@
 #include "../../headers/commands/Notice.hpp"
+#include "../../headers/Help.hpp"
 
 namespace irc {
 /* Constructors & Destructors */
@@ -33,7 +34,13 @@ namespace irc {
 			if (is_valid_nickname(_args[1]) == true){
 				std::vector<User *>		user_list = _server->get_user_list();
 				std::vector<User *>::const_iterator receiver = _server->find_nickname(_args[1], user_list);
-				user.send_message(" NOTICE " + (*receiver)->get_nickname() + " " + _args[2], *(*receiver));
+				std::clog << "RECEIVER NICKNAME = " << (*receiver)->get_nickname() << std::endl;
+				if ((*receiver)->get_nickname() != "Help_bot")
+					user.send_message(" NOTICE " + (*receiver)->get_nickname() + " " + _args[2], *(*receiver));
+				else
+				{
+					dynamic_cast<irc::Help *>(*receiver)->send_message("NOTICE " + (*receiver)->get_nickname() + " " + _args[2], user);
+				}
 			}
 	}
 

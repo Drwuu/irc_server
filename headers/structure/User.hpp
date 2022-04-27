@@ -35,15 +35,15 @@ namespace irc {
 			bool _is_irc_operator; // FIXME : REMOVE
 			Socket<Address_ipv6> const	*_socket;
 			User(User const & copy);
-			Server * _server; //TEMP
 
 		protected:
 			std::vector<ChanStatus>::iterator	get_chan_status(const Channel *channel);
+			Server * _server;
 
 		public:
 			User();
 			User(Socket<Address_ipv6> const *socket);
-			~User();
+			virtual ~User();
 
 			int								get_port() const; // Not in use
 			const std::string				get_nickname() const;

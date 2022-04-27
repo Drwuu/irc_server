@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/05 14:15:16 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/25 22:46:49 by guhernan         ###   ########.fr       */
+/*   Updated: 2022/04/27 03:57:08 by mhaman           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <sys/event.h>
 #include <stdint.h>
 
+#include "headers/Help.hpp"
+#include "headers/irc.hpp"
 #include "headers/proxy/Proxy.hpp"
 #include "headers/structure/Server.hpp"
 
@@ -54,6 +56,10 @@ int		main(int ac, char **av) {
 	server.set_password(password);
 	server.set_name("irc.42lyon.fr");
 	server.set_motd("Welcome to 42lyon irc server");
+	irc::User * Robot = new irc::Help();
+	Robot->set_nickname("Help_bot");
+	Robot->set_server(&server);
+	server.add_user(Robot);
 
 	irc::Proxy	proxy(port_nb);
 	irc::Proxy::api_type		to_proxy;
