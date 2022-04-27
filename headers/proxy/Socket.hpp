@@ -6,7 +6,7 @@
 /*   By: mhaman <mhaman@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 15:56:39 by guhernan          #+#    #+#             */
-/*   Updated: 2022/04/26 20:05:38 by mhaman           ###   ########lyon.fr   */
+/*   Updated: 2022/04/27 03:34:59 by guhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 # include <stdlib.h>
 
 # include <sys/socket.h>
-# include <fcntl.h>
+# include <netinet/tcp.h>
 # include <netinet/in.h>
+# include <fcntl.h>
 # include "Address.hpp"
 
 # include <iostream>
@@ -91,11 +92,15 @@ class Socket {
 			}
 			int		opt_val = true;
 			// define TCP_PROTOCOL 6 (netinet/in.h)
-			if (setsockopt(_sockfd, TCP_PROTOCOL, SO_REUSEADDR, &opt_val, sizeof(int)) == -1) {
+			if (setsockopt(_sockfd, IPPROTO_TCP, SO_REUSEADDR, &opt_val, sizeof(int)) == -1) {
 				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
 				return ;
 			}
-			if (setsockopt(_sockfd, TCP_PROTOCOL, SO_DONTROUTE, &opt_val, sizeof(int)) == -1) {
+			if (setsockopt(_sockfd, IPPROTO_IP, SO_DONTROUTE, &opt_val, sizeof(int)) == -1) {
+				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
+				return ;
+			}
+			if (setsockopt(_sockfd, IPPROTO_IP, TCP_NODELAY, &opt_val, sizeof(int)) == -1) {
 				std::cerr << " [ERROR] : adding socket option failed -- [SO_REUSEADDR] " << strerror(errno) << std::endl;
 				return ;
 			}

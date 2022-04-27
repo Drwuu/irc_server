@@ -51,6 +51,7 @@ namespace irc {
 			bool							is_no_external_msg() const;
 			bool							is_moderated() const;
 			bool							is_limited() const;
+			bool							is_key() const;
 			bool							is_operator(const User *user) const;
 
 			User *							find_user(std::string nickname);
@@ -64,6 +65,7 @@ namespace irc {
 			void							set_lifetime(const int& lifetime);
 			void							set_opdelay(const int& opdelay);
 			void							set_userlimit(const int& userlimit);
+			void							set_limited(bool value);
 			void							set_channel_identifier(const std::string& channel_identifier);
 
 			void							set_external_msg(bool value);
@@ -77,6 +79,7 @@ namespace irc {
 			void							add_operator(User * user);
 			void							del_operator(User * user);
 			void							del_user(User * user);
+			void							del_key();
 			void							ban_user(std::string nick);
 			void							unban_user(std::string nick);
 			void							invite_user(std::string const &nickname);

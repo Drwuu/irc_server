@@ -5,7 +5,6 @@
 
 namespace irc {
 
-
 	Server * User::get_server() {
 		return _server;
 	}
@@ -124,54 +123,6 @@ namespace irc {
 		this->_chan_list.push_back(status);
 	}
 
-
-
-// void User::join_channel(Server & Server, std::string channel){
-// 	srand(time(NULL));
-// 	for (std::vector<ChanStatus>::iterator it = get_chan_list().begin(); it != get_chan_list().end(); ++it){
-// 		if ((*it).channel->get_name() == channel){
-// 			for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
-// 				if ((*it2)->get_nickname() != this->get_nickname() && (*it2)->get_operator_status() == true){ // WIP pue la merde
-// 					(*it).channel->del_user(this);
-// 					get_chan_list().erase(it);
-// 					return ; // Channel found
-// 				}
-// 			}
-// 			// No operator left on the channel
-// 			(*it).channel->del_user(this);
-// 			get_chan_list().erase(it);
-// 			if ((*it).channel->get_user_list().size() > 5){
-// 				(*it).channel->get_user_list().at(rand() % (*it).channel->get_user_list().size())->get_chanstatus_from_list((*it).channel)->is_operator = true;
-// 			}
-// 			else{
-// 				for (std::vector<User *>::const_iterator it2 = (*it).channel->get_user_list().begin(); it2 != (*it).channel->get_user_list().end(); ++it2){
-// 					(*it2)->get_chanstatus_from_list((*it).channel)->is_operator = true;
-// 				} // If there is less than 6 user in the channel make them all op
-// 			}
-// 			}
-// 			break;
-// 		}
-// 		for (std::vector<Channel *>::const_iterator it = Server.get_channel_list().begin(); it != Server.get_channel_list().end(); ++it){
-// 			if ((*it)->get_name() == channel){
-// 				ChanStatus chan(*it);
-// 				if ((*it)->is_moderated() == true)
-// 					chan.is_mute = true;
-// 				chan.channel->add_user(this);
-// 				get_chan_list().push_back(chan);
-// 				return ; // Channel found
-// 			}
-// 		}
-// 		// Channel not found in channel list : create it
-// 		// WIP need to add mod to the channel creation
-// 		Channel *new_chan = new Channel(channel);
-// 		Server.add_channel(*new_chan);
-// 		ChanStatus chan_status(new_chan);
-// 		chan_status.is_operator = true;
-// 		chan_status.is_mute = false;
-// 		get_chan_list().push_back(chan_status);
-// 		new_chan->add_user(this);
-// 	}
-
 	void User::leave_channel(std::string channel) {
 		for (std::vector<ChanStatus>::iterator it = _chan_list.begin(); it != _chan_list.end(); ++it){
 			if ((*it).channel->get_name() == channel){
@@ -183,11 +134,7 @@ namespace irc {
 		}
 	}
 
-
 	bool	User::is_mute(const Channel *channel) { return get_chan_status(channel)->is_mute; }
-
-
-
 
 	void User::send_message(std::string msg, Channel & channel){
 		channel.transmit_message(msg, this);
@@ -234,14 +181,14 @@ namespace irc {
 
 	void User::unmute_user(User & user, Channel & channel){(void)user;(void)channel;}
 
-int	User::disconnect_user(string const msg_quit){
-	int ret = this->_socket->get_fd();
-	for (std::vector<ChanStatus>::const_iterator it = this->_chan_list.begin(); it != this->_chan_list.end(); ++it){
-		(*it).channel->transmit_message(" PART " + (*it).channel->get_name() + " " + this->get_nickname(), this);
-		(*it).channel->transmit_message(" QUIT " + msg_quit, this);
-		(*it).channel->del_user(this);
+	int	User::disconnect_user(string const msg_quit){
+		int ret = this->_socket->get_fd();
+		for (std::vector<ChanStatus>::const_iterator it = this->_chan_list.begin(); it != this->_chan_list.end(); ++it){
+			(*it).channel->transmit_message(" PART " + (*it).channel->get_name() + " " + this->get_nickname(), this);
+			(*it).channel->transmit_message(" QUIT " + msg_quit, this);
+			(*it).channel->del_user(this);
+		}
+		this->_chan_list.clear();
+		return ret;
 	}
-	this->_chan_list.clear();
-	return ret;
-}
 }

@@ -10,7 +10,8 @@ irc::Proxy::Proxy()
 	_cl_base_pevents(), _cl_message_pevents(), _sv_pevents() { }
 
 irc::Proxy::Proxy(const port_type &port)
-	: _server(port, SOCK_STREAM), _clients(client_tree_type()), _cache_sending(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
+	: _server(port, SOCK_STREAM), _clients(client_tree_type()),
+	_cache_sending(cache_tree_type()), _flags(flag_tree_type()), _poll_data(pollfd_type()),
 	_timeout(60 * 1000), _to_server(api_type()),
 	_cl_base_pevents(0), _cl_message_pevents(0), _sv_pevents(0),
 	_cl_hang_up(0), _cl_invalid(0), _cl_error(0) {
@@ -236,7 +237,6 @@ void	irc::Proxy::init_flags() {
 
 	_flags.insert(std::make_pair(POLLOUT, new Poll_out(this)));
 	_flags.insert(std::make_pair(_cl_message_pevents, new Poll_out(this)));
-	_flags.insert(std::make_pair(POLLWRNORM, new Poll_out(this)));
 	std::clog << " |--| FLAG inialised. " << std::endl;
 }
 
@@ -346,12 +346,17 @@ void		irc::Proxy::receive(socket_type *client) {
 	int		rtn = 0;
 	// MSG_DONTWAIT -> enable non-blocking operation.
 	rtn = recv(client->get_fd(), &buffer, buffer_len - 1, MSG_DONTWAIT);
+
 	if (rtn < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
 		std::stringstream	ss;
 		ss << "[ERROR] recv() failed. [" << client->get_fd()
 			<< "] [" << client->get_address_readable() << "] :"
 			<< strerror(errno) << std::endl;
 		throw Error_exception(ss.str());
+	}
+	else if (rtn < 0) {
+		bzero(&buffer, buffer_len);
+		return ;
 	}
 	// Connexion closed : launch POLLHUP after
 	else if (rtn == 0) {
@@ -612,8 +617,7 @@ void	irc::Proxy::Poll_out::handle(socket_type *client) {
 	// FIXME : error on send ?
 	_proxy->send_to_client(client, it_cache_sending->second.front());
 	const char *tmp = it_cache_sending->second.front();
-	if (tmp != NULL)
-		free((void *)tmp);
+	free((void *)tmp);
 	it_cache_sending->second.front() = NULL;
 	it_cache_sending->second.pop_front();
 }

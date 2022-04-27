@@ -1,4 +1,4 @@
-NAME			=  irc_42
+NAME			=  ircserv
 
 MAIN			:= main_server.cpp
 

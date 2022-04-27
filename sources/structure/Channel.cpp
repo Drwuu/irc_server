@@ -7,9 +7,11 @@ namespace irc {
 
 	Channel::Channel(std::string name): _name(name){}
 
-	Channel::Channel(std::string name, char *prefix): _name(name), _prefix(prefix){}
+	Channel::Channel(std::string name, char *prefix)
+		: _name(name), _prefix(prefix), _userlimit(10), _is_limited(false) {}
 
-	Channel::Channel(std::string name, char *prefix, std::string key): _name(name), _prefix(prefix), _key(key){}
+	Channel::Channel(std::string name, char *prefix, std::string key)
+		: _name(name), _prefix(prefix), _key(key), _userlimit(10), _is_limited(false) {}
 
 	Channel::Channel(Channel const & copy){*this = copy;}
 
@@ -35,7 +37,10 @@ namespace irc {
 	bool Channel::is_topic() const{ return (this->_is_topic_chop_only);}
 	bool Channel::is_no_external_msg() const{ return (this->_is_no_external_msg);}
 	bool Channel::is_moderated() const{ return (this->_is_moderated);}
-	bool Channel::is_limited() const{ return (this->_is_limited);}
+	bool Channel::is_limited() const { return this->_is_limited; }
+	bool Channel::is_key() const { return !this->_key.empty(); }
+
+	void Channel::del_key() { this->_key.clear(); }
 
 	bool Channel::is_operator(const User *user) const {
 		if (std::find(_operator_list.begin(), _operator_list.end(), user) == _operator_list.end())
@@ -58,6 +63,7 @@ namespace irc {
 	void Channel::set_lifetime(const int & lifetime){ this->_lifetime = lifetime;}
 	void Channel::set_opdelay(const int & opdelay){ this->_opdelay = opdelay;}
 	void Channel::set_userlimit(const int & userlimit){ this->_userlimit = userlimit;}
+	void Channel::set_limited(bool value){ _is_limited = value; }
 
 	void Channel::set_private(bool value) { this->_is_private = value; }
 	void Channel::set_external_msg(bool value) { this->_is_no_external_msg = value; }

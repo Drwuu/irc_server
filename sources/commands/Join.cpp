@@ -18,6 +18,9 @@ namespace irc {
 			if (mchan != serv_chans.end() and (*mchan)->find_user(user.get_nickname()) == NULL) {												// if it founds a channel, add user on it
 				ChanStatus status(*mchan);
 				user.join_channel(status);													// create channel and add user on it
+				// Mute the user if the channel is moderated.
+				if (status.channel->is_moderated())
+					user.set_mute(*mchan, true);
 				(*mchan)->add_user(&user);
 				(*mchan)->transmit_message( " JOIN " + (*mchan)->get_name(), &user);
 
@@ -87,8 +90,15 @@ namespace irc {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				vec_user users = (*mchan)->get_user_list();
-				if (users.size() >= (*mchan)->get_userlimit())
-					throw error(_chans[i] + " :Cannot join channel (+l)", ERR_CHANNELISFULL);
+				if ((*mchan)->is_limited()) {
+					if (users.size() >= (*mchan)->get_userlimit())
+						throw error(_chans[i] + " :Cannot join channel (+l)", ERR_CHANNELISFULL);
+				}
+				// FIXME --> throw error when there is no key
+				if ((*mchan)->is_key()) {
+					if (_keys.empty() || i > _keys.size() || (*mchan)->get_key() != _keys[i])
+						throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
+				}
 				if ((*mchan)->is_invite()) {
 					if ((*mchan)->is_invite(user.get_nickname()) == false)
 						throw error(_chans[i] + " :Cannot join channel (+i)", ERR_INVITEONLYCHAN);
@@ -106,10 +116,7 @@ namespace irc {
 			vec_cit_chan mchan = _server->find_chan_name(_chans[i], serv_chans);			// pos of key must be the same as chan
 			if (mchan != serv_chans.end()) {												// if it founds a channel
 				if (_keys[i] != (*mchan)->get_key())										// check key
-					{
-						std::clog << "_keys[i] = " << _keys[i] << " | get_key = " << (*mchan)->get_key() << std::endl;
-						throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
-					}
+					throw error(_chans[i] + " :Cannot join channel (+k)", ERR_BADCHANNELKEY);
 			}
 		}
 
