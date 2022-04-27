@@ -82,9 +82,8 @@ namespace irc {
 		for (std::vector<std::string>::iterator it = _chans.begin(); it != _chans.end();it++)
 		{
 			if (_is_valid_channel(*it) == false)
-				throw error(*it + " :No such Channel", ERR_CHANNELISFULL);
+				throw error(*it + " :No such Channel", ERR_NOSUCHCHANNEL);
 		}
-
 		if (_args.size() >= 3)																// get keys
 			_keys = _get_instructions(_args[2], ',');
 		vec_chan const serv_chans = _server->get_channel_list();
