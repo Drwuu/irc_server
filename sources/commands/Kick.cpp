@@ -21,10 +21,6 @@ namespace irc {
 				_server->get_event_list().push_back(selfmsg);
 				(*chan)->transmit_message( " KICK " + (*chan)->get_name() + " "+ parting_user->get_nickname(), &user); // Maybe PART instead of KICK here for the client to understand what to do
 				parting_user->leave_channel((*chan)->get_name());
-				std::clog << "Channel to leave = " << *it << std::endl;
-				if ((*chan)->get_user_list().size() == 0){
-					_server->del_channel(*(*chan));
-				}
 			}
 		}
 		else {
